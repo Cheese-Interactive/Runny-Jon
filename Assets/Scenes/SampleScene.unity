@@ -1704,6 +1704,8 @@ MonoBehaviour:
   airMultiplier: 0.4
   crouchSpeed: 3.5
   crouchHeight: 0.5
+  maxSlideTime: 0.75
+  slideSpeed: 15
   feet: {fileID: 1514621584}
   groundCheckRadius: 0.25
   environmentMask:

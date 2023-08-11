@@ -30,6 +30,12 @@ public class PlayerController : MonoBehaviour {
     [SerializeField] private float crouchHeight;
     private float startHeight;
 
+    [Header("Sliding")]
+    [SerializeField] private float maxSlideTime;
+    [SerializeField] private float slideSpeed;
+    private float slideTimer;
+    private bool isSliding;
+
     [Header("Ground Check")]
     [SerializeField] private Transform feet;
     [SerializeField] private float groundCheckRadius;
@@ -87,14 +93,25 @@ public class PlayerController : MonoBehaviour {
 
         if (Input.GetKeyDown(KeyCode.LeftControl)) {
 
-            transform.localScale = new Vector3(transform.localScale.x, crouchHeight, transform.localScale.z);
-            rb.AddForce(Vector3.down * 5f, ForceMode.Impulse);
+            Crouch();
 
         }
 
         if (Input.GetKeyUp(KeyCode.LeftControl)) {
 
-            transform.localScale = new Vector3(transform.localScale.x, startHeight, transform.localScale.z);
+            Uncrouch();
+
+        }
+
+        if (Input.GetKeyDown(KeyCode.C) && (horizontalInput != 0 || verticalInput != 0)) {
+
+            StartSlide();
+
+        }
+
+        if ((Input.GetKeyUp(KeyCode.C) || Input.GetKeyDown(KeyCode.Space)) && isSliding) {
+
+            StopSlide();
 
         }
 
@@ -132,7 +149,17 @@ public class PlayerController : MonoBehaviour {
 
     private void HandleMovementState() {
 
-        if (Input.GetKey(KeyCode.LeftControl)) {
+        if (isSliding && isGrounded) {
+
+            if (!CheckSlope())
+                slideTimer -= Time.deltaTime;
+
+            moveSpeed = slideSpeed;
+
+            if (slideTimer <= 0f)
+                StopSlide();
+
+        } else if (Input.GetKey(KeyCode.LeftControl)) {
 
             movementState = MovementState.Crouching;
             moveSpeed = crouchSpeed;
@@ -204,6 +231,35 @@ public class PlayerController : MonoBehaviour {
 
         jumpReady = true;
         exitingSlope = false;
+
+    }
+
+    private void Crouch() {
+
+        transform.localScale = new Vector3(transform.localScale.x, crouchHeight, transform.localScale.z);
+        rb.AddForce(Vector3.down * 5f, ForceMode.Impulse);
+
+    }
+
+    private void Uncrouch() {
+
+        transform.localScale = new Vector3(transform.localScale.x, startHeight, transform.localScale.z);
+
+    }
+
+    private void StartSlide() {
+
+        isSliding = true;
+        Crouch();
+
+        slideTimer = maxSlideTime;
+
+    }
+
+    private void StopSlide() {
+
+        isSliding = false;
+        Uncrouch();
 
     }
 
