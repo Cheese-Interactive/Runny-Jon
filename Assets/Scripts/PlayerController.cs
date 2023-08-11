@@ -25,6 +25,11 @@ public class PlayerController : MonoBehaviour {
     [SerializeField] private float airMultiplier;
     private bool jumpReady;
 
+    [Header("Crouching")]
+    [SerializeField] private float crouchSpeed;
+    [SerializeField] private float crouchHeight;
+    private float startHeight;
+
     [Header("Ground Check")]
     [SerializeField] private Transform feet;
     [SerializeField] private float groundCheckRadius;
@@ -35,13 +40,14 @@ public class PlayerController : MonoBehaviour {
     [SerializeField] private float maxSlopeAngle;
     [SerializeField] private float slopeCheckDistance;
     private RaycastHit slopeHit;
+    private bool exitingSlope;
 
     [Header("Drag Control")]
     [SerializeField] private float groundDrag;
 
     public enum MovementState {
 
-        None, Walking, Sprinting, Air
+        None, Walking, Sprinting, Crouching, Air
 
     }
 
@@ -51,10 +57,11 @@ public class PlayerController : MonoBehaviour {
         rb = GetComponent<Rigidbody>();
         rb.freezeRotation = true;
 
-        moveSpeed = walkSpeed;
         movementState = MovementState.None;
 
         jumpReady = true;
+
+        startHeight = transform.localScale.y;
 
     }
 
@@ -78,6 +85,19 @@ public class PlayerController : MonoBehaviour {
 
         }
 
+        if (Input.GetKeyDown(KeyCode.LeftControl)) {
+
+            transform.localScale = new Vector3(transform.localScale.x, crouchHeight, transform.localScale.z);
+            rb.AddForce(Vector3.down * 5f, ForceMode.Impulse);
+
+        }
+
+        if (Input.GetKeyUp(KeyCode.LeftControl)) {
+
+            transform.localScale = new Vector3(transform.localScale.x, startHeight, transform.localScale.z);
+
+        }
+
         if (isGrounded)
             rb.drag = groundDrag;
         else
@@ -89,19 +109,22 @@ public class PlayerController : MonoBehaviour {
 
         movementDirection = transform.forward * verticalInput + transform.right * horizontalInput;
 
-        if (CheckSlope()) {
+        if (CheckSlope() && !exitingSlope) {
 
-            rb.AddForce(GetSlopeMoveDirection() * moveSpeed * 20f, ForceMode.Force);
+            rb.AddForce(GetSlopeMoveDirection() * moveSpeed * 50f, ForceMode.Force);
 
             if (rb.velocity.y > 0f)
                 rb.AddForce(Vector3.down * 80f, ForceMode.Force);
 
-        }
+        } else if (isGrounded) {
 
-        if (isGrounded)
             rb.AddForce(movementDirection.normalized * moveSpeed * 10f, ForceMode.Force);
-        else
+
+        } else {
+
             rb.AddForce(movementDirection.normalized * moveSpeed * airMultiplier * 10f, ForceMode.Force);
+
+        }
 
         rb.useGravity = !CheckSlope();
 
@@ -109,14 +132,20 @@ public class PlayerController : MonoBehaviour {
 
     private void HandleMovementState() {
 
-        if (isGrounded && movementDirection == Vector3.zero) {
+        if (Input.GetKey(KeyCode.LeftControl)) {
+
+            movementState = MovementState.Crouching;
+            moveSpeed = crouchSpeed;
+
+        } else if (isGrounded && movementDirection == Vector3.zero) {
 
             animator.SetBool("isWalking", false);
             animator.SetBool("isSprinting", false);
             animator.SetBool("inAir", false);
             movementState = MovementState.None;
+            moveSpeed = walkSpeed;
 
-        } else if (isGrounded && Input.GetKey(KeyCode.LeftShift)) {
+        } else if (isGrounded && Input.GetKey(KeyCode.LeftShift) && !CheckSlope()) {
 
             animator.SetBool("isWalking", false);
             animator.SetBool("isSprinting", true);
@@ -144,19 +173,28 @@ public class PlayerController : MonoBehaviour {
 
     private void ControlSpeed() {
 
-        Vector3 flatVel = new Vector3(rb.velocity.x, 0f, rb.velocity.z);
+        if (CheckSlope() && !exitingSlope) {
 
-        if (flatVel.magnitude > moveSpeed) {
+            if (rb.velocity.magnitude > moveSpeed)
+                rb.velocity = rb.velocity.normalized * moveSpeed;
 
-            Vector3 controlledVel = flatVel.normalized * moveSpeed;
-            rb.velocity = new Vector3(controlledVel.x, rb.velocity.y, controlledVel.z);
+        } else {
 
+            Vector3 flatVel = new Vector3(rb.velocity.x, 0f, rb.velocity.z);
+
+            if (flatVel.magnitude > moveSpeed) {
+
+                Vector3 controlledVel = flatVel.normalized * moveSpeed;
+                rb.velocity = new Vector3(controlledVel.x, rb.velocity.y, controlledVel.z);
+
+            }
         }
     }
 
     private void Jump() {
 
         jumpReady = false;
+        exitingSlope = true;
         rb.velocity = new Vector3(rb.velocity.x, 0f, rb.velocity.z);
         rb.AddForce(transform.up * jumpForce, ForceMode.Impulse);
 
@@ -165,6 +203,7 @@ public class PlayerController : MonoBehaviour {
     private void ResetJump() {
 
         jumpReady = true;
+        exitingSlope = false;
 
     }
 
