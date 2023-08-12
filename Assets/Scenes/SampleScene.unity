@@ -1704,7 +1704,7 @@ MonoBehaviour:
   airMultiplier: 0.4
   crouchSpeed: 3.5
   crouchHeight: 0.5
-  maxSlideTime: 0.75
+  maxSlideTime: 0.5
   slideSpeed: 15
   feet: {fileID: 1514621584}
   groundCheckRadius: 0.25
@@ -1712,7 +1712,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 64
   maxSlopeAngle: 45
-  slopeCheckDistance: 0.3
+  slopeCheckDistance: 1
   groundDrag: 5
 --- !u!54 &1384782514
 Rigidbody:

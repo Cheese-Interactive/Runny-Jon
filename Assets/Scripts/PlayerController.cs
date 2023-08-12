@@ -1,5 +1,6 @@
 using System.Security.Cryptography;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
@@ -57,6 +58,12 @@ public class PlayerController : MonoBehaviour {
 
     }
 
+    public enum SlopeState {
+
+        None, Valid, Invalid
+
+    }
+
     private void Start() {
 
         animator = GetComponent<Animator>();
@@ -103,7 +110,7 @@ public class PlayerController : MonoBehaviour {
 
         }
 
-        if (Input.GetKeyDown(KeyCode.C) && (horizontalInput != 0 || verticalInput != 0)) {
+        if (Input.GetKeyDown(KeyCode.C) && (horizontalInput != 0 || verticalInput != 0) && CheckSlope() == SlopeState.Valid) {
 
             StartSlide();
 
@@ -126,12 +133,16 @@ public class PlayerController : MonoBehaviour {
 
         movementDirection = transform.forward * verticalInput + transform.right * horizontalInput;
 
-        if (CheckSlope() && !exitingSlope) {
+        if (CheckSlope() == SlopeState.Valid && !exitingSlope) {
 
-            rb.AddForce(GetSlopeMoveDirection() * moveSpeed * 50f, ForceMode.Force);
+            rb.AddForce(GetSlopeMoveDirection() * moveSpeed * 30f, ForceMode.Force);
 
             if (rb.velocity.y > 0f)
                 rb.AddForce(Vector3.down * 80f, ForceMode.Force);
+
+        } else if (CheckSlope() == SlopeState.Invalid) {
+
+            rb.AddForce(Vector3.Cross(slopeHit.normal, Vector3.Cross(slopeHit.normal, Vector3.up)) * 500f, ForceMode.Acceleration);
 
         } else if (isGrounded) {
 
@@ -143,7 +154,7 @@ public class PlayerController : MonoBehaviour {
 
         }
 
-        rb.useGravity = !CheckSlope();
+        rb.useGravity = CheckSlope() == SlopeState.None || CheckSlope() == SlopeState.Invalid;
 
     }
 
@@ -151,13 +162,13 @@ public class PlayerController : MonoBehaviour {
 
         if (isSliding && isGrounded) {
 
-            if (!CheckSlope())
-                slideTimer -= Time.deltaTime;
+            //if (CheckSlope() == SlopeState.None)
+            //    slideTimer -= Time.deltaTime;
 
             moveSpeed = slideSpeed;
 
-            if (slideTimer <= 0f)
-                StopSlide();
+            //if (slideTimer <= 0f)
+            //    StopSlide();
 
         } else if (Input.GetKey(KeyCode.LeftControl)) {
 
@@ -172,7 +183,7 @@ public class PlayerController : MonoBehaviour {
             movementState = MovementState.None;
             moveSpeed = walkSpeed;
 
-        } else if (isGrounded && Input.GetKey(KeyCode.LeftShift) && !CheckSlope()) {
+        } else if (isGrounded && Input.GetKey(KeyCode.LeftShift)) {
 
             animator.SetBool("isWalking", false);
             animator.SetBool("isSprinting", true);
@@ -200,7 +211,7 @@ public class PlayerController : MonoBehaviour {
 
     private void ControlSpeed() {
 
-        if (CheckSlope() && !exitingSlope) {
+        if (CheckSlope() == SlopeState.Valid || CheckSlope() == SlopeState.Invalid && !exitingSlope) {
 
             if (rb.velocity.magnitude > moveSpeed)
                 rb.velocity = rb.velocity.normalized * moveSpeed;
@@ -252,7 +263,7 @@ public class PlayerController : MonoBehaviour {
         isSliding = true;
         Crouch();
 
-        slideTimer = maxSlideTime;
+        //slideTimer = maxSlideTime;
 
     }
 
@@ -263,16 +274,23 @@ public class PlayerController : MonoBehaviour {
 
     }
 
-    private bool CheckSlope() {
+    private SlopeState CheckSlope() {
 
         if (Physics.Raycast(feet.position, Vector3.down, out slopeHit, slopeCheckDistance)) {
 
             float angle = Vector3.Angle(Vector3.up, slopeHit.normal);
-            return angle <= maxSlopeAngle && angle != 0;
 
+            if (angle != 0f) {
+
+                if (angle <= maxSlopeAngle)
+                    return SlopeState.Valid;
+                else
+                    return SlopeState.Invalid;
+
+            }
         }
 
-        return false;
+        return SlopeState.None;
 
     }
 
