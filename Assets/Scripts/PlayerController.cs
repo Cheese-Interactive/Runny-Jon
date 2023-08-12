@@ -8,6 +8,7 @@ public class PlayerController : MonoBehaviour {
 
     [Header("References")]
     [SerializeField] private TMP_Text speedText;
+    [SerializeField] private Transform cameraPos;
     private Animator animator;
     private Rigidbody rb;
 
@@ -37,6 +38,14 @@ public class PlayerController : MonoBehaviour {
     private float slideTimer;
     private bool isSliding;
 
+    [Header("Headbob")]
+    [SerializeField] private float walkBobSpeed;
+    [SerializeField] private float walkBobAmount;
+    [SerializeField] private float sprintBobSpeed;
+    [SerializeField] private float sprintBobAmount;
+    private float startYPos;
+    private float timer;
+
     [Header("Ground Check")]
     [SerializeField] private Transform feet;
     [SerializeField] private float groundCheckRadius;
@@ -54,7 +63,7 @@ public class PlayerController : MonoBehaviour {
 
     public enum MovementState {
 
-        None, Walking, Sprinting, Crouching, Air
+        None, Walking, Sprinting, Air
 
     }
 
@@ -75,6 +84,8 @@ public class PlayerController : MonoBehaviour {
         jumpReady = true;
 
         startHeight = transform.localScale.y;
+
+        startYPos = cameraPos.localPosition.y;
 
     }
 
@@ -98,19 +109,7 @@ public class PlayerController : MonoBehaviour {
 
         }
 
-        if (Input.GetKeyDown(KeyCode.LeftControl)) {
-
-            Crouch();
-
-        }
-
-        if (Input.GetKeyUp(KeyCode.LeftControl)) {
-
-            Uncrouch();
-
-        }
-
-        if (Input.GetKeyDown(KeyCode.C) && (horizontalInput != 0 || verticalInput != 0) && CheckSlope() == SlopeState.Valid) {
+        if (Input.GetKeyDown(KeyCode.C) && (horizontalInput != 0 || verticalInput != 0)) {
 
             StartSlide();
 
@@ -121,6 +120,8 @@ public class PlayerController : MonoBehaviour {
             StopSlide();
 
         }
+
+        HandleHeadbob();
 
         if (isGrounded)
             rb.drag = groundDrag;
@@ -160,20 +161,15 @@ public class PlayerController : MonoBehaviour {
 
     private void HandleMovementState() {
 
-        if (isSliding && isGrounded) {
+        if (isSliding) {
 
-            //if (CheckSlope() == SlopeState.None)
-            //    slideTimer -= Time.deltaTime;
+            if (CheckSlope() == SlopeState.None)
+                slideTimer -= Time.deltaTime;
 
             moveSpeed = slideSpeed;
 
-            //if (slideTimer <= 0f)
-            //    StopSlide();
-
-        } else if (Input.GetKey(KeyCode.LeftControl)) {
-
-            movementState = MovementState.Crouching;
-            moveSpeed = crouchSpeed;
+            if (slideTimer <= 0f)
+                StopSlide();
 
         } else if (isGrounded && movementDirection == Vector3.zero) {
 
@@ -245,33 +241,33 @@ public class PlayerController : MonoBehaviour {
 
     }
 
-    private void Crouch() {
-
-        transform.localScale = new Vector3(transform.localScale.x, crouchHeight, transform.localScale.z);
-        rb.AddForce(Vector3.down * 5f, ForceMode.Impulse);
-
-    }
-
-    private void Uncrouch() {
-
-        transform.localScale = new Vector3(transform.localScale.x, startHeight, transform.localScale.z);
-
-    }
-
     private void StartSlide() {
 
         isSliding = true;
-        Crouch();
-
-        //slideTimer = maxSlideTime;
+        transform.localScale = new Vector3(transform.localScale.x, crouchHeight, transform.localScale.z);
+        rb.AddForce(Vector3.down * 5f, ForceMode.Impulse);
+        slideTimer = maxSlideTime;
 
     }
 
     private void StopSlide() {
 
         isSliding = false;
-        Uncrouch();
+        transform.localScale = new Vector3(transform.localScale.x, startHeight, transform.localScale.z);
 
+    }
+
+    private void HandleHeadbob() {
+
+        if (isGrounded) {
+
+            if (Mathf.Abs(movementDirection.x) > 0.1f || Mathf.Abs(movementDirection.z) > 0.1f) {
+
+                timer += (movementState == MovementState.Sprinting ? sprintBobSpeed : movementState == MovementState.Walking ? walkBobSpeed : 0f) * Time.deltaTime;
+                cameraPos.localPosition = new Vector3(cameraPos.localPosition.x, startYPos + Mathf.Sin(timer) * (movementState == MovementState.Sprinting ? sprintBobAmount : movementState == MovementState.Walking ? walkBobAmount : 0f), cameraPos.localPosition.z);
+
+            }
+        }
     }
 
     private SlopeState CheckSlope() {
