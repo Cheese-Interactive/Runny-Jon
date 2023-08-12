@@ -47,12 +47,13 @@ public class PlayerController : MonoBehaviour {
     private float startHeight;
 
     [Header("Sliding")]
-    [SerializeField] private float maxSlideTime;
     [SerializeField] private float maxSlideSpeed;
+    [SerializeField] private float maxSlideTime;
     private float slideTimer;
     private bool isSliding;
 
     [Header("Swinging")]
+    [SerializeField] private float maxSwingSpeed;
     [SerializeField] private float maxGrappleDistance;
     [SerializeField] private float jointSpring;
     [SerializeField] private float jointDamper;
@@ -61,6 +62,7 @@ public class PlayerController : MonoBehaviour {
     private Vector3 swingPoint;
     private Vector3 currentGrapplePosition;
     private SpringJoint joint;
+    private bool isSwinging;
 
     [Header("Headbob")]
     [SerializeField] private float walkBobSpeed;
@@ -87,7 +89,7 @@ public class PlayerController : MonoBehaviour {
 
     public enum MovementState {
 
-        None, Walking, Sprinting, Sliding, Air
+        None, Walking, Sprinting, Sliding, Swinging, Air
 
     }
 
@@ -148,7 +150,7 @@ public class PlayerController : MonoBehaviour {
 
         }
 
-        if (Input.GetKeyDown(KeyCode.C) && (horizontalInput != 0 || verticalInput != 0))
+        if (Input.GetKeyDown(KeyCode.C) && (horizontalInput != 0 || verticalInput != 0) && !isSwinging)
             StartSlide();
 
         if ((Input.GetKeyUp(KeyCode.C) || Input.GetKeyDown(KeyCode.Space)) && isSliding)
@@ -157,7 +159,7 @@ public class PlayerController : MonoBehaviour {
         if (Input.GetMouseButtonDown(1))
             StartSwing();
 
-        if (Input.GetMouseButtonUp(1))
+        if (Input.GetMouseButtonUp(1) && isSwinging)
             StopSwing();
 
         HandleHeadbob();
@@ -170,6 +172,9 @@ public class PlayerController : MonoBehaviour {
     }
 
     private void FixedUpdate() {
+
+        if (isSwinging)
+            return;
 
         movementDirection = transform.forward * verticalInput + transform.right * horizontalInput;
 
@@ -206,7 +211,12 @@ public class PlayerController : MonoBehaviour {
 
     private void HandleMovementState() {
 
-        if (isSliding) {
+        if (isSwinging) {
+
+            movementState = MovementState.Swinging;
+            moveSpeed = maxSwingSpeed;
+
+        } else if (isSliding) {
 
             movementState = MovementState.Sliding;
 
@@ -352,6 +362,8 @@ public class PlayerController : MonoBehaviour {
 
         if (Physics.Raycast(cameraPos.position, cameraPos.forward, out hit, maxGrappleDistance, grappleableMask)) {
 
+            isSwinging = true;
+
             swingPoint = hit.point;
             joint = gameObject.AddComponent<SpringJoint>();
             joint.autoConfigureConnectedAnchor = false;
@@ -374,6 +386,7 @@ public class PlayerController : MonoBehaviour {
 
     private void StopSwing() {
 
+        isSwinging = false;
         lineRenderer.positionCount = 0;
         Destroy(joint);
 

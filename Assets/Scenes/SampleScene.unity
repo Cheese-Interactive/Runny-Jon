@@ -1906,8 +1906,9 @@ MonoBehaviour:
   jumpCooldown: 0.25
   airMultiplier: 0.4
   crouchHeight: 0.5
-  maxSlideTime: 0.5
   maxSlideSpeed: 25
+  maxSlideTime: 0.5
+  maxSwingSpeed: 20
   maxGrappleDistance: 25
   jointSpring: 4.5
   jointDamper: 7
