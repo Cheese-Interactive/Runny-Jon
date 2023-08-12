@@ -1,14 +1,19 @@
 using System.Collections;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class PlayerController : MonoBehaviour {
 
     [Header("References")]
+    [SerializeField] private new Camera camera;
     [SerializeField] private TMP_Text speedText;
     [SerializeField] private Transform cameraPos;
+    [SerializeField] private Transform muzzle;
+    [SerializeField] private Image crosshair;
     private Animator animator;
     private Rigidbody rb;
+    private LineRenderer lineRenderer;
 
     [Header("Looking")]
     [SerializeField][Range(0f, 100f)] private float xSensitivity;
@@ -43,9 +48,19 @@ public class PlayerController : MonoBehaviour {
 
     [Header("Sliding")]
     [SerializeField] private float maxSlideTime;
-    [SerializeField] private float slideSpeed;
+    [SerializeField] private float maxSlideSpeed;
     private float slideTimer;
     private bool isSliding;
+
+    [Header("Swinging")]
+    [SerializeField] private float maxGrappleDistance;
+    [SerializeField] private float jointSpring;
+    [SerializeField] private float jointDamper;
+    [SerializeField] private float jointMassScale;
+    [SerializeField] private LayerMask grappleableMask;
+    private Vector3 swingPoint;
+    private Vector3 currentGrapplePosition;
+    private SpringJoint joint;
 
     [Header("Headbob")]
     [SerializeField] private float walkBobSpeed;
@@ -86,6 +101,7 @@ public class PlayerController : MonoBehaviour {
 
         animator = GetComponent<Animator>();
         rb = GetComponent<Rigidbody>();
+        lineRenderer = GetComponent<LineRenderer>();
         rb.freezeRotation = true;
 
         Cursor.lockState = CursorLockMode.Locked;
@@ -132,17 +148,17 @@ public class PlayerController : MonoBehaviour {
 
         }
 
-        if (Input.GetKeyDown(KeyCode.C) && (horizontalInput != 0 || verticalInput != 0)) {
-
+        if (Input.GetKeyDown(KeyCode.C) && (horizontalInput != 0 || verticalInput != 0))
             StartSlide();
 
-        }
-
-        if ((Input.GetKeyUp(KeyCode.C) || Input.GetKeyDown(KeyCode.Space)) && isSliding) {
-
+        if ((Input.GetKeyUp(KeyCode.C) || Input.GetKeyDown(KeyCode.Space)) && isSliding)
             StopSlide();
 
-        }
+        if (Input.GetMouseButtonDown(1))
+            StartSwing();
+
+        if (Input.GetMouseButtonUp(1))
+            StopSwing();
 
         HandleHeadbob();
 
@@ -182,6 +198,12 @@ public class PlayerController : MonoBehaviour {
 
     }
 
+    private void LateUpdate() {
+
+        DrawRope();
+
+    }
+
     private void HandleMovementState() {
 
         if (isSliding) {
@@ -191,7 +213,7 @@ public class PlayerController : MonoBehaviour {
             if (CheckSlope() == SlopeType.None && isGrounded)
                 slideTimer -= Time.deltaTime;
             else if (CheckSlope() == SlopeType.Valid)
-                desiredMoveSpeed = slideSpeed;
+                desiredMoveSpeed = maxSlideSpeed;
             else
                 desiredMoveSpeed = sprintSpeed;
 
@@ -321,6 +343,52 @@ public class PlayerController : MonoBehaviour {
         isSliding = false;
         animator.SetBool("isSliding", false);
         transform.localScale = new Vector3(transform.localScale.x, startHeight, transform.localScale.z);
+
+    }
+
+    private void StartSwing() {
+
+        RaycastHit hit;
+
+        if (Physics.Raycast(cameraPos.position, cameraPos.forward, out hit, maxGrappleDistance, grappleableMask)) {
+
+            swingPoint = hit.point;
+            joint = gameObject.AddComponent<SpringJoint>();
+            joint.autoConfigureConnectedAnchor = false;
+            joint.connectedAnchor = swingPoint;
+
+            float distanceFromPoint = Vector3.Distance(transform.position, swingPoint);
+
+            joint.maxDistance = distanceFromPoint * 0.8f;
+            joint.minDistance = distanceFromPoint * 0.25f;
+
+            joint.spring = jointSpring;
+            joint.damper = jointDamper;
+            joint.massScale = jointMassScale;
+
+            lineRenderer.positionCount = 2;
+            currentGrapplePosition = muzzle.position;
+
+        }
+    }
+
+    private void StopSwing() {
+
+        lineRenderer.positionCount = 0;
+        Destroy(joint);
+
+    }
+
+    private void DrawRope() {
+
+        if (!joint)
+            return;
+
+        // TODO: Make 8f a variable?
+        currentGrapplePosition = Vector3.Lerp(currentGrapplePosition, swingPoint, Time.deltaTime * 8f);
+
+        lineRenderer.SetPosition(0, muzzle.position);
+        lineRenderer.SetPosition(1, swingPoint);
 
     }
 
