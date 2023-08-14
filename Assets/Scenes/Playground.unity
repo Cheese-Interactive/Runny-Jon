@@ -703,7 +703,7 @@ GameObject:
   - component: {fileID: 448788923}
   - component: {fileID: 448788922}
   m_Layer: 6
-  m_Name: Cube
+  m_Name: Platform
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1817,7 +1817,6 @@ GameObject:
   - component: {fileID: 1384782514}
   - component: {fileID: 1384782509}
   - component: {fileID: 1384782513}
-  - component: {fileID: 1384782516}
   - component: {fileID: 1384782515}
   m_Layer: 0
   m_Name: Player
@@ -1908,12 +1907,15 @@ MonoBehaviour:
   crouchHeight: 0.5
   maxSlideSpeed: 25
   maxSlideTime: 0.5
-  maxSwingSpeed: 20
-  maxGrappleDistance: 25
+  maxSwingSpeed: 30
+  maxSwingDistance: 40
+  horizontalThrustForce: 2000
+  forwardThrustForce: 3000
+  cableExtendSpeed: 20
   jointSpring: 4.5
   jointDamper: 7
   jointMassScale: 4.5
-  grappleableMask:
+  swingableMask:
     serializedVersion: 2
     m_Bits: 64
   walkBobSpeed: 10
@@ -1964,7 +1966,7 @@ LineRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 4709a02f132663041b23d87dbc25f353, type: 2}
+  - {fileID: 10306, guid: 0000000000000000f000000000000000, type: 0}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -2008,7 +2010,7 @@ LineRenderer:
       m_RotationOrder: 4
     colorGradient:
       serializedVersion: 2
-      key0: {r: 1, g: 1, b: 1, a: 1}
+      key0: {r: 0, g: 0, b: 0, a: 1}
       key1: {r: 1, g: 1, b: 1, a: 1}
       key2: {r: 0, g: 0, b: 0, a: 0}
       key3: {r: 0, g: 0, b: 0, a: 0}
@@ -2035,38 +2037,14 @@ LineRenderer:
       m_Mode: 0
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
-    numCornerVertices: 0
-    numCapVertices: 0
+    numCornerVertices: 2
+    numCapVertices: 2
     alignment: 0
     textureMode: 0
     shadowBias: 0.5
     generateLightingData: 0
   m_UseWorldSpace: 1
   m_Loop: 0
---- !u!114 &1384782516
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1384782507}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1cf290b55e2c35145a2301c15ec3d624, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  muzzle: {fileID: 1335182328}
-  camera: {fileID: 924507703}
-  lineRenderer: {fileID: 1384782515}
-  grappleableMask:
-    m_Bits: 64
-  maxGrappleDistance: 25
-  jointSpring: 4.5
-  jointDamper: 7
-  jointMassScale: 4.5
-  swingPoint: {x: 0, y: 0, z: 0}
-  currentGrapplePosition: {x: 0, y: 0, z: 0}
-  joint: {fileID: 0}
 --- !u!1 &1411666162
 GameObject:
   m_ObjectHideFlags: 0
@@ -2359,7 +2337,7 @@ GameObject:
   - component: {fileID: 1683934177}
   - component: {fileID: 1683934176}
   m_Layer: 6
-  m_Name: Cube (2)
+  m_Name: Platform
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2719,7 +2697,7 @@ GameObject:
   - component: {fileID: 2132571212}
   - component: {fileID: 2132571211}
   m_Layer: 6
-  m_Name: Cube (1)
+  m_Name: Platform
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

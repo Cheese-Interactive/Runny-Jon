@@ -35,6 +35,7 @@ public class PlayerController : MonoBehaviour {
     private float horizontalInput;
     private Vector3 movementDirection;
     private MovementState movementState;
+    private Coroutine moveSpeedCoroutine;
 
     [Header("Jumping")]
     [SerializeField] private float jumpForce;
@@ -54,13 +55,16 @@ public class PlayerController : MonoBehaviour {
 
     [Header("Swinging")]
     [SerializeField] private float maxSwingSpeed;
-    [SerializeField] private float maxGrappleDistance;
+    [SerializeField] private float maxSwingDistance;
+    [SerializeField] private float horizontalThrustForce;
+    [SerializeField] private float forwardThrustForce;
+    [SerializeField] private float cableExtendSpeed;
     [SerializeField] private float jointSpring;
     [SerializeField] private float jointDamper;
     [SerializeField] private float jointMassScale;
-    [SerializeField] private LayerMask grappleableMask;
+    [SerializeField] private LayerMask swingableMask;
     private Vector3 swingPoint;
-    private Vector3 currentGrapplePosition;
+    private Vector3 currentSwingPosition;
     private SpringJoint joint;
     private bool isSwinging;
 
@@ -69,7 +73,7 @@ public class PlayerController : MonoBehaviour {
     [SerializeField] private float walkBobAmount;
     [SerializeField] private float sprintBobSpeed;
     [SerializeField] private float sprintBobAmount;
-    private float startYPos;
+    private Vector3 startCameraPos;
     private float timer;
 
     [Header("Ground Check")]
@@ -114,8 +118,7 @@ public class PlayerController : MonoBehaviour {
         jumpReady = true;
 
         startHeight = transform.localScale.y;
-
-        startYPos = cameraPos.localPosition.y;
+        startCameraPos = cameraPos.localPosition;
 
     }
 
@@ -161,6 +164,9 @@ public class PlayerController : MonoBehaviour {
 
         if (Input.GetMouseButtonUp(1) && isSwinging)
             StopSwing();
+
+        if (joint != null)
+            HandleSwingMovement();
 
         HandleHeadbob();
 
@@ -261,8 +267,10 @@ public class PlayerController : MonoBehaviour {
 
         if (Mathf.Abs(desiredMoveSpeed - lastDesiredMoveSpeed) > sprintSpeed - walkSpeed && moveSpeed != 0f) {
 
-            StopAllCoroutines();
-            StartCoroutine(LerpMoveSpeed());
+            if (moveSpeedCoroutine != null)
+                StopCoroutine(moveSpeedCoroutine);
+
+            moveSpeedCoroutine = StartCoroutine(LerpMoveSpeed());
 
         } else {
 
@@ -360,7 +368,7 @@ public class PlayerController : MonoBehaviour {
 
         RaycastHit hit;
 
-        if (Physics.Raycast(cameraPos.position, cameraPos.forward, out hit, maxGrappleDistance, grappleableMask)) {
+        if (Physics.Raycast(cameraPos.position, cameraPos.forward, out hit, maxSwingDistance, swingableMask)) {
 
             isSwinging = true;
 
@@ -379,7 +387,37 @@ public class PlayerController : MonoBehaviour {
             joint.massScale = jointMassScale;
 
             lineRenderer.positionCount = 2;
-            currentGrapplePosition = muzzle.position;
+            currentSwingPosition = muzzle.position;
+
+        }
+    }
+
+    private void HandleSwingMovement() {
+
+        if (horizontalInput != 0f)
+            rb.AddForce((horizontalInput > 0f ? transform.right : -transform.right) * horizontalThrustForce * Time.deltaTime);
+
+        if (verticalInput > 0f)
+            rb.AddForce(transform.forward * forwardThrustForce * Time.deltaTime);
+
+        if (Input.GetKey(KeyCode.Space)) {
+
+            Vector3 directionToPoint = swingPoint - transform.position;
+            rb.AddForce(directionToPoint.normalized * forwardThrustForce * Time.deltaTime);
+
+            float distanceFromPoint = Vector3.Distance(transform.position, swingPoint);
+
+            joint.maxDistance = distanceFromPoint * 0.8f;
+            joint.minDistance = distanceFromPoint * 0.25f;
+
+        }
+
+        if (Input.GetKey(KeyCode.S)) {
+
+            float extendedDistanceFromPoint = Vector3.Distance(transform.position, swingPoint) + cableExtendSpeed;
+
+            joint.maxDistance = extendedDistanceFromPoint * 0.8f;
+            joint.minDistance = extendedDistanceFromPoint * 0.25f;
 
         }
     }
@@ -398,7 +436,7 @@ public class PlayerController : MonoBehaviour {
             return;
 
         // TODO: Make 8f a variable?
-        currentGrapplePosition = Vector3.Lerp(currentGrapplePosition, swingPoint, Time.deltaTime * 8f);
+        currentSwingPosition = Vector3.Lerp(currentSwingPosition, swingPoint, Time.deltaTime * 8f);
 
         lineRenderer.SetPosition(0, muzzle.position);
         lineRenderer.SetPosition(1, swingPoint);
@@ -409,11 +447,23 @@ public class PlayerController : MonoBehaviour {
 
         if (isGrounded) {
 
-            if (Mathf.Abs(movementDirection.x) > 0.1f || Mathf.Abs(movementDirection.z) > 0.1f) {
+            if (Mathf.Abs(rb.velocity.x) > 0.1f || Mathf.Abs(rb.velocity.z) > 0.1f) {
 
-                timer += (movementState == MovementState.Sprinting ? sprintBobSpeed : movementState == MovementState.Walking ? walkBobSpeed : 0f) * Time.deltaTime;
-                cameraPos.localPosition = new Vector3(cameraPos.localPosition.x, startYPos + Mathf.Sin(timer) * (movementState == MovementState.Sprinting ? sprintBobAmount : movementState == MovementState.Walking ? walkBobAmount : 0f), cameraPos.localPosition.z);
+                switch (movementState) {
 
+                    case MovementState.Sprinting:
+
+                    timer += sprintBobSpeed * Time.deltaTime;
+                    cameraPos.localPosition = new Vector3(cameraPos.localPosition.x, startCameraPos.y + Mathf.Sin(timer) * sprintBobAmount, cameraPos.localPosition.z);
+                    break;
+
+                    case MovementState.Walking:
+
+                    timer += walkBobSpeed * Time.deltaTime;
+                    cameraPos.localPosition = new Vector3(cameraPos.localPosition.x, startCameraPos.y + Mathf.Sin(timer) * walkBobAmount, cameraPos.localPosition.z);
+                    break;
+
+                }
             }
         }
     }
