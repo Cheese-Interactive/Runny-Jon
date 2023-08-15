@@ -53,6 +53,49 @@ public class PlayerController : MonoBehaviour {
     private float slideTimer;
     private bool isSliding;
 
+    [Header("Wall Running")]
+    [SerializeField] private float wallRunSpeed;
+    [SerializeField] private float wallRunForce;
+    [SerializeField] private float maxWallRunTime;
+    [SerializeField] private float wallNormalForce;
+    [SerializeField] private float exitWallTime;
+    [SerializeField] private LayerMask wallMask;
+    private float wallRunTimer;
+    private float exitWallTimer;
+    private bool isWallRunning;
+    private bool exitingWall;
+
+    [Header("Wall Jumping")]
+    [SerializeField] private float wallJumpUpForce;
+    [SerializeField] private float wallJumpSideForce;
+
+    [Header("Wall Climbing")]
+    [SerializeField] private float wallClimbSpeed;
+    private bool wallRunningUpwards;
+    private bool wallRunningDownwards;
+
+    [Header("Wall Run Gravity")]
+    [SerializeField] private bool useWallRunGravity;
+    [SerializeField] private float gravityCounterForce;
+
+    [Header("Wall Run Animations")]
+    [SerializeField] private float wallRunCameraFOV;
+    [SerializeField] private float camFOVLerpDuration;
+    [SerializeField] private float wallRunCamTilt;
+    [SerializeField] private float camTiltLerpDuration;
+    private float startCameraFOV;
+    private float startCameraZTilt;
+    private Coroutine lerpCamFOVCoroutine;
+    private Coroutine lerpCamTiltCoroutine;
+
+    [Header("Wall Detection")]
+    [SerializeField] private float wallCheckDistance;
+    [SerializeField] private float minJumpHeight;
+    private RaycastHit leftWallHit;
+    private RaycastHit rightWallHit;
+    private bool wallLeft;
+    private bool wallRight;
+
     [Header("Swinging")]
     [SerializeField] private float maxSwingSpeed;
     [SerializeField] private float maxSwingDistance;
@@ -62,7 +105,7 @@ public class PlayerController : MonoBehaviour {
     [SerializeField] private float jointSpring;
     [SerializeField] private float jointDamper;
     [SerializeField] private float jointMassScale;
-    [SerializeField] private LayerMask swingableMask;
+    [SerializeField] private string swingableTag;
     private Vector3 swingPoint;
     private Vector3 currentSwingPosition;
     private SpringJoint joint;
@@ -91,9 +134,17 @@ public class PlayerController : MonoBehaviour {
     [Header("Drag Control")]
     [SerializeField] private float groundDrag;
 
+    [Header("Keybinds")]
+    [SerializeField] private KeyCode sprintKey;
+    [SerializeField] private KeyCode jumpKey;
+    [SerializeField] private KeyCode slideKey;
+    [SerializeField] private KeyCode upwardsWallRunKey;
+    [SerializeField] private KeyCode downwardsWallRunKey;
+    [SerializeField] private KeyCode cableExtendKey;
+
     public enum MovementState {
 
-        None, Walking, Sprinting, Sliding, Swinging, Air
+        None, Walking, Sprinting, Sliding, WallRunning, Swinging, Air
 
     }
 
@@ -116,6 +167,9 @@ public class PlayerController : MonoBehaviour {
         movementState = MovementState.None;
 
         jumpReady = true;
+
+        startCameraFOV = camera.fieldOfView;
+        startCameraZTilt = camera.transform.localRotation.z;
 
         startHeight = transform.localScale.y;
         startCameraPos = cameraPos.localPosition;
@@ -145,7 +199,7 @@ public class PlayerController : MonoBehaviour {
         speedText.text = "Speed: " + (Mathf.Round(rb.velocity.magnitude * 100f) / 100f);
         HandleMovementState();
 
-        if (Input.GetKeyDown(KeyCode.Space) && jumpReady && isGrounded) {
+        if (Input.GetKeyDown(jumpKey) && jumpReady && isGrounded) {
 
             jumpReady = false;
             Jump();
@@ -153,20 +207,20 @@ public class PlayerController : MonoBehaviour {
 
         }
 
-        if (Input.GetKeyDown(KeyCode.C) && (horizontalInput != 0 || verticalInput != 0) && !isSwinging)
+        if (Input.GetKeyDown(slideKey) && (horizontalInput != 0 || verticalInput != 0) && !isSwinging)
             StartSlide();
 
-        if ((Input.GetKeyUp(KeyCode.C) || Input.GetKeyDown(KeyCode.Space)) && isSliding)
+        if ((Input.GetKeyUp(slideKey) || Input.GetKeyDown(jumpKey)) && isSliding)
             StopSlide();
+
+        CheckWall();
+        HandleWallRunState();
 
         if (Input.GetMouseButtonDown(1))
             StartSwing();
 
         if (Input.GetMouseButtonUp(1) && isSwinging)
             StopSwing();
-
-        if (joint != null)
-            HandleSwingMovement();
 
         HandleHeadbob();
 
@@ -179,12 +233,17 @@ public class PlayerController : MonoBehaviour {
 
     private void FixedUpdate() {
 
-        if (isSwinging)
-            return;
-
         movementDirection = transform.forward * verticalInput + transform.right * horizontalInput;
 
-        if (CheckSlope() == SlopeType.Valid && !exitingSlope) {
+        if (isSwinging && joint != null) {
+
+            HandleSwingMovement();
+
+        } else if (isWallRunning) {
+
+            HandleWallRunMovement();
+
+        } else if (CheckSlope() == SlopeType.Valid && !exitingSlope) {
 
             rb.AddForce(GetSlopeMoveDirection() * moveSpeed * 30f, ForceMode.Force);
 
@@ -205,7 +264,8 @@ public class PlayerController : MonoBehaviour {
 
         }
 
-        rb.useGravity = CheckSlope() == SlopeType.None || CheckSlope() == SlopeType.Invalid;
+        if (!isWallRunning)
+            rb.useGravity = CheckSlope() == SlopeType.None || CheckSlope() == SlopeType.Invalid;
 
     }
 
@@ -215,12 +275,69 @@ public class PlayerController : MonoBehaviour {
 
     }
 
+    private void StartLerpCameraFOV(float targetFOV) {
+
+        if (lerpCamFOVCoroutine != null)
+            StopCoroutine(lerpCamFOVCoroutine);
+
+        lerpCamFOVCoroutine = StartCoroutine(LerpCameraFOV(camera.fieldOfView, targetFOV));
+
+    }
+
+    private IEnumerator LerpCameraFOV(float startFOV, float targetFOV) {
+
+        float currentTime = 0f;
+
+        while (currentTime < camFOVLerpDuration) {
+
+            currentTime += Time.deltaTime;
+            camera.fieldOfView = Mathf.Lerp(startFOV, targetFOV, currentTime / camFOVLerpDuration);
+            yield return null;
+
+        }
+
+        camera.fieldOfView = targetFOV;
+        lerpCamFOVCoroutine = null;
+
+    }
+
+    private void StartLerpCameraTilt(float targetZTilt) {
+
+        if (lerpCamTiltCoroutine != null)
+            StopCoroutine(lerpCamTiltCoroutine);
+
+        lerpCamTiltCoroutine = StartCoroutine(LerpCameraTilt(camera.transform.localRotation.z, targetZTilt));
+
+    }
+
+    private IEnumerator LerpCameraTilt(float startZTilt, float targetZTilt) {
+
+        float currentTime = 0f;
+
+        while (currentTime < camTiltLerpDuration) {
+
+            currentTime += Time.deltaTime;
+            camera.transform.localRotation = Quaternion.Euler(camera.transform.localRotation.x, camera.transform.localRotation.y, Mathf.Lerp(startZTilt, targetZTilt, currentTime / camTiltLerpDuration));
+            yield return null;
+
+        }
+
+        camera.transform.localRotation = Quaternion.Euler(camera.transform.localRotation.x, camera.transform.localRotation.y, targetZTilt);
+        lerpCamTiltCoroutine = null;
+
+    }
+
     private void HandleMovementState() {
 
         if (isSwinging) {
 
             movementState = MovementState.Swinging;
-            moveSpeed = maxSwingSpeed;
+            desiredMoveSpeed = maxSwingSpeed;
+
+        } else if (isWallRunning) {
+
+            movementState = MovementState.WallRunning;
+            desiredMoveSpeed = wallRunSpeed;
 
         } else if (isSliding) {
 
@@ -243,7 +360,7 @@ public class PlayerController : MonoBehaviour {
             movementState = MovementState.None;
             desiredMoveSpeed = walkSpeed;
 
-        } else if (isGrounded && Input.GetKey(KeyCode.LeftShift)) {
+        } else if (isGrounded && Input.GetKey(sprintKey)) {
 
             animator.SetBool("isWalking", false);
             animator.SetBool("isSprinting", true);
@@ -364,11 +481,125 @@ public class PlayerController : MonoBehaviour {
 
     }
 
+    private void CheckWall() {
+
+        wallRight = Physics.Raycast(transform.position, transform.right, out rightWallHit, wallCheckDistance, wallMask);
+        wallLeft = Physics.Raycast(transform.position, -transform.right, out leftWallHit, wallCheckDistance, wallMask);
+
+    }
+
+    private bool CanWallRun() {
+
+        return !Physics.Raycast(transform.position, Vector3.down, minJumpHeight, environmentMask);
+
+    }
+
+    private void HandleWallRunState() {
+
+        wallRunningUpwards = Input.GetKey(upwardsWallRunKey);
+        wallRunningDownwards = Input.GetKey(downwardsWallRunKey);
+
+        if ((wallLeft || wallRight) && verticalInput > 0 && CanWallRun() && !exitingWall) {
+
+            if (!isWallRunning)
+                StartWallRun();
+
+            if (wallRunTimer > 0f)
+                wallRunTimer -= Time.deltaTime;
+
+            if (wallRunTimer <= 0f && isWallRunning) {
+
+                WallJump();
+
+            }
+
+            if (Input.GetKeyDown(jumpKey))
+                WallJump();
+
+        } else if (exitingWall) {
+
+            if (isWallRunning)
+                StopWallRun();
+
+            if (exitWallTimer > 0f)
+                exitWallTimer -= Time.deltaTime;
+
+            if (exitWallTimer <= 0f)
+                exitingWall = false;
+
+        } else {
+
+            StopWallRun();
+
+        }
+    }
+
+    private void StartWallRun() {
+
+        isWallRunning = true;
+        wallRunTimer = maxWallRunTime;
+        rb.velocity = new Vector3(rb.velocity.x, 0f, rb.velocity.z);
+        StartLerpCameraFOV(wallRunCameraFOV);
+
+        if (wallLeft)
+            StartLerpCameraTilt(-wallRunCamTilt);
+
+        if (wallRight)
+            StartLerpCameraTilt(wallRunCamTilt);
+    }
+
+    private void HandleWallRunMovement() {
+
+        rb.useGravity = useWallRunGravity;
+
+        Vector3 wallNormal = wallRight ? rightWallHit.normal : leftWallHit.normal;
+        Vector3 wallForward = Vector3.Cross(wallNormal, transform.up);
+
+        if ((transform.forward - wallForward).magnitude > (transform.forward - -wallForward).magnitude)
+            wallForward = -wallForward;
+
+        rb.AddForce(wallForward * wallRunForce, ForceMode.Force);
+
+        if (wallRunningUpwards)
+            rb.velocity = new Vector3(rb.velocity.x, wallClimbSpeed, rb.velocity.z);
+
+        if (wallRunningDownwards)
+            rb.velocity = new Vector3(rb.velocity.x, -wallClimbSpeed, rb.velocity.z);
+
+        if (!(wallLeft && horizontalInput > 0f) && !(wallRight && horizontalInput < 0f))
+            rb.AddForce(-wallNormal * wallNormalForce, ForceMode.Force);
+
+        if (useWallRunGravity)
+            rb.AddForce(transform.up * gravityCounterForce, ForceMode.Force);
+
+    }
+
+    private void WallJump() {
+
+        exitingWall = true;
+        exitWallTimer = exitWallTime;
+
+        Vector3 wallNormal = wallRight ? rightWallHit.normal : leftWallHit.normal;
+        Vector3 force = transform.up * wallJumpUpForce + wallNormal * wallJumpSideForce;
+
+        rb.velocity = new Vector3(rb.velocity.x, 0f, rb.velocity.z);
+        rb.AddForce(force, ForceMode.Impulse);
+
+    }
+
+    private void StopWallRun() {
+
+        isWallRunning = false;
+        StartLerpCameraFOV(startCameraFOV);
+        StartLerpCameraTilt(startCameraZTilt);
+
+    }
+
     private void StartSwing() {
 
         RaycastHit hit;
 
-        if (Physics.Raycast(cameraPos.position, cameraPos.forward, out hit, maxSwingDistance, swingableMask)) {
+        if (Physics.Raycast(cameraPos.position, cameraPos.forward, out hit, maxSwingDistance) && hit.transform.CompareTag(swingableTag)) {
 
             isSwinging = true;
 
@@ -400,7 +631,7 @@ public class PlayerController : MonoBehaviour {
         if (verticalInput > 0f)
             rb.AddForce(transform.forward * forwardThrustForce * Time.deltaTime);
 
-        if (Input.GetKey(KeyCode.Space)) {
+        if (Input.GetKey(jumpKey)) {
 
             Vector3 directionToPoint = swingPoint - transform.position;
             rb.AddForce(directionToPoint.normalized * forwardThrustForce * Time.deltaTime);
@@ -412,7 +643,7 @@ public class PlayerController : MonoBehaviour {
 
         }
 
-        if (Input.GetKey(KeyCode.S)) {
+        if (Input.GetKey(cableExtendKey)) {
 
             float extendedDistanceFromPoint = Vector3.Distance(transform.position, swingPoint) + cableExtendSpeed;
 
