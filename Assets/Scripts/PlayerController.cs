@@ -56,9 +56,10 @@ public class PlayerController : MonoBehaviour {
     [Header("Wall Running")]
     [SerializeField] private float wallRunSpeed;
     [SerializeField] private float wallRunForce;
-    [SerializeField] private float maxWallRunTime;
     [SerializeField] private float wallNormalForce;
     [SerializeField] private float exitWallTime;
+    [SerializeField] private bool useWallRunTimer;
+    [SerializeField] private float maxWallRunTime;
     [SerializeField] private LayerMask wallMask;
     private float wallRunTimer;
     private float exitWallTimer;
@@ -105,11 +106,16 @@ public class PlayerController : MonoBehaviour {
     [SerializeField] private float jointSpring;
     [SerializeField] private float jointDamper;
     [SerializeField] private float jointMassScale;
-    [SerializeField] private string swingableTag;
+    [SerializeField] private LayerMask swingableMask;
     private Vector3 swingPoint;
     private Vector3 currentSwingPosition;
     private SpringJoint joint;
     private bool isSwinging;
+
+    [Header("Swing Prediction")]
+    [SerializeField] private Transform predictionObj;
+    [SerializeField] private float predictionRadius;
+    private RaycastHit predictionHit;
 
     [Header("Headbob")]
     [SerializeField] private float walkBobSpeed;
@@ -174,6 +180,8 @@ public class PlayerController : MonoBehaviour {
         startHeight = transform.localScale.y;
         startCameraPos = cameraPos.localPosition;
 
+        predictionObj.gameObject.SetActive(false);
+
     }
 
     private void Update() {
@@ -207,7 +215,7 @@ public class PlayerController : MonoBehaviour {
 
         }
 
-        if (Input.GetKeyDown(slideKey) && (horizontalInput != 0 || verticalInput != 0) && !isSwinging)
+        if (Input.GetKeyDown(slideKey) && (horizontalInput != 0 || verticalInput != 0) && !isSwinging && !isWallRunning)
             StartSlide();
 
         if ((Input.GetKeyUp(slideKey) || Input.GetKeyDown(jumpKey)) && isSliding)
@@ -222,6 +230,7 @@ public class PlayerController : MonoBehaviour {
         if (Input.GetMouseButtonUp(1) && isSwinging)
             StopSwing();
 
+        CheckSwingPoints();
         HandleHeadbob();
 
         if (isGrounded)
@@ -504,13 +513,16 @@ public class PlayerController : MonoBehaviour {
             if (!isWallRunning)
                 StartWallRun();
 
-            if (wallRunTimer > 0f)
-                wallRunTimer -= Time.deltaTime;
+            if (useWallRunTimer) {
 
-            if (wallRunTimer <= 0f && isWallRunning) {
+                if (wallRunTimer > 0f)
+                    wallRunTimer -= Time.deltaTime;
 
-                WallJump();
+                if (wallRunTimer <= 0f && isWallRunning) {
 
+                    WallJump();
+
+                }
             }
 
             if (Input.GetKeyDown(jumpKey))
@@ -536,8 +548,17 @@ public class PlayerController : MonoBehaviour {
 
     private void StartWallRun() {
 
+        if (isSliding)
+            StopSlide();
+
+        if (isSwinging)
+            StopSwing();
+
         isWallRunning = true;
-        wallRunTimer = maxWallRunTime;
+
+        if (useWallRunTimer)
+            wallRunTimer = maxWallRunTime;
+
         rb.velocity = new Vector3(rb.velocity.x, 0f, rb.velocity.z);
         StartLerpCameraFOV(wallRunCameraFOV);
 
@@ -546,6 +567,7 @@ public class PlayerController : MonoBehaviour {
 
         if (wallRight)
             StartLerpCameraTilt(wallRunCamTilt);
+
     }
 
     private void HandleWallRunMovement() {
@@ -597,30 +619,28 @@ public class PlayerController : MonoBehaviour {
 
     private void StartSwing() {
 
-        RaycastHit hit;
+        if (predictionHit.point == Vector3.zero)
+            return;
 
-        if (Physics.Raycast(cameraPos.position, cameraPos.forward, out hit, maxSwingDistance) && hit.transform.CompareTag(swingableTag)) {
+        isSwinging = true;
 
-            isSwinging = true;
+        swingPoint = predictionHit.point;
+        joint = gameObject.AddComponent<SpringJoint>();
+        joint.autoConfigureConnectedAnchor = false;
+        joint.connectedAnchor = swingPoint;
 
-            swingPoint = hit.point;
-            joint = gameObject.AddComponent<SpringJoint>();
-            joint.autoConfigureConnectedAnchor = false;
-            joint.connectedAnchor = swingPoint;
+        float distanceFromPoint = Vector3.Distance(transform.position, swingPoint);
 
-            float distanceFromPoint = Vector3.Distance(transform.position, swingPoint);
+        joint.maxDistance = distanceFromPoint * 0.8f;
+        joint.minDistance = distanceFromPoint * 0.25f;
 
-            joint.maxDistance = distanceFromPoint * 0.8f;
-            joint.minDistance = distanceFromPoint * 0.25f;
+        joint.spring = jointSpring;
+        joint.damper = jointDamper;
+        joint.massScale = jointMassScale;
 
-            joint.spring = jointSpring;
-            joint.damper = jointDamper;
-            joint.massScale = jointMassScale;
+        lineRenderer.positionCount = 2;
+        currentSwingPosition = muzzle.position;
 
-            lineRenderer.positionCount = 2;
-            currentSwingPosition = muzzle.position;
-
-        }
     }
 
     private void HandleSwingMovement() {
@@ -653,9 +673,56 @@ public class PlayerController : MonoBehaviour {
         }
     }
 
+    private void CheckSwingPoints() {
+
+        if (joint != null || isWallRunning)
+            return;
+
+        RaycastHit raycastHit;
+        Physics.Raycast(cameraPos.position, cameraPos.forward, out raycastHit, maxSwingDistance, swingableMask);
+
+        if (raycastHit.point != Vector3.zero) {
+
+            // Direct Hit
+            predictionHit = raycastHit;
+
+        } else {
+
+            RaycastHit sphereCastHit;
+            Physics.SphereCast(cameraPos.position, predictionRadius, cameraPos.forward, out sphereCastHit, maxSwingDistance, swingableMask);
+
+            if (sphereCastHit.point != Vector3.zero) {
+
+                // Indirect / Predicted Hit
+                predictionHit = sphereCastHit;
+
+            } else {
+
+                // Miss
+                predictionHit.point = Vector3.zero;
+
+            }
+        }
+
+        Vector3 hitPoint = predictionHit.point;
+
+        if (hitPoint != Vector3.zero) {
+
+            predictionObj.gameObject.SetActive(true);
+            predictionObj.position = hitPoint + (predictionHit.normal * 0.002f);
+            predictionObj.rotation = Quaternion.LookRotation(-predictionHit.normal, transform.up);
+
+        } else {
+
+            predictionObj.gameObject.SetActive(false);
+
+        }
+    }
+
     private void StopSwing() {
 
         isSwinging = false;
+        crosshair.gameObject.SetActive(true);
         lineRenderer.positionCount = 0;
         Destroy(joint);
 
