@@ -13,6 +13,8 @@ public class PlayerController : MonoBehaviour {
     [SerializeField] private Image crosshair;
     private Animator animator;
     private Rigidbody rb;
+    private LineRenderer lineRenderer;
+    private Spring spring;
 
     [Header("Looking")]
     [SerializeField][Range(0f, 100f)] private float xSensitivity;
@@ -111,6 +113,15 @@ public class PlayerController : MonoBehaviour {
     private SpringJoint joint;
     private bool isSwinging;
 
+    [Header("Swing Rope Animation")]
+    [SerializeField] private int quality;
+    [SerializeField] private float damper;
+    [SerializeField] private float strength;
+    [SerializeField] private float velocity;
+    [SerializeField] private float waveCount;
+    [SerializeField] private float waveHeight;
+    [SerializeField] private AnimationCurve effectCurve;
+
     [Header("Swing Prediction")]
     [SerializeField] private Transform predictionObj;
     [SerializeField] private float predictionRadius;
@@ -163,7 +174,11 @@ public class PlayerController : MonoBehaviour {
 
         animator = GetComponent<Animator>();
         rb = GetComponent<Rigidbody>();
+        lineRenderer = GetComponent<LineRenderer>();
+        spring = new Spring();
+
         rb.freezeRotation = true;
+        spring.SetTarget(0);
 
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
@@ -273,6 +288,12 @@ public class PlayerController : MonoBehaviour {
 
         if (!isWallRunning)
             rb.useGravity = CheckSlope() == SlopeType.None || CheckSlope() == SlopeType.Invalid;
+
+    }
+
+    private void LateUpdate() {
+
+        DrawRope();
 
     }
 
@@ -701,6 +722,46 @@ public class PlayerController : MonoBehaviour {
         joint.damper = jointDamper;
         joint.massScale = jointMassScale;
 
+    }
+
+    private void DrawRope() {
+
+        if (!isSwinging) {
+
+            currentSwingPosition = muzzle.position;
+            spring.Reset();
+
+            if (lineRenderer.positionCount > 0)
+                lineRenderer.positionCount = 0;
+
+            return;
+
+        }
+
+        if (lineRenderer.positionCount == 0) {
+
+            spring.SetVelocity(velocity);
+            lineRenderer.positionCount = quality + 1;
+
+        }
+
+        spring.SetDamper(damper);
+        spring.SetStrength(strength);
+        spring.Update(Time.deltaTime);
+
+        Vector3 up = Quaternion.LookRotation(swingPoint - muzzle.position).normalized * Vector3.up;
+
+        // TODO: Make 12f a variable?
+        currentSwingPosition = Vector3.Lerp(currentSwingPosition, swingPoint, Time.deltaTime * 12f);
+
+        for (int i = 0; i < quality + 1; i++) {
+
+            var delta = i / (float) quality;
+            Vector3 offset = up * waveHeight * Mathf.Sin(delta * waveCount * Mathf.PI * spring.Value * effectCurve.Evaluate(delta));
+
+            lineRenderer.SetPosition(i, Vector3.Lerp(muzzle.position, currentSwingPosition, delta) + offset);
+
+        }
     }
 
     private void HandleSwingMovement() {
