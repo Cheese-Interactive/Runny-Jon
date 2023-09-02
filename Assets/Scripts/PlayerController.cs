@@ -13,7 +13,6 @@ public class PlayerController : MonoBehaviour {
     [SerializeField] private Image crosshair;
     private Animator animator;
     private Rigidbody rb;
-    private LineRenderer lineRenderer;
 
     [Header("Looking")]
     [SerializeField][Range(0f, 100f)] private float xSensitivity;
@@ -164,7 +163,6 @@ public class PlayerController : MonoBehaviour {
 
         animator = GetComponent<Animator>();
         rb = GetComponent<Rigidbody>();
-        lineRenderer = GetComponent<LineRenderer>();
         rb.freezeRotation = true;
 
         Cursor.lockState = CursorLockMode.Locked;
@@ -275,11 +273,6 @@ public class PlayerController : MonoBehaviour {
 
         if (!isWallRunning)
             rb.useGravity = CheckSlope() == SlopeType.None || CheckSlope() == SlopeType.Invalid;
-
-    }
-    private void LateUpdate() {
-
-        DrawRope();
 
     }
 
@@ -618,66 +611,27 @@ public class PlayerController : MonoBehaviour {
 
     }
 
-    private void StartSwing() {
+    public bool IsSwinging() {
 
-        if (isWallRunning || predictionHit.point == Vector3.zero)
-            return;
-
-        isSwinging = true;
-        crosshair.gameObject.SetActive(true);
-
-        swingPoint = predictionHit.point;
-        joint = gameObject.AddComponent<SpringJoint>();
-        joint.autoConfigureConnectedAnchor = false;
-        joint.connectedAnchor = swingPoint;
-
-        float distanceFromPoint = Vector3.Distance(transform.position, swingPoint);
-
-        joint.maxDistance = distanceFromPoint * 0.8f;
-        joint.minDistance = distanceFromPoint * 0.25f;
-
-        joint.spring = jointSpring;
-        joint.damper = jointDamper;
-        joint.massScale = jointMassScale;
-
-        lineRenderer.positionCount = 2;
-        currentSwingPosition = muzzle.position;
+        return isSwinging;
 
     }
 
-    private void HandleSwingMovement() {
+    public Transform GetSwingMuzzle() {
 
-        if (horizontalInput != 0f)
-            rb.AddForce((horizontalInput > 0f ? transform.right : -transform.right) * horizontalThrustForce * Time.deltaTime);
+        return muzzle;
 
-        if (verticalInput > 0f)
-            rb.AddForce(transform.forward * forwardThrustForce * Time.deltaTime);
+    }
 
-        if (Input.GetKey(jumpKey)) {
+    public Vector3 GetSwingPoint() {
 
-            Vector3 directionToPoint = swingPoint - transform.position;
-            rb.AddForce(directionToPoint.normalized * forwardThrustForce * Time.deltaTime);
+        return swingPoint;
 
-            float distanceFromPoint = Vector3.Distance(transform.position, swingPoint);
-
-            joint.maxDistance = distanceFromPoint * 0.8f;
-            joint.minDistance = distanceFromPoint * 0.25f;
-
-        }
-
-        if (Input.GetKey(cableExtendKey)) {
-
-            float extendedDistanceFromPoint = Vector3.Distance(transform.position, swingPoint) + cableExtendSpeed;
-
-            joint.maxDistance = extendedDistanceFromPoint * 0.8f;
-            joint.minDistance = extendedDistanceFromPoint * 0.25f;
-
-        }
     }
 
     private void CheckSwingPoints() {
 
-        if (joint != null || isWallRunning)
+        if (joint != null || isWallRunning || isSwinging)
             return;
 
         RaycastHit raycastHit;
@@ -724,25 +678,66 @@ public class PlayerController : MonoBehaviour {
         }
     }
 
+    private void StartSwing() {
+
+        if (predictionHit.point == Vector3.zero)
+            return;
+
+        predictionObj.gameObject.SetActive(false);
+        isSwinging = true;
+        crosshair.gameObject.SetActive(true);
+
+        swingPoint = predictionHit.point;
+        joint = gameObject.AddComponent<SpringJoint>();
+        joint.autoConfigureConnectedAnchor = false;
+        joint.connectedAnchor = swingPoint;
+
+        float distanceFromPoint = Vector3.Distance(transform.position, swingPoint);
+
+        joint.maxDistance = distanceFromPoint * 0.8f;
+        joint.minDistance = distanceFromPoint * 0.25f;
+
+        joint.spring = jointSpring;
+        joint.damper = jointDamper;
+        joint.massScale = jointMassScale;
+
+    }
+
+    private void HandleSwingMovement() {
+
+        if (horizontalInput != 0f)
+            rb.AddForce((horizontalInput > 0f ? transform.right : -transform.right) * horizontalThrustForce * Time.deltaTime);
+
+        if (verticalInput > 0f)
+            rb.AddForce(transform.forward * forwardThrustForce * Time.deltaTime);
+
+        if (Input.GetKey(jumpKey)) {
+
+            Vector3 directionToPoint = swingPoint - transform.position;
+            rb.AddForce(directionToPoint.normalized * forwardThrustForce * Time.deltaTime);
+
+            float distanceFromPoint = Vector3.Distance(transform.position, swingPoint);
+
+            joint.maxDistance = distanceFromPoint * 0.8f;
+            joint.minDistance = distanceFromPoint * 0.25f;
+
+        }
+
+        if (Input.GetKey(cableExtendKey)) {
+
+            float extendedDistanceFromPoint = Vector3.Distance(transform.position, swingPoint) + cableExtendSpeed;
+
+            joint.maxDistance = extendedDistanceFromPoint * 0.8f;
+            joint.minDistance = extendedDistanceFromPoint * 0.25f;
+
+        }
+    }
+
     private void StopSwing() {
 
         isSwinging = false;
         crosshair.gameObject.SetActive(true);
-        lineRenderer.positionCount = 0;
         Destroy(joint);
-
-    }
-
-    private void DrawRope() {
-
-        if (!joint)
-            return;
-
-        // TODO: Make 12f a variable?
-        currentSwingPosition = Vector3.Lerp(currentSwingPosition, swingPoint, Time.deltaTime * 12f);
-
-        lineRenderer.SetPosition(0, muzzle.position);
-        lineRenderer.SetPosition(1, swingPoint);
 
     }
 
