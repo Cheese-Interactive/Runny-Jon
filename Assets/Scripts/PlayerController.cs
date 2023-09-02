@@ -277,7 +277,6 @@ public class PlayerController : MonoBehaviour {
             rb.useGravity = CheckSlope() == SlopeType.None || CheckSlope() == SlopeType.Invalid;
 
     }
-
     private void LateUpdate() {
 
         DrawRope();
@@ -475,6 +474,7 @@ public class PlayerController : MonoBehaviour {
     private void StartSlide() {
 
         isSliding = true;
+        crosshair.gameObject.SetActive(true);
         animator.SetBool("isSliding", true);
         transform.localScale = new Vector3(transform.localScale.x, crouchHeight, transform.localScale.z);
         rb.AddForce(Vector3.down * 5f, ForceMode.Impulse);
@@ -555,6 +555,7 @@ public class PlayerController : MonoBehaviour {
             StopSwing();
 
         isWallRunning = true;
+        crosshair.gameObject.SetActive(true);
 
         if (useWallRunTimer)
             wallRunTimer = maxWallRunTime;
@@ -619,10 +620,11 @@ public class PlayerController : MonoBehaviour {
 
     private void StartSwing() {
 
-        if (predictionHit.point == Vector3.zero)
+        if (isWallRunning || predictionHit.point == Vector3.zero)
             return;
 
         isSwinging = true;
+        crosshair.gameObject.SetActive(true);
 
         swingPoint = predictionHit.point;
         joint = gameObject.AddComponent<SpringJoint>();
@@ -685,6 +687,7 @@ public class PlayerController : MonoBehaviour {
 
             // Direct Hit
             predictionHit = raycastHit;
+            crosshair.gameObject.SetActive(false);
 
         } else {
 
@@ -695,11 +698,13 @@ public class PlayerController : MonoBehaviour {
 
                 // Indirect / Predicted Hit
                 predictionHit = sphereCastHit;
+                crosshair.gameObject.SetActive(true);
 
             } else {
 
                 // Miss
                 predictionHit.point = Vector3.zero;
+                crosshair.gameObject.SetActive(true);
 
             }
         }
@@ -733,8 +738,8 @@ public class PlayerController : MonoBehaviour {
         if (!joint)
             return;
 
-        // TODO: Make 8f a variable?
-        currentSwingPosition = Vector3.Lerp(currentSwingPosition, swingPoint, Time.deltaTime * 8f);
+        // TODO: Make 12f a variable?
+        currentSwingPosition = Vector3.Lerp(currentSwingPosition, swingPoint, Time.deltaTime * 12f);
 
         lineRenderer.SetPosition(0, muzzle.position);
         lineRenderer.SetPosition(1, swingPoint);

@@ -1865,7 +1865,7 @@ MonoBehaviour:
   maxSwingDistance: 20
   horizontalThrustForce: 2000
   forwardThrustForce: 3000
-  cableExtendSpeed: 20
+  cableExtendSpeed: 0
   jointSpring: 4.5
   jointDamper: 7
   jointMassScale: 4.5
@@ -1889,9 +1889,9 @@ MonoBehaviour:
   sprintKey: 304
   jumpKey: 32
   slideKey: 99
-  upwardsWallRunKey: 32
+  upwardsWallRunKey: 304
   downwardsWallRunKey: 306
-  cableExtendKey: 306
+  cableExtendKey: 0
 --- !u!54 &1384782514
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -1973,7 +1973,7 @@ LineRenderer:
     colorGradient:
       serializedVersion: 2
       key0: {r: 0, g: 0, b: 0, a: 1}
-      key1: {r: 0.2735849, g: 0.2735849, b: 0.2735849, a: 1}
+      key1: {r: 0, g: 0, b: 0, a: 1}
       key2: {r: 0, g: 0, b: 0, a: 0}
       key3: {r: 0, g: 0, b: 0, a: 0}
       key4: {r: 0, g: 0, b: 0, a: 0}
