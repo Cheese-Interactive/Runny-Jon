@@ -37,6 +37,7 @@ public class PlayerController : MonoBehaviour {
     private Vector3 movementDirection;
     private MovementState movementState;
     private Coroutine moveSpeedCoroutine;
+    private bool canPlay;
 
     [Header("Jumping")]
     [SerializeField] private float jumpForce;
@@ -184,6 +185,7 @@ public class PlayerController : MonoBehaviour {
         Cursor.visible = false;
 
         movementState = MovementState.None;
+        canPlay = true;
 
         jumpReady = true;
 
@@ -198,6 +200,9 @@ public class PlayerController : MonoBehaviour {
     }
 
     private void Update() {
+
+        if (!canPlay)
+            return;
 
         float mouseX = Input.GetAxisRaw("Mouse X") * xSensitivity * 10f * Time.fixedDeltaTime;
         float mouseY = Input.GetAxisRaw("Mouse Y") * ySensitivity * 10f * Time.fixedDeltaTime;
@@ -255,6 +260,9 @@ public class PlayerController : MonoBehaviour {
 
     private void FixedUpdate() {
 
+        if (!canPlay)
+            return;
+
         movementDirection = transform.forward * verticalInput + transform.right * horizontalInput;
 
         if (isSwinging && joint != null) {
@@ -294,6 +302,17 @@ public class PlayerController : MonoBehaviour {
     private void LateUpdate() {
 
         DrawRope();
+
+    }
+
+    public void HaltAllMovement() {
+
+        canPlay = false;
+        movementState = MovementState.None;
+        animator.SetBool("isWalking", false);
+        animator.SetBool("isSprinting", false);
+        animator.SetBool("isSliding", false);
+        animator.SetBool("isGrounded", true);
 
     }
 
@@ -350,6 +369,12 @@ public class PlayerController : MonoBehaviour {
     }
 
     private void HandleMovementState() {
+
+        if (!canPlay) {
+
+            return;
+
+        }
 
         if (isSwinging) {
 
