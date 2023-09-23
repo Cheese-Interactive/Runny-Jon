@@ -1193,10 +1193,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   levelCompleteScreen: {fileID: 1358854113}
+  tutorialText: {fileID: 0}
   timeLimitText: {fileID: 937489077}
   timeText: {fileID: 485847744}
   nextLevelButton: {fileID: 902633577}
   timerText: {fileID: 174790080}
+  totalTypeTime: 0
   levelCompleteFadeInDuration: 0.3
 --- !u!1 &459093955
 GameObject:
@@ -2747,8 +2749,9 @@ MonoBehaviour:
   wallJumpUpForce: 7
   wallJumpSideForce: 10
   wallClimbSpeed: 8
-  useWallRunGravity: 0
-  gravityCounterForce: 25
+  useWallRunGravity: 1
+  gravityCounterForce: 15
+  gravityDelay: 0.5
   wallRunCameraFOV: 80
   camFOVLerpDuration: 0.25
   wallRunCamTilt: 5

@@ -37,7 +37,7 @@ public class UIController : MonoBehaviour {
 
     }
 
-    public void TypeTutorialText(string text) {
+    public void TypeSubtitleText(string text) {
 
         if (typeCoroutine != null)
             StopCoroutine(typeCoroutine);
@@ -92,11 +92,8 @@ public class UIController : MonoBehaviour {
 
     private void FadeInScreen(CanvasGroup screen, float targetOpacity, float duration) {
 
-        if (fadeInCoroutine != null) {
-
+        if (fadeInCoroutine != null)
             StopCoroutine(fadeInCoroutine);
-
-        }
 
         fadeInCoroutine = StartCoroutine(FadeScreen(screen, targetOpacity, duration, true));
 

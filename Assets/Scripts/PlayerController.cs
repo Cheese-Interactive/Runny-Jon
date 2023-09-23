@@ -80,6 +80,9 @@ public class PlayerController : MonoBehaviour {
     [Header("Wall Run Gravity")]
     [SerializeField] private bool useWallRunGravity;
     [SerializeField] private float gravityCounterForce;
+    [SerializeField] private float gravityDelay;
+    private Coroutine gravityDelayCoroutine;
+    private bool delayOver;
 
     [Header("Wall Run Animations")]
     [SerializeField] private float wallRunCameraFOV;
@@ -593,6 +596,7 @@ public class PlayerController : MonoBehaviour {
         if (isSwinging)
             StopSwing();
 
+        rb.useGravity = false;
         isWallRunning = true;
         crosshair.gameObject.SetActive(true);
 
@@ -600,6 +604,10 @@ public class PlayerController : MonoBehaviour {
             wallRunTimer = maxWallRunTime;
 
         rb.velocity = new Vector3(rb.velocity.x, 0f, rb.velocity.z);
+
+        if (useWallRunGravity)
+            gravityDelayCoroutine = StartCoroutine(HandleWallRunGravity());
+
         StartLerpCameraFOV(wallRunCameraFOV);
 
         if (wallLeft)
@@ -610,9 +618,15 @@ public class PlayerController : MonoBehaviour {
 
     }
 
-    private void HandleWallRunMovement() {
+    private IEnumerator HandleWallRunGravity() {
 
-        rb.useGravity = useWallRunGravity;
+        yield return new WaitForSeconds(gravityDelay);
+        delayOver = true;
+        rb.useGravity = true;
+
+    }
+
+    private void HandleWallRunMovement() {
 
         Vector3 wallNormal = wallRight ? rightWallHit.normal : leftWallHit.normal;
         Vector3 wallForward = Vector3.Cross(wallNormal, transform.up);
@@ -631,9 +645,11 @@ public class PlayerController : MonoBehaviour {
         if (!(wallLeft && horizontalInput > 0f) && !(wallRight && horizontalInput < 0f))
             rb.AddForce(-wallNormal * wallNormalForce, ForceMode.Force);
 
-        if (useWallRunGravity)
+        if (delayOver) {
+
             rb.AddForce(transform.up * gravityCounterForce, ForceMode.Force);
 
+        }
     }
 
     private void WallJump() {
@@ -651,9 +667,13 @@ public class PlayerController : MonoBehaviour {
 
     private void StopWallRun() {
 
+        delayOver = false;
         isWallRunning = false;
         StartLerpCameraFOV(startCameraFOV);
         StartLerpCameraTilt(startCameraZTilt);
+
+        if (gravityDelayCoroutine != null)
+            StopCoroutine(gravityDelayCoroutine);
 
     }
 
