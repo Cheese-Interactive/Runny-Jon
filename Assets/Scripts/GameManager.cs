@@ -21,47 +21,18 @@ public class GameManager : MonoBehaviour {
 
     }
 
-    public void FinishTutorialStage(Checkpoint.CheckpointType checkpointType) {
-
-        switch (checkpointType) {
-
-            case Checkpoint.CheckpointType.Normal:
-
-            break;
-
-            case Checkpoint.CheckpointType.Sprint:
-
-            break;
-
-            case Checkpoint.CheckpointType.Jump:
-
-            break;
-
-            case Checkpoint.CheckpointType.Slide:
-
-            break;
-
-            case Checkpoint.CheckpointType.WallRun:
-
-            break;
-
-            case Checkpoint.CheckpointType.Swing:
-
-            break;
-
-            default:
-
-            return;
-
-        }
-    }
-
     public void CompleteLevel() {
 
         playerController.HaltAllMovement();
         UIController.ShowLevelCompleteScreen();
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
+
+    }
+
+    public Level GetCurrentLevel() {
+
+        return currentLevel;
 
     }
 

@@ -79,10 +79,11 @@ public class PlayerController : MonoBehaviour {
 
     [Header("Wall Run Gravity")]
     [SerializeField] private bool useWallRunGravity;
-    [SerializeField] private float gravityCounterForce;
+    [SerializeField] private float initialGravityCounterForce;
     [SerializeField] private float gravityDelay;
+    [SerializeField] private float gravityRate;
+    private float gravityCounterForce;
     private Coroutine gravityDelayCoroutine;
-    private bool delayOver;
 
     [Header("Wall Run Animations")]
     [SerializeField] private float wallRunCameraFOV;
@@ -199,6 +200,8 @@ public class PlayerController : MonoBehaviour {
         startCameraPos = cameraPos.localPosition;
 
         predictionObj.gameObject.SetActive(false);
+
+        gravityCounterForce = initialGravityCounterForce;
 
     }
 
@@ -621,9 +624,16 @@ public class PlayerController : MonoBehaviour {
     private IEnumerator HandleWallRunGravity() {
 
         yield return new WaitForSeconds(gravityDelay);
-        delayOver = true;
-        rb.useGravity = true;
 
+        while (isWallRunning) {
+
+            rb.useGravity = true;
+            rb.AddForce(transform.up * gravityCounterForce, ForceMode.Force);
+            yield return new WaitForSeconds(gravityRate);
+            rb.useGravity = false;
+            gravityCounterForce--;
+
+        }
     }
 
     private void HandleWallRunMovement() {
@@ -645,11 +655,6 @@ public class PlayerController : MonoBehaviour {
         if (!(wallLeft && horizontalInput > 0f) && !(wallRight && horizontalInput < 0f))
             rb.AddForce(-wallNormal * wallNormalForce, ForceMode.Force);
 
-        if (delayOver) {
-
-            rb.AddForce(transform.up * gravityCounterForce, ForceMode.Force);
-
-        }
     }
 
     private void WallJump() {
@@ -667,7 +672,6 @@ public class PlayerController : MonoBehaviour {
 
     private void StopWallRun() {
 
-        delayOver = false;
         isWallRunning = false;
         StartLerpCameraFOV(startCameraFOV);
         StartLerpCameraTilt(startCameraZTilt);

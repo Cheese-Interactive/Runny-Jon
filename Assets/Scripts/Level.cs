@@ -10,5 +10,6 @@ public class Level : MonoBehaviour {
     public Transform spawn;
     public Transform[] checkpoints;
     public Transform objective;
+    public bool isTutorial;
 
 }

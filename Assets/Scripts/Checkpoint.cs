@@ -5,18 +5,35 @@ using UnityEngine;
 public class Checkpoint : MonoBehaviour {
 
     [Header("References")]
+    private GameManager gameManager;
+    private TutorialManager tutorialManager;
+    private bool isTutorial;
 
     [Header("Checkpoint")]
-    private CheckpointType checkpointType;
+    [SerializeField] private CheckpointType checkpointType;
 
     public enum CheckpointType {
 
-        Normal, Sprint, Jump, Slide, WallRun, Swing
+        Spawn, Normal, Walk, Sprint, Jump, Slide, WallRun, Swing, Finish
 
+    }
+
+    private void Start() {
+
+        gameManager = FindObjectOfType<GameManager>();
+        isTutorial = gameManager.GetCurrentLevel().isTutorial;
+
+        if (isTutorial) {
+
+            tutorialManager = (TutorialManager) gameManager;
+
+        }
     }
 
     private void OnCollisionEnter(Collision collision) {
 
-        
+        if (isTutorial)
+            tutorialManager.FinishTutorialStage(checkpointType);
+
     }
 }
