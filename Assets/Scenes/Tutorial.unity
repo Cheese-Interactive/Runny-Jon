@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.1919891, g: 0.5946699, b: 0.7773259, a: 1}
+  m_IndirectSpecularColor: {r: 0.19202137, g: 0.59462655, b: 0.7770628, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -5859,8 +5859,9 @@ MonoBehaviour:
   wallJumpSideForce: 10
   wallClimbSpeed: 8
   useWallRunGravity: 1
-  gravityCounterForce: 2
-  gravityDelay: 0.8
+  initialGravityCounterForce: 30
+  gravityDelay: 3
+  gravityRate: 0.2
   wallRunCameraFOV: 80
   camFOVLerpDuration: 0.25
   wallRunCamTilt: 5
@@ -8107,6 +8108,7 @@ MonoBehaviour:
   spawn: {fileID: 1979616649}
   checkpoints: []
   objective: {fileID: 0}
+  isTutorial: 0
 --- !u!1 &2038682556
 GameObject:
   m_ObjectHideFlags: 0

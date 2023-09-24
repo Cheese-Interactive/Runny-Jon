@@ -38,6 +38,11 @@ public class PlayerController : MonoBehaviour {
     private MovementState movementState;
     private Coroutine moveSpeedCoroutine;
     private bool canPlay;
+    private bool sprintEnabled;
+    private bool jumpEnabled;
+    private bool slideEnabled;
+    private bool wallRunEnabled;
+    private bool swingEnabled;
 
     [Header("Jumping")]
     [SerializeField] private float jumpForce;
@@ -81,7 +86,8 @@ public class PlayerController : MonoBehaviour {
     [SerializeField] private bool useWallRunGravity;
     [SerializeField] private float initialGravityCounterForce;
     [SerializeField] private float gravityDelay;
-    [SerializeField] private float gravityRate;
+    [SerializeField] private float gravityDecrementRate;
+    [SerializeField] private float gravityDecrementAmount;
     private float gravityCounterForce;
     private Coroutine gravityDelayCoroutine;
 
@@ -231,7 +237,7 @@ public class PlayerController : MonoBehaviour {
         speedText.text = "Speed: " + (Mathf.Round(rb.velocity.magnitude * 100f) / 100f);
         HandleMovementState();
 
-        if (Input.GetKeyDown(jumpKey) && jumpReady && isGrounded) {
+        if (Input.GetKeyDown(jumpKey) && jumpReady && jumpEnabled && isGrounded) {
 
             jumpReady = false;
             Jump();
@@ -239,7 +245,7 @@ public class PlayerController : MonoBehaviour {
 
         }
 
-        if (Input.GetKeyDown(slideKey) && (horizontalInput != 0 || verticalInput != 0) && !isSwinging && !isWallRunning)
+        if (Input.GetKeyDown(slideKey) && (horizontalInput != 0 || verticalInput != 0) && swingEnabled && !isSwinging && !isWallRunning)
             StartSlide();
 
         if ((Input.GetKeyUp(slideKey) || Input.GetKeyDown(jumpKey)) && isSliding)
@@ -248,7 +254,7 @@ public class PlayerController : MonoBehaviour {
         CheckWall();
         HandleWallRunState();
 
-        if (Input.GetMouseButtonDown(1))
+        if (Input.GetMouseButtonDown(1) && swingEnabled)
             StartSwing();
 
         if (Input.GetMouseButtonUp(1) && isSwinging)
@@ -382,17 +388,17 @@ public class PlayerController : MonoBehaviour {
 
         }
 
-        if (isSwinging) {
+        if (isSwinging && swingEnabled) {
 
             movementState = MovementState.Swinging;
             desiredMoveSpeed = maxSwingSpeed;
 
-        } else if (isWallRunning) {
+        } else if (isWallRunning && wallRunEnabled) {
 
             movementState = MovementState.WallRunning;
             desiredMoveSpeed = wallRunSpeed;
 
-        } else if (isSliding) {
+        } else if (isSliding && slideEnabled) {
 
             movementState = MovementState.Sliding;
 
@@ -413,7 +419,7 @@ public class PlayerController : MonoBehaviour {
             movementState = MovementState.None;
             desiredMoveSpeed = walkSpeed;
 
-        } else if (isGrounded && Input.GetKey(sprintKey)) {
+        } else if (isGrounded && Input.GetKey(sprintKey) && sprintEnabled) {
 
             animator.SetBool("isWalking", false);
             animator.SetBool("isSprinting", true);
@@ -570,7 +576,7 @@ public class PlayerController : MonoBehaviour {
                 }
             }
 
-            if (Input.GetKeyDown(jumpKey))
+            if (Input.GetKeyDown(jumpKey) && jumpEnabled)
                 WallJump();
 
         } else if (exitingWall) {
@@ -629,9 +635,9 @@ public class PlayerController : MonoBehaviour {
 
             rb.useGravity = true;
             rb.AddForce(transform.up * gravityCounterForce, ForceMode.Force);
-            yield return new WaitForSeconds(gravityRate);
+            yield return new WaitForSeconds(gravityDecrementRate);
             rb.useGravity = false;
-            gravityCounterForce--;
+            gravityCounterForce -= gravityDecrementAmount;
 
         }
     }
@@ -821,7 +827,7 @@ public class PlayerController : MonoBehaviour {
         if (verticalInput > 0f)
             rb.AddForce(transform.forward * forwardThrustForce * Time.deltaTime);
 
-        if (Input.GetKey(jumpKey)) {
+        if (Input.GetKey(jumpKey) && jumpEnabled) {
 
             Vector3 directionToPoint = swingPoint - transform.position;
             rb.AddForce(directionToPoint.normalized * forwardThrustForce * Time.deltaTime);
