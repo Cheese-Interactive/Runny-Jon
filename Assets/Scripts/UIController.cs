@@ -2,16 +2,17 @@ using System.Collections;
 using System.Diagnostics;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Device;
 using UnityEngine.UI;
 
 public class UIController : MonoBehaviour {
 
     [Header("References")]
-    private GameManager gameManager;
+    private LevelManager gameManager;
 
     [Header("UI References")]
     [SerializeField] private CanvasGroup levelCompleteScreen;
-    [SerializeField] private TMP_Text tutorialText;
+    [SerializeField] private TMP_Text subtitleText;
     [SerializeField] private TMP_Text timeLimitText;
     [SerializeField] private TMP_Text timeText;
     [SerializeField] private Button nextLevelButton;
@@ -19,18 +20,21 @@ public class UIController : MonoBehaviour {
     [Header("Timer")]
     [SerializeField] private TMP_Text timerText;
     private Coroutine timerCoroutine;
-    private int timer;
 
     [Header("Animations")]
-    [SerializeField] private float totalTypeTime;
+    [SerializeField] private float subtitleTypeDuration;
+    [SerializeField] private float subtitleFadeDuration;
     [SerializeField] private float levelCompleteFadeInDuration;
     private Coroutine typeCoroutine;
-    private Coroutine fadeInCoroutine;
-    private Coroutine fadeOutCoroutine;
+    private Coroutine screenFadeInCoroutine;
+    private Coroutine screenFadeOutCoroutine;
+    private Coroutine textFadeInCoroutine;
+    private Coroutine textFadeOutCoroutine;
+    private bool textFaded;
 
     private void Start() {
 
-        gameManager = FindObjectOfType<GameManager>();
+        gameManager = FindObjectOfType<LevelManager>();
 
         FadeOutScreen(levelCompleteScreen, 0f);
         StartLevelTimer();
@@ -42,21 +46,32 @@ public class UIController : MonoBehaviour {
         if (typeCoroutine != null)
             StopCoroutine(typeCoroutine);
 
-        typeCoroutine = StartCoroutine(HandleTypeAnimation(text));
+        typeCoroutine = StartCoroutine(StartTypeAnimation(text));
 
     }
 
-    private IEnumerator HandleTypeAnimation(string text) {
+    private IEnumerator StartTypeAnimation(string text) {
 
-        tutorialText.gameObject.SetActive(true);
-        tutorialText.maxVisibleCharacters = 0;
-        tutorialText.text = text;
+        FadeOutText(subtitleText, subtitleFadeDuration);
+
+        while (!textFaded) {
+
+            yield return null;
+
+        }
+
+        subtitleText.alpha = 1f;
+        textFaded = false;
+
+        subtitleText.gameObject.SetActive(true);
+        subtitleText.maxVisibleCharacters = 0;
+        subtitleText.text = text;
         int length = text.Length;
 
-        while (tutorialText.maxVisibleCharacters < length) {
+        while (subtitleText.maxVisibleCharacters < length) {
 
-            yield return new WaitForSeconds(totalTypeTime / length);
-            tutorialText.maxVisibleCharacters++;
+            yield return new WaitForSeconds(subtitleTypeDuration / length);
+            subtitleText.maxVisibleCharacters++;
 
         }
     }
@@ -92,22 +107,19 @@ public class UIController : MonoBehaviour {
 
     private void FadeInScreen(CanvasGroup screen, float targetOpacity, float duration) {
 
-        if (fadeInCoroutine != null)
-            StopCoroutine(fadeInCoroutine);
+        if (screenFadeInCoroutine != null)
+            StopCoroutine(screenFadeInCoroutine);
 
-        fadeInCoroutine = StartCoroutine(FadeScreen(screen, targetOpacity, duration, true));
+        screenFadeInCoroutine = StartCoroutine(FadeScreen(screen, targetOpacity, duration, true));
 
     }
 
     private void FadeOutScreen(CanvasGroup screen, float duration) {
 
-        if (fadeOutCoroutine != null) {
+        if (screenFadeOutCoroutine != null)
+            StopCoroutine(screenFadeOutCoroutine);
 
-            StopCoroutine(fadeOutCoroutine);
-
-        }
-
-        fadeOutCoroutine = StartCoroutine(FadeScreen(screen, 0f, duration, false));
+        screenFadeOutCoroutine = StartCoroutine(FadeScreen(screen, 0f, duration, false));
 
     }
 
@@ -129,12 +141,58 @@ public class UIController : MonoBehaviour {
 
         if (fadeIn) {
 
-            fadeInCoroutine = null;
+            screenFadeInCoroutine = null;
 
         } else {
 
             screen.gameObject.SetActive(false);
-            fadeOutCoroutine = null;
+            screenFadeOutCoroutine = null;
+
+        }
+    }
+
+    private void FadeInText(TMP_Text text, float targetOpacity, float duration) {
+
+        if (textFadeInCoroutine != null)
+            StopCoroutine(textFadeInCoroutine);
+
+        textFadeInCoroutine = StartCoroutine(FadeText(text, targetOpacity, duration, true));
+
+    }
+
+    private void FadeOutText(TMP_Text text, float duration) {
+
+        if (textFadeOutCoroutine != null)
+            StopCoroutine(textFadeOutCoroutine);
+
+        textFadeOutCoroutine = StartCoroutine(FadeText(text, 0f, duration, false));
+
+    }
+
+    private IEnumerator FadeText(TMP_Text text, float targetOpacity, float duration, bool fadeIn) {
+
+        float currentTime = 0f;
+        float startOpacity = text.alpha;
+        text.gameObject.SetActive(true);
+
+        while (currentTime < duration) {
+
+            currentTime += Time.deltaTime;
+            text.alpha = Mathf.Lerp(startOpacity, targetOpacity, currentTime / duration);
+            yield return null;
+        }
+
+        text.alpha = targetOpacity;
+
+        if (fadeIn) {
+
+            textFadeInCoroutine = null;
+
+        } else {
+
+            text.gameObject.SetActive(false);
+            textFadeOutCoroutine = null;
+            textFaded = true;
 
         }
     }
