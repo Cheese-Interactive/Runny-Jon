@@ -10,7 +10,7 @@ public class TutorialManager : GameManager {
 
     [Header("Checkpoints")]
     [SerializeField] private Checkpoint[] checkpoints;
-    private int nextCheckpoint;
+    private int currCheckpoint;
 
     [Header("Level")]
     [SerializeField] private Level currentLevel;
@@ -23,65 +23,65 @@ public class TutorialManager : GameManager {
         playerController = FindObjectOfType<PlayerController>();
         UIController = FindObjectOfType<UIController>();
 
-        nextCheckpoint = 1;
-
         for (int i = 2; i < checkpoints.Length; i++)
             checkpoints[i].gameObject.SetActive(false);
 
-        UIController.TypeSubtitleText("Use WASD to move around. Walk to the checkpoint in front of you.");
+        UIController.TypeSubtitleText(checkpoints[currCheckpoint].GetSubtitleText());
 
     }
 
     public void CheckpointReached(Checkpoint.CheckpointType checkpointType) {
 
-        if (checkpointType != checkpoints[nextCheckpoint].GetCheckpointType())
+        if (checkpointType != checkpoints[currCheckpoint + 1].GetCheckpointType())
             return;
 
-        checkpoints[nextCheckpoint].StartFadeOutCheckpoint(fadeOutDuration);
-        checkpoints[nextCheckpoint].GetComponentInChildren<CheckpointArrow>().StartFadeOutArrow(fadeOutDuration);
-
-        if (nextCheckpoint != checkpoints.Length - 1)
-            checkpoints[++nextCheckpoint].gameObject.SetActive(true);
+        currCheckpoint++;
 
         switch (checkpointType) {
 
-            case Checkpoint.CheckpointType.Walk:
-
-            UIController.TypeSubtitleText("Use left shift to sprint. Sprint to the next checkpoint.");
-            playerController.EnableSprint();
-            break;
-
             case Checkpoint.CheckpointType.Sprint:
 
-            UIController.TypeSubtitleText("Use space to jump. Jump over the gaps to the next checkpoint.");
-            playerController.EnableJump();
+            UIController.TypeSubtitleText(checkpoints[currCheckpoint].GetSubtitleText());
+            playerController.EnableSprint();
             break;
 
             case Checkpoint.CheckpointType.Jump:
 
-            UIController.TypeSubtitleText("Use c to slide. Slide under the barrier to the next checkpoint.");
-            playerController.EnableSlide();
+            UIController.TypeSubtitleText(checkpoints[currCheckpoint].GetSubtitleText());
+            playerController.EnableJump();
             break;
 
             case Checkpoint.CheckpointType.Slide:
 
-            UIController.TypeSubtitleText("Jump onto the wall while moving to wall run. Wall run to the next checkpoint.");
-            playerController.EnableWallRun();
+            UIController.TypeSubtitleText(checkpoints[currCheckpoint].GetSubtitleText());
+            playerController.EnableSlide();
             break;
 
             case Checkpoint.CheckpointType.WallRun:
 
-            UIController.TypeSubtitleText("Use right click to swing. An indicator should appear on any swingable objects. Swing to the next checkpoint.");
-            playerController.EnableSwing();
+            UIController.TypeSubtitleText(checkpoints[currCheckpoint].GetSubtitleText());
+            playerController.EnableWallRun();
             break;
 
             case Checkpoint.CheckpointType.Swing:
 
-            UIController.TypeSubtitleText("Great job! You've learned all the basic movement mechanics. Complete the rest of the level.");
-            nextCheckpoint++;
+            UIController.TypeSubtitleText(checkpoints[currCheckpoint].GetSubtitleText());
+            playerController.EnableSwing();
+            break;
+
+            case Checkpoint.CheckpointType.Finish:
+
+            UIController.TypeSubtitleText(checkpoints[currCheckpoint].GetSubtitleText());
             break;
 
         }
+
+        checkpoints[currCheckpoint].StartFadeOutCheckpoint(fadeOutDuration);
+        checkpoints[currCheckpoint].GetComponentInChildren<CheckpointArrow>().StartFadeOutArrow(fadeOutDuration);
+
+        if (currCheckpoint != checkpoints.Length - 1)
+            checkpoints[currCheckpoint + 1].gameObject.SetActive(true);
+
     }
 
     public override void CompleteLevel() {

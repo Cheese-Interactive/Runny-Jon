@@ -29,6 +29,12 @@ public class PlayerController : MonoBehaviour {
     [SerializeField] private float sprintSpeed;
     [SerializeField] private float speedIncreaseMultiplier;
     [SerializeField] private float slopeIncreaseMultiplier;
+    [SerializeField] private bool walkEnabled;
+    [SerializeField] private bool sprintEnabled;
+    [SerializeField] private bool jumpEnabled;
+    [SerializeField] private bool slideEnabled;
+    [SerializeField] private bool wallRunEnabled;
+    [SerializeField] private bool swingEnabled;
     private float moveSpeed;
     private float desiredMoveSpeed;
     private float lastDesiredMoveSpeed;
@@ -37,12 +43,6 @@ public class PlayerController : MonoBehaviour {
     private Vector3 movementDirection;
     private MovementState movementState;
     private Coroutine moveSpeedCoroutine;
-    private bool walkEnabled;
-    private bool sprintEnabled;
-    private bool jumpEnabled;
-    private bool slideEnabled;
-    private bool wallRunEnabled;
-    private bool swingEnabled;
 
     [Header("Jumping")]
     [SerializeField] private float jumpForce;
@@ -208,13 +208,6 @@ public class PlayerController : MonoBehaviour {
 
         gravityCounterForce = initialGravityCounterForce;
 
-        walkEnabled = true;
-        sprintEnabled = false;
-        jumpEnabled = false;
-        slideEnabled = false;
-        wallRunEnabled = false;
-        swingEnabled = false;
-
     }
 
     private void Update() {
@@ -329,6 +322,8 @@ public class PlayerController : MonoBehaviour {
         animator.SetBool("isWalking", false);
         animator.SetBool("isSprinting", false);
         animator.SetBool("isSliding", false);
+        animator.SetBool("isWallRunningLeft", false);
+        animator.SetBool("isWallRunningRight", false);
         animator.SetBool("isGrounded", true);
 
     }
@@ -674,6 +669,11 @@ public class PlayerController : MonoBehaviour {
         if (isSwinging)
             StopSwing();
 
+        if (wallLeft)
+            animator.SetBool("isWallRunningLeft", true);
+        if (wallRight)
+            animator.SetBool("isWallRunningRight", true);
+
         rb.useGravity = false;
         isWallRunning = true;
         crosshair.gameObject.SetActive(true);
@@ -746,6 +746,9 @@ public class PlayerController : MonoBehaviour {
     }
 
     private void StopWallRun() {
+
+        animator.SetBool("isWallRunningLeft", false);
+        animator.SetBool("isWallRunningRight", false);
 
         isWallRunning = false;
         StartLerpCameraFOV(startCameraFOV);

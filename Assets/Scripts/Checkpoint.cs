@@ -12,13 +12,14 @@ public class Checkpoint : MonoBehaviour {
 
     [Header("Checkpoint")]
     [SerializeField] private CheckpointType checkpointType;
+    [SerializeField] private string subtitleText;
 
     [Header("Animations")]
     private Coroutine fadeOutCoroutine;
 
     public enum CheckpointType {
 
-        Spawn, Normal, Walk, Sprint, Jump, Slide, WallRun, Swing, Finish
+        Spawn, Normal, Sprint, Jump, Slide, WallRun, Swing, Finish
 
     }
 
@@ -75,6 +76,12 @@ public class Checkpoint : MonoBehaviour {
     public CheckpointType GetCheckpointType() {
 
         return checkpointType;
+
+    }
+
+    public string GetSubtitleText() {
+
+        return subtitleText;
 
     }
 }
