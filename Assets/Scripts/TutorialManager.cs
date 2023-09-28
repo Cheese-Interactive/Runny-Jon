@@ -36,42 +36,33 @@ public class TutorialManager : GameManager {
             return;
 
         currCheckpoint++;
+        UIController.TypeSubtitleText(checkpoints[currCheckpoint].GetSubtitleText());
 
         switch (checkpointType) {
 
             case Checkpoint.CheckpointType.Sprint:
 
-            UIController.TypeSubtitleText(checkpoints[currCheckpoint].GetSubtitleText());
             playerController.EnableSprint();
             break;
 
             case Checkpoint.CheckpointType.Jump:
 
-            UIController.TypeSubtitleText(checkpoints[currCheckpoint].GetSubtitleText());
             playerController.EnableJump();
             break;
 
             case Checkpoint.CheckpointType.Slide:
 
-            UIController.TypeSubtitleText(checkpoints[currCheckpoint].GetSubtitleText());
             playerController.EnableSlide();
             break;
 
             case Checkpoint.CheckpointType.WallRun:
 
-            UIController.TypeSubtitleText(checkpoints[currCheckpoint].GetSubtitleText());
             playerController.EnableWallRun();
             break;
 
             case Checkpoint.CheckpointType.Swing:
 
-            UIController.TypeSubtitleText(checkpoints[currCheckpoint].GetSubtitleText());
             playerController.EnableSwing();
-            break;
-
-            case Checkpoint.CheckpointType.Finish:
-
-            UIController.TypeSubtitleText(checkpoints[currCheckpoint].GetSubtitleText());
             break;
 
         }

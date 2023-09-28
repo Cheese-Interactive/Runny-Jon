@@ -1,6 +1,7 @@
 using System.Collections;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Device;
 using UnityEngine.UI;
 
 public class PlayerController : MonoBehaviour {
@@ -21,6 +22,8 @@ public class PlayerController : MonoBehaviour {
     [SerializeField][Range(0f, 100f)] private float ySensitivity;
     [SerializeField][Range(0f, 90f)] private float topCameraClamp;
     [SerializeField][Range(0f, 90f)] private float bottomCameraClamp;
+    [SerializeField][Range(0f, 90f)] private float wallRunLeftCameraClamp;
+    [SerializeField][Range(0f, 90f)] private float wallRunRightCameraClamp;
     private float xRotation;
     private float yRotation;
 
@@ -32,6 +35,7 @@ public class PlayerController : MonoBehaviour {
     [SerializeField] private bool walkEnabled;
     [SerializeField] private bool sprintEnabled;
     [SerializeField] private bool jumpEnabled;
+    [SerializeField] private bool crouchEnabled;
     [SerializeField] private bool slideEnabled;
     [SerializeField] private bool wallRunEnabled;
     [SerializeField] private bool swingEnabled;
@@ -51,6 +55,7 @@ public class PlayerController : MonoBehaviour {
     private bool jumpReady;
 
     [Header("Crouching")]
+    [SerializeField] private float crouchSpeed;
     [SerializeField] private float crouchHeight;
     private float startHeight;
 
@@ -58,7 +63,6 @@ public class PlayerController : MonoBehaviour {
     [SerializeField] private float maxSlideSpeed;
     [SerializeField] private float maxSlideTime;
     private float slideTimer;
-    private bool isSliding;
 
     [Header("Wall Running")]
     [SerializeField] private float wallRunSpeed;
@@ -68,9 +72,12 @@ public class PlayerController : MonoBehaviour {
     [SerializeField] private bool useWallRunTimer;
     [SerializeField] private float maxWallRunTime;
     [SerializeField] private LayerMask wallMask;
+    [SerializeField] private float lookRotationLerpDuration;
+    private Vector3 wallForward;
+    private Vector3 wallNormal;
+    private Coroutine lookRotationLerpCoroutine;
     private float wallRunTimer;
     private float exitWallTimer;
-    private bool isWallRunning;
     private bool exitingWall;
 
     [Header("Wall Jumping")]
@@ -122,7 +129,6 @@ public class PlayerController : MonoBehaviour {
     private Vector3 swingPoint;
     private Vector3 currentSwingPosition;
     private SpringJoint joint;
-    private bool isSwinging;
 
     [Header("Swing Rope Animation")]
     [SerializeField] private int quality;
@@ -143,6 +149,10 @@ public class PlayerController : MonoBehaviour {
     [SerializeField] private float walkBobAmount;
     [SerializeField] private float sprintBobSpeed;
     [SerializeField] private float sprintBobAmount;
+    [SerializeField] private float crouchBobSpeed;
+    [SerializeField] private float crouchBobAmount;
+    [SerializeField] private float slideBobSpeed;
+    [SerializeField] private float slideBobAmount;
     private Vector3 startCameraPos;
     private float timer;
 
@@ -171,7 +181,7 @@ public class PlayerController : MonoBehaviour {
 
     public enum MovementState {
 
-        None, Walking, Sprinting, Sliding, WallRunning, Swinging, Air
+        None, Walking, Sprinting, Crouching, Sliding, WallRunning, Swinging, Air
 
     }
 
@@ -217,11 +227,23 @@ public class PlayerController : MonoBehaviour {
 
         yRotation += mouseX;
 
+        if (movementState != MovementState.WallRunning) {
+
+            transform.rotation = Quaternion.Euler(0f, yRotation, 0f);
+
+        } else {
+
+            Vector3 rotation = Quaternion.LookRotation(wallForward, Vector3.up).eulerAngles;
+
+            if (lookRotationLerpCoroutine == null)
+                yRotation = Mathf.Clamp(yRotation, rotation.y - 90f, rotation.y + 90f);
+
+        }
+
         xRotation -= mouseY;
         xRotation = Mathf.Clamp(xRotation, -topCameraClamp, bottomCameraClamp);
 
-        cameraPos.rotation = Quaternion.Euler(xRotation, yRotation, 0);
-        transform.rotation = Quaternion.Euler(0, yRotation, 0);
+        cameraPos.rotation = Quaternion.Euler(xRotation, yRotation, 0f);
 
         isGrounded = Physics.CheckSphere(feet.position, groundCheckRadius, environmentMask);
         animator.SetBool("isGrounded", isGrounded);
@@ -241,11 +263,21 @@ public class PlayerController : MonoBehaviour {
 
         }
 
-        if (Input.GetKeyDown(slideKey) && (horizontalInput != 0 || verticalInput != 0) && slideEnabled && !isSwinging && !isWallRunning)
-            StartSlide();
+        if (Input.GetKeyDown(slideKey) && movementState != MovementState.Sliding && movementState != MovementState.Crouching && movementState != MovementState.Swinging && movementState != MovementState.WallRunning) {
 
-        if ((Input.GetKeyUp(slideKey) || Input.GetKeyDown(jumpKey)) && isSliding)
-            StopSlide();
+            if ((movementState == MovementState.Sprinting || movementState == MovementState.Air) && slideEnabled)
+                StartSlide();
+            else if (crouchEnabled)
+                StartCrouch();
+
+        } else if (Input.GetKeyUp(slideKey) || Input.GetKeyDown(jumpKey)) {
+
+            if (movementState == MovementState.Sliding)
+                StopSlide();
+            else if (movementState == MovementState.Crouching)
+                StopCrouch();
+
+        }
 
         CheckWall();
         HandleWallRunState();
@@ -253,7 +285,7 @@ public class PlayerController : MonoBehaviour {
         if (Input.GetMouseButtonDown(1) && swingEnabled)
             StartSwing();
 
-        if (Input.GetMouseButtonUp(1) && isSwinging)
+        if (Input.GetMouseButtonUp(1) && movementState == MovementState.Swinging)
             StopSwing();
 
         CheckSwingPoints();
@@ -270,11 +302,11 @@ public class PlayerController : MonoBehaviour {
 
         movementDirection = transform.forward * verticalInput + transform.right * horizontalInput;
 
-        if (isSwinging && joint != null) {
+        if (movementState == MovementState.Swinging && joint != null) {
 
             HandleSwingMovement();
 
-        } else if (isWallRunning) {
+        } else if (movementState == MovementState.WallRunning) {
 
             HandleWallRunMovement();
 
@@ -299,7 +331,7 @@ public class PlayerController : MonoBehaviour {
 
         }
 
-        if (!isWallRunning)
+        if (movementState != MovementState.WallRunning)
             rb.useGravity = CheckSlope() == SlopeType.None || CheckSlope() == SlopeType.Invalid;
 
     }
@@ -315,12 +347,14 @@ public class PlayerController : MonoBehaviour {
         walkEnabled = false;
         sprintEnabled = false;
         jumpEnabled = false;
+        crouchEnabled = false;
         slideEnabled = false;
         wallRunEnabled = false;
         swingEnabled = false;
         movementState = MovementState.None;
         animator.SetBool("isWalking", false);
         animator.SetBool("isSprinting", false);
+        animator.SetBool("isCrouching", false);
         animator.SetBool("isSliding", false);
         animator.SetBool("isWallRunningLeft", false);
         animator.SetBool("isWallRunningRight", false);
@@ -361,6 +395,18 @@ public class PlayerController : MonoBehaviour {
     public void DisableJump() {
 
         jumpEnabled = false;
+
+    }
+
+    private void EnableCrouch() {
+
+        crouchEnabled = true;
+
+    }
+
+    private void DisableCrouch() {
+
+        crouchEnabled = false;
 
     }
 
@@ -454,17 +500,17 @@ public class PlayerController : MonoBehaviour {
 
     private void HandleMovementState() {
 
-        if (isSwinging && swingEnabled) {
+        if (movementState == MovementState.Swinging && swingEnabled) {
 
             movementState = MovementState.Swinging;
             desiredMoveSpeed = maxSwingSpeed;
 
-        } else if (isWallRunning && wallRunEnabled) {
+        } else if (movementState == MovementState.WallRunning && wallRunEnabled) {
 
             movementState = MovementState.WallRunning;
             desiredMoveSpeed = wallRunSpeed;
 
-        } else if (isSliding && slideEnabled) {
+        } else if (movementState == MovementState.Sliding && slideEnabled) {
 
             movementState = MovementState.Sliding;
 
@@ -477,6 +523,11 @@ public class PlayerController : MonoBehaviour {
 
             if (slideTimer <= 0f)
                 StopSlide();
+
+        } else if (movementState == MovementState.Crouching && crouchEnabled) {
+
+            movementState = MovementState.Crouching;
+            desiredMoveSpeed = crouchSpeed;
 
         } else if (isGrounded && movementDirection == Vector3.zero) {
 
@@ -588,22 +639,54 @@ public class PlayerController : MonoBehaviour {
 
     }
 
-    private void StartSlide() {
+    private void StartCrouch() {
 
-        isSliding = true;
+        movementState = MovementState.Crouching;
         crosshair.gameObject.SetActive(true);
-        animator.SetBool("isSliding", true);
+        animator.SetBool("isCrouching", true);
+        animator.SetBool("isWalking", false);
+        animator.SetBool("isSprinting", false);
+        animator.SetBool("isSliding", false);
+        Crouch();
+
+    }
+
+    private void Crouch() {
+
         transform.localScale = new Vector3(transform.localScale.x, crouchHeight, transform.localScale.z);
         rb.AddForce(Vector3.down * 5f, ForceMode.Impulse);
+
+    }
+
+    private void StopCrouch() {
+
+        movementState = MovementState.None;
+        animator.SetBool("isCrouching", false);
+        Uncrouch();
+
+    }
+
+    private void Uncrouch() {
+
+        transform.localScale = new Vector3(transform.localScale.x, startHeight, transform.localScale.z);
+
+    }
+
+    private void StartSlide() {
+
+        movementState = MovementState.Sliding;
+        crosshair.gameObject.SetActive(true);
+        animator.SetBool("isSliding", true);
+        Crouch();
         slideTimer = maxSlideTime;
 
     }
 
     private void StopSlide() {
 
-        isSliding = false;
+        movementState = MovementState.None;
         animator.SetBool("isSliding", false);
-        transform.localScale = new Vector3(transform.localScale.x, startHeight, transform.localScale.z);
+        Uncrouch();
 
     }
 
@@ -627,7 +710,7 @@ public class PlayerController : MonoBehaviour {
 
         if ((wallLeft || wallRight) && verticalInput > 0 && CanWallRun() && !exitingWall && !isGrounded) {
 
-            if (!isWallRunning)
+            if (movementState != MovementState.WallRunning)
                 StartWallRun();
 
             if (useWallRunTimer) {
@@ -635,7 +718,7 @@ public class PlayerController : MonoBehaviour {
                 if (wallRunTimer > 0f)
                     wallRunTimer -= Time.deltaTime;
 
-                if (wallRunTimer <= 0f && isWallRunning)
+                if (wallRunTimer <= 0f && movementState == MovementState.WallRunning)
                     WallJump();
 
             }
@@ -645,7 +728,7 @@ public class PlayerController : MonoBehaviour {
 
         } else if (exitingWall) {
 
-            if (isWallRunning)
+            if (movementState == MovementState.WallRunning)
                 StopWallRun();
 
             if (exitWallTimer > 0f)
@@ -654,7 +737,7 @@ public class PlayerController : MonoBehaviour {
             if (exitWallTimer <= 0f)
                 exitingWall = false;
 
-        } else {
+        } else if (movementState == MovementState.WallRunning) {
 
             StopWallRun();
 
@@ -663,19 +746,34 @@ public class PlayerController : MonoBehaviour {
 
     private void StartWallRun() {
 
-        if (isSliding)
+        if (movementState == MovementState.Crouching)
+            StopCrouch();
+
+        if (movementState == MovementState.Sliding)
             StopSlide();
 
-        if (isSwinging)
+        if (movementState == MovementState.Swinging)
             StopSwing();
+
+        movementState = MovementState.WallRunning;
 
         if (wallLeft)
             animator.SetBool("isWallRunningLeft", true);
         if (wallRight)
             animator.SetBool("isWallRunningRight", true);
 
+        wallNormal = wallRight ? rightWallHit.normal : leftWallHit.normal;
+        wallForward = Vector3.Cross(wallNormal, transform.up);
+
+        if ((transform.forward - wallForward).magnitude > (transform.forward - -wallForward).magnitude)
+            wallForward = -wallForward;
+
+        Quaternion rotation = Quaternion.LookRotation(wallForward, Vector3.up);
+
+        if (yRotation < rotation.eulerAngles.y - wallRunLeftCameraClamp || yRotation > rotation.eulerAngles.y + wallRunRightCameraClamp)
+            lookRotationLerpCoroutine = StartCoroutine(LerpLookRotation(rotation));
+
         rb.useGravity = false;
-        isWallRunning = true;
         crosshair.gameObject.SetActive(true);
 
         if (useWallRunTimer)
@@ -700,7 +798,7 @@ public class PlayerController : MonoBehaviour {
 
         yield return new WaitForSeconds(gravityDelay);
 
-        while (isWallRunning) {
+        while (movementState == MovementState.WallRunning) {
 
             rb.useGravity = true;
             rb.AddForce(transform.up * gravityCounterForce, ForceMode.Force);
@@ -713,12 +811,6 @@ public class PlayerController : MonoBehaviour {
 
     private void HandleWallRunMovement() {
 
-        Vector3 wallNormal = wallRight ? rightWallHit.normal : leftWallHit.normal;
-        Vector3 wallForward = Vector3.Cross(wallNormal, transform.up);
-
-        if ((transform.forward - wallForward).magnitude > (transform.forward - -wallForward).magnitude)
-            wallForward = -wallForward;
-
         rb.AddForce(wallForward * wallRunForce, ForceMode.Force);
 
         if (wallRunningUpwards)
@@ -729,6 +821,24 @@ public class PlayerController : MonoBehaviour {
 
         if (!(wallLeft && horizontalInput > 0f) && !(wallRight && horizontalInput < 0f))
             rb.AddForce(-wallNormal * wallNormalForce, ForceMode.Force);
+
+    }
+
+    private IEnumerator LerpLookRotation(Quaternion targetRotation) {
+
+        float currentTime = 0f;
+        Quaternion startRotation = Quaternion.Euler(0f, yRotation, 0f);
+
+        while (currentTime < lookRotationLerpDuration) {
+
+            currentTime += Time.deltaTime;
+            yRotation = Quaternion.Lerp(startRotation, targetRotation, currentTime / lookRotationLerpDuration).eulerAngles.y;
+            yield return null;
+
+        }
+
+        yRotation = targetRotation.eulerAngles.y;
+        lookRotationLerpCoroutine = null;
 
     }
 
@@ -747,21 +857,19 @@ public class PlayerController : MonoBehaviour {
 
     private void StopWallRun() {
 
+        if (lookRotationLerpCoroutine != null)
+            StopCoroutine(lookRotationLerpCoroutine);
+
+        movementState = MovementState.None;
+
         animator.SetBool("isWallRunningLeft", false);
         animator.SetBool("isWallRunningRight", false);
 
-        isWallRunning = false;
         StartLerpCameraFOV(startCameraFOV);
         StartLerpCameraTilt(startCameraZTilt);
 
         if (gravityDelayCoroutine != null)
             StopCoroutine(gravityDelayCoroutine);
-
-    }
-
-    public bool IsSwinging() {
-
-        return isSwinging;
 
     }
 
@@ -779,7 +887,7 @@ public class PlayerController : MonoBehaviour {
 
     private void CheckSwingPoints() {
 
-        if (joint != null || isWallRunning || isSwinging)
+        if (joint != null || movementState == MovementState.WallRunning || movementState == MovementState.Swinging)
             return;
 
         RaycastHit raycastHit;
@@ -831,8 +939,9 @@ public class PlayerController : MonoBehaviour {
         if (predictionHit.point == Vector3.zero)
             return;
 
+        movementState = MovementState.Swinging;
+
         predictionObj.gameObject.SetActive(false);
-        isSwinging = true;
         crosshair.gameObject.SetActive(true);
 
         swingPoint = predictionHit.point;
@@ -853,7 +962,7 @@ public class PlayerController : MonoBehaviour {
 
     private void DrawRope() {
 
-        if (!isSwinging) {
+        if (movementState != MovementState.Swinging) {
 
             currentSwingPosition = muzzle.position;
             spring.Reset();
@@ -923,7 +1032,7 @@ public class PlayerController : MonoBehaviour {
 
     private void StopSwing() {
 
-        isSwinging = false;
+        movementState = MovementState.None;
         crosshair.gameObject.SetActive(true);
         Destroy(joint);
 
@@ -936,6 +1045,18 @@ public class PlayerController : MonoBehaviour {
             if (Mathf.Abs(rb.velocity.x) > 0.1f || Mathf.Abs(rb.velocity.z) > 0.1f) {
 
                 switch (movementState) {
+
+                    case MovementState.Sliding:
+
+                    timer += slideBobSpeed * Time.deltaTime;
+                    cameraPos.localPosition = new Vector3(cameraPos.localPosition.x, startCameraPos.y + Mathf.Sin(timer) * slideBobAmount, cameraPos.localPosition.z);
+                    break;
+
+                    case MovementState.Crouching:
+
+                    timer += crouchBobSpeed * Time.deltaTime;
+                    cameraPos.localPosition = new Vector3(cameraPos.localPosition.x, startCameraPos.y + Mathf.Sin(timer) * crouchBobAmount, cameraPos.localPosition.z);
+                    break;
 
                     case MovementState.Sprinting:
 

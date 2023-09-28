@@ -5187,7 +5187,7 @@ GameObject:
   - component: {fileID: 984997701}
   - component: {fileID: 984997699}
   m_Layer: 0
-  m_Name: PlayerCamera
+  m_Name: ArmCamera
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -6859,19 +6859,23 @@ MonoBehaviour:
   ySensitivity: 15
   topCameraClamp: 90
   bottomCameraClamp: 75
+  wallRunLeftCameraClamp: 75
+  wallRunRightCameraClamp: 75
   walkSpeed: 8
   sprintSpeed: 12
-  speedIncreaseMultiplier: 2
+  speedIncreaseMultiplier: 5
   slopeIncreaseMultiplier: 5
   walkEnabled: 1
-  sprintEnabled: 0
-  jumpEnabled: 0
-  slideEnabled: 0
-  wallRunEnabled: 0
-  swingEnabled: 0
+  sprintEnabled: 1
+  jumpEnabled: 1
+  crouchEnabled: 1
+  slideEnabled: 1
+  wallRunEnabled: 1
+  swingEnabled: 1
   jumpForce: 15
   jumpCooldown: 0.25
   airMultiplier: 0.6
+  crouchSpeed: 5
   crouchHeight: 0.5
   maxSlideSpeed: 25
   maxSlideTime: 0.5
@@ -6884,6 +6888,7 @@ MonoBehaviour:
   wallMask:
     serializedVersion: 2
     m_Bits: 128
+  lookRotationLerpDuration: 0.25
   wallJumpUpForce: 9
   wallJumpSideForce: 32
   wallClimbSpeed: 8
@@ -6945,6 +6950,10 @@ MonoBehaviour:
   walkBobAmount: 0.05
   sprintBobSpeed: 18
   sprintBobAmount: 0.1
+  crouchBobSpeed: 10
+  crouchBobAmount: 0.15
+  slideBobSpeed: 15
+  slideBobAmount: 0.4
   feet: {fileID: 1514621584}
   groundCheckRadius: 0.25
   environmentMask:
