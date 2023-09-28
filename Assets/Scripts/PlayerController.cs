@@ -236,7 +236,7 @@ public class PlayerController : MonoBehaviour {
             Vector3 rotation = Quaternion.LookRotation(wallForward, Vector3.up).eulerAngles;
 
             if (lookRotationLerpCoroutine == null)
-                yRotation = Mathf.Clamp(yRotation, rotation.y - 90f, rotation.y + 90f);
+                yRotation = Mathf.Clamp(yRotation, rotation.y - wallRunLeftCameraClamp, rotation.y + wallRunRightCameraClamp);
 
         }
 
