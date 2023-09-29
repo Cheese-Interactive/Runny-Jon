@@ -180,6 +180,7 @@ public class UIController : MonoBehaviour {
             currentTime += Time.deltaTime;
             text.alpha = Mathf.Lerp(startOpacity, targetOpacity, currentTime / duration);
             yield return null;
+
         }
 
         text.alpha = targetOpacity;

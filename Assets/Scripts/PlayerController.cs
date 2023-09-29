@@ -22,8 +22,8 @@ public class PlayerController : MonoBehaviour {
     [SerializeField][Range(0f, 100f)] private float ySensitivity;
     [SerializeField][Range(0f, 90f)] private float topCameraClamp;
     [SerializeField][Range(0f, 90f)] private float bottomCameraClamp;
-    [SerializeField][Range(0f, 90f)] private float wallRunLeftCameraClamp;
-    [SerializeField][Range(0f, 90f)] private float wallRunRightCameraClamp;
+    [SerializeField][Range(0f, 90f)] private float wallSideCameraClamp;
+    [SerializeField][Range(0f, 90f)] private float wallOutsideCameraClamp;
     private float xRotation;
     private float yRotation;
 
@@ -73,6 +73,8 @@ public class PlayerController : MonoBehaviour {
     [SerializeField] private float maxWallRunTime;
     [SerializeField] private LayerMask wallMask;
     [SerializeField] private float lookRotationLerpDuration;
+    [SerializeField] private float wallRunCooldown;
+    private bool canWallRun;
     private Vector3 wallForward;
     private Vector3 wallNormal;
     private Coroutine lookRotationLerpCoroutine;
@@ -207,6 +209,7 @@ public class PlayerController : MonoBehaviour {
         movementState = MovementState.None;
 
         jumpReady = true;
+        canWallRun = true;
 
         startCameraFOV = camera.fieldOfView;
         startCameraZTilt = camera.transform.localRotation.z;
@@ -235,9 +238,14 @@ public class PlayerController : MonoBehaviour {
 
             Vector3 rotation = Quaternion.LookRotation(wallForward, Vector3.up).eulerAngles;
 
-            if (lookRotationLerpCoroutine == null)
-                yRotation = Mathf.Clamp(yRotation, rotation.y - wallRunLeftCameraClamp, rotation.y + wallRunRightCameraClamp);
+            if (lookRotationLerpCoroutine == null) {
 
+                if (wallLeft)
+                    yRotation = Mathf.Clamp(yRotation, rotation.y - wallSideCameraClamp, rotation.y + wallOutsideCameraClamp);
+                else
+                    yRotation = Mathf.Clamp(yRotation, rotation.y - wallOutsideCameraClamp, rotation.y + wallSideCameraClamp);
+
+            }
         }
 
         xRotation -= mouseY;
@@ -746,6 +754,9 @@ public class PlayerController : MonoBehaviour {
 
     private void StartWallRun() {
 
+        if (!canWallRun)
+            return;
+
         if (movementState == MovementState.Crouching)
             StopCrouch();
 
@@ -770,7 +781,7 @@ public class PlayerController : MonoBehaviour {
 
         Quaternion rotation = Quaternion.LookRotation(wallForward, Vector3.up);
 
-        if (yRotation < rotation.eulerAngles.y - wallRunLeftCameraClamp || yRotation > rotation.eulerAngles.y + wallRunRightCameraClamp)
+        if (yRotation < rotation.eulerAngles.y - wallSideCameraClamp || yRotation > rotation.eulerAngles.y + wallOutsideCameraClamp)
             lookRotationLerpCoroutine = StartCoroutine(LerpLookRotation(rotation));
 
         rb.useGravity = false;
@@ -810,6 +821,13 @@ public class PlayerController : MonoBehaviour {
     }
 
     private void HandleWallRunMovement() {
+
+        if (rb.velocity.magnitude < 0.1f) {
+
+            StopWallRun();
+            return;
+
+        }
 
         rb.AddForce(wallForward * wallRunForce, ForceMode.Force);
 
@@ -870,6 +888,24 @@ public class PlayerController : MonoBehaviour {
 
         if (gravityDelayCoroutine != null)
             StopCoroutine(gravityDelayCoroutine);
+
+        StartCoroutine(StartWallRunCooldown());
+
+    }
+
+    private IEnumerator StartWallRunCooldown() {
+
+        canWallRun = false;
+        float currentTime = 0f;
+
+        while (currentTime < wallRunCooldown) {
+
+            currentTime += Time.deltaTime;
+            yield return null;
+
+        }
+
+        canWallRun = true;
 
     }
 

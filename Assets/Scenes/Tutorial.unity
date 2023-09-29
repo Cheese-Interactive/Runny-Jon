@@ -6859,8 +6859,8 @@ MonoBehaviour:
   ySensitivity: 15
   topCameraClamp: 90
   bottomCameraClamp: 75
-  wallRunLeftCameraClamp: 75
-  wallRunRightCameraClamp: 75
+  wallSideCameraClamp: 15
+  wallOutsideCameraClamp: 75
   walkSpeed: 8
   sprintSpeed: 12
   speedIncreaseMultiplier: 5
@@ -6889,6 +6889,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 128
   lookRotationLerpDuration: 0.25
+  wallRunCooldown: 0.5
   wallJumpUpForce: 9
   wallJumpSideForce: 32
   wallClimbSpeed: 8
