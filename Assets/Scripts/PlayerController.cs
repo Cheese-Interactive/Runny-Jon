@@ -73,8 +73,8 @@ public class PlayerController : MonoBehaviour {
     [SerializeField] private float maxWallRunTime;
     [SerializeField] private LayerMask wallMask;
     [SerializeField] private float lookRotationLerpDuration;
-    [SerializeField] private float wallRunCooldown;
     private bool canWallRun;
+    private Transform lastWall;
     private Vector3 wallForward;
     private Vector3 wallNormal;
     private Coroutine lookRotationLerpCoroutine;
@@ -255,6 +255,9 @@ public class PlayerController : MonoBehaviour {
 
         isGrounded = Physics.CheckSphere(feet.position, groundCheckRadius, environmentMask);
         animator.SetBool("isGrounded", isGrounded);
+
+        if (isGrounded && lastWall != null)
+            lastWall = null;
 
         horizontalInput = Input.GetAxisRaw("Horizontal");
         verticalInput = Input.GetAxisRaw("Vertical");
@@ -754,7 +757,7 @@ public class PlayerController : MonoBehaviour {
 
     private void StartWallRun() {
 
-        if (!canWallRun)
+        if (!canWallRun || (wallLeft && lastWall == leftWallHit.transform) || (wallRight && lastWall == rightWallHit.transform))
             return;
 
         if (movementState == MovementState.Crouching)
@@ -768,12 +771,20 @@ public class PlayerController : MonoBehaviour {
 
         movementState = MovementState.WallRunning;
 
-        if (wallLeft)
-            animator.SetBool("isWallRunningLeft", true);
-        if (wallRight)
-            animator.SetBool("isWallRunningRight", true);
+        if (wallLeft) {
 
-        wallNormal = wallRight ? rightWallHit.normal : leftWallHit.normal;
+            animator.SetBool("isWallRunningLeft", true);
+            wallNormal = leftWallHit.normal;
+            lastWall = leftWallHit.transform;
+
+        } else if (wallRight) {
+
+            animator.SetBool("isWallRunningRight", true);
+            wallNormal = rightWallHit.normal;
+            lastWall = rightWallHit.transform;
+
+        }
+
         wallForward = Vector3.Cross(wallNormal, transform.up);
 
         if ((transform.forward - wallForward).magnitude > (transform.forward - -wallForward).magnitude)
@@ -888,24 +899,6 @@ public class PlayerController : MonoBehaviour {
 
         if (gravityDelayCoroutine != null)
             StopCoroutine(gravityDelayCoroutine);
-
-        StartCoroutine(StartWallRunCooldown());
-
-    }
-
-    private IEnumerator StartWallRunCooldown() {
-
-        canWallRun = false;
-        float currentTime = 0f;
-
-        while (currentTime < wallRunCooldown) {
-
-            currentTime += Time.deltaTime;
-            yield return null;
-
-        }
-
-        canWallRun = true;
 
     }
 
