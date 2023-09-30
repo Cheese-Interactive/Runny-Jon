@@ -91,4 +91,23 @@ public class TutorialManager : GameManager {
         return currentLevel.timeLimit;
 
     }
+
+    public override void KillPlayer() {
+
+        StartCoroutine(HandlePlayerDeath());
+
+    }
+
+    private IEnumerator HandlePlayerDeath() {
+
+        playerController.DisableAllMovement();
+        yield return StartCoroutine(UIController.ShowDeathScreen());
+        Transform spawn = checkpoints[currCheckpoint].GetPlayerSpawn();
+        playerController.transform.position = spawn.position;
+        playerController.transform.rotation = spawn.rotation;
+        playerController.SetLookRotations(0f, spawn.rotation.eulerAngles.y);
+        playerController.EnableAllMovement();
+        yield return StartCoroutine(UIController.HideDeathScreen());
+
+    }
 }

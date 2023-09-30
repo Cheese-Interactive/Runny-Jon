@@ -23,7 +23,7 @@ public class LevelManager : GameManager {
 
     public override void CompleteLevel() {
 
-        playerController.HaltAllMovement();
+        playerController.DisableAllMovement();
         UIController.ShowLevelCompleteScreen();
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
@@ -39,6 +39,10 @@ public class LevelManager : GameManager {
     public override int GetLevelTimeLimit() {
 
         return currentLevel.timeLimit;
+
+    }
+
+    public override void KillPlayer() {
 
     }
 }

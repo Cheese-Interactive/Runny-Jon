@@ -13,6 +13,7 @@ public class Checkpoint : MonoBehaviour {
     [Header("Checkpoint")]
     [SerializeField] private CheckpointType checkpointType;
     [SerializeField] private string subtitleText;
+    [SerializeField] private Transform playerSpawn;
 
     [Header("Animations")]
     private Coroutine fadeOutCoroutine;
@@ -82,6 +83,12 @@ public class Checkpoint : MonoBehaviour {
     public string GetSubtitleText() {
 
         return subtitleText;
+
+    }
+
+    public Transform GetPlayerSpawn() {
+
+        return playerSpawn;
 
     }
 }

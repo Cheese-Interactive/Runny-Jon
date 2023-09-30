@@ -15,6 +15,7 @@ public class UIController : MonoBehaviour {
     [SerializeField] private TMP_Text subtitleText;
     [SerializeField] private TMP_Text timeLimitText;
     [SerializeField] private TMP_Text timeText;
+    [SerializeField] private CanvasGroup deathScreen;
     [SerializeField] private Button nextLevelButton;
 
     [Header("Timer")]
@@ -24,6 +25,7 @@ public class UIController : MonoBehaviour {
     [Header("Animations")]
     [SerializeField] private float subtitleTypeDuration;
     [SerializeField] private float subtitleFadeDuration;
+    [SerializeField] private float deathScreenFadeDuration;
     [SerializeField] private float levelCompleteFadeInDuration;
     private Coroutine typeCoroutine;
     private Coroutine screenFadeInCoroutine;
@@ -38,6 +40,9 @@ public class UIController : MonoBehaviour {
 
         FadeOutScreen(levelCompleteScreen, 0f);
         StartLevelTimer();
+
+        deathScreen.alpha = 0f;
+        deathScreen.gameObject.SetActive(false);
 
     }
 
@@ -93,6 +98,18 @@ public class UIController : MonoBehaviour {
             yield return null;
 
         }
+    }
+
+    public IEnumerator ShowDeathScreen() {
+
+        yield return StartCoroutine(FadeScreen(deathScreen, 1f, deathScreenFadeDuration, true));
+
+    }
+
+    public IEnumerator HideDeathScreen() {
+
+        yield return StartCoroutine(FadeScreen(deathScreen, 0f, deathScreenFadeDuration, false));
+
     }
 
     public void ShowLevelCompleteScreen() {

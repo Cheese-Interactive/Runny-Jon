@@ -10,4 +10,6 @@ public abstract class GameManager : MonoBehaviour {
 
     public abstract int GetLevelTimeLimit();
 
+    public abstract void KillPlayer();
+
 }

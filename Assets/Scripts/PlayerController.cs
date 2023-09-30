@@ -12,6 +12,7 @@ public class PlayerController : MonoBehaviour {
     [SerializeField] private Transform cameraPos;
     [SerializeField] private Transform muzzle;
     [SerializeField] private Image crosshair;
+    private GameManager gameManager;
     private Animator animator;
     private Rigidbody rb;
     private LineRenderer lineRenderer;
@@ -26,6 +27,7 @@ public class PlayerController : MonoBehaviour {
     [SerializeField][Range(0f, 90f)] private float wallOutsideCameraClamp;
     private float xRotation;
     private float yRotation;
+    [SerializeField] private bool lookEnabled;
 
     [Header("Movement")]
     [SerializeField] private float walkSpeed;
@@ -180,6 +182,7 @@ public class PlayerController : MonoBehaviour {
     [SerializeField] private KeyCode upwardsWallRunKey;
     [SerializeField] private KeyCode downwardsWallRunKey;
     [SerializeField] private KeyCode cableExtendKey;
+    [SerializeField] private KeyCode resetKey;
 
     public enum MovementState {
 
@@ -195,6 +198,7 @@ public class PlayerController : MonoBehaviour {
 
     private void Start() {
 
+        gameManager = FindObjectOfType<GameManager>();
         animator = GetComponent<Animator>();
         rb = GetComponent<Rigidbody>();
         lineRenderer = GetComponent<LineRenderer>();
@@ -225,33 +229,37 @@ public class PlayerController : MonoBehaviour {
 
     private void Update() {
 
-        float mouseX = Input.GetAxisRaw("Mouse X") * xSensitivity * 10f * Time.fixedDeltaTime;
-        float mouseY = Input.GetAxisRaw("Mouse Y") * ySensitivity * 10f * Time.fixedDeltaTime;
+        if (lookEnabled) {
 
-        yRotation += mouseX;
+            float mouseX = Input.GetAxisRaw("Mouse X") * xSensitivity * 10f * Time.fixedDeltaTime;
+            float mouseY = Input.GetAxisRaw("Mouse Y") * ySensitivity * 10f * Time.fixedDeltaTime;
 
-        if (movementState != MovementState.WallRunning) {
+            yRotation += mouseX;
 
-            transform.rotation = Quaternion.Euler(0f, yRotation, 0f);
+            if (movementState != MovementState.WallRunning) {
 
-        } else {
+                transform.rotation = Quaternion.Euler(0f, yRotation, 0f);
 
-            Vector3 rotation = Quaternion.LookRotation(wallForward, Vector3.up).eulerAngles;
+            } else {
 
-            if (lookRotationLerpCoroutine == null) {
+                Vector3 rotation = Quaternion.LookRotation(wallForward, Vector3.up).eulerAngles;
 
-                if (wallLeft)
-                    yRotation = Mathf.Clamp(yRotation, rotation.y - wallSideCameraClamp, rotation.y + wallOutsideCameraClamp);
-                else
-                    yRotation = Mathf.Clamp(yRotation, rotation.y - wallOutsideCameraClamp, rotation.y + wallSideCameraClamp);
+                if (lookRotationLerpCoroutine == null) {
 
+                    if (wallLeft)
+                        yRotation = Mathf.Clamp(yRotation, rotation.y - wallSideCameraClamp, rotation.y + wallOutsideCameraClamp);
+                    else
+                        yRotation = Mathf.Clamp(yRotation, rotation.y - wallOutsideCameraClamp, rotation.y + wallSideCameraClamp);
+
+                }
             }
+
+            xRotation -= mouseY;
+            xRotation = Mathf.Clamp(xRotation, -topCameraClamp, bottomCameraClamp);
+
+            cameraPos.rotation = Quaternion.Euler(xRotation, yRotation, 0f);
+
         }
-
-        xRotation -= mouseY;
-        xRotation = Mathf.Clamp(xRotation, -topCameraClamp, bottomCameraClamp);
-
-        cameraPos.rotation = Quaternion.Euler(xRotation, yRotation, 0f);
 
         isGrounded = Physics.CheckSphere(feet.position, groundCheckRadius, environmentMask);
         animator.SetBool("isGrounded", isGrounded);
@@ -307,6 +315,9 @@ public class PlayerController : MonoBehaviour {
         else
             rb.drag = 0f;
 
+        if (Input.GetKeyDown(resetKey))
+            gameManager.KillPlayer();
+
     }
 
     private void FixedUpdate() {
@@ -353,8 +364,29 @@ public class PlayerController : MonoBehaviour {
 
     }
 
-    public void HaltAllMovement() {
+    public void SetLookRotations(float xRotation, float yRotation) {
 
+        this.xRotation = xRotation;
+        this.yRotation = yRotation;
+
+    }
+
+    public void EnableAllMovement() {
+
+        lookEnabled = true;
+        walkEnabled = true;
+        sprintEnabled = true;
+        jumpEnabled = true;
+        crouchEnabled = true;
+        slideEnabled = true;
+        wallRunEnabled = true;
+        swingEnabled = true;
+
+    }
+
+    public void DisableAllMovement() {
+
+        lookEnabled = false;
         walkEnabled = false;
         sprintEnabled = false;
         jumpEnabled = false;
@@ -370,6 +402,18 @@ public class PlayerController : MonoBehaviour {
         animator.SetBool("isWallRunningLeft", false);
         animator.SetBool("isWallRunningRight", false);
         animator.SetBool("isGrounded", true);
+
+    }
+
+    public void EnableLook() {
+
+        lookEnabled = true;
+
+    }
+
+    public void DisableLook() {
+
+        lookEnabled = false;
 
     }
 
