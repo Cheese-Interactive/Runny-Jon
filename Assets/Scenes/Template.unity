@@ -2472,7 +2472,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1257761223}
   m_Layer: 6
-  m_Name: Spawn Area
+  m_Name: SpawnArea
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
