@@ -39,7 +39,6 @@ public class UIController : MonoBehaviour {
         gameManager = FindObjectOfType<LevelManager>();
 
         FadeOutScreen(levelCompleteScreen, 0f);
-        StartLevelTimer();
 
         deathScreen.alpha = 0f;
         deathScreen.gameObject.SetActive(false);
@@ -79,12 +78,6 @@ public class UIController : MonoBehaviour {
             subtitleText.maxVisibleCharacters++;
 
         }
-    }
-
-    private void StartLevelTimer() {
-
-        timerCoroutine = StartCoroutine(HandleLevelTimer());
-
     }
 
     private IEnumerator HandleLevelTimer() {

@@ -1,5 +1,5 @@
 using System.Collections;
-using System.Collections.Generic;
+using System.Diagnostics;
 using UnityEngine;
 
 public class TutorialManager : GameManager {
@@ -14,6 +14,7 @@ public class TutorialManager : GameManager {
 
     [Header("Level")]
     [SerializeField] private Level currentLevel;
+    private Stopwatch stopwatch;
 
     [Header("Animations")]
     [SerializeField] private float fadeOutDuration;
@@ -22,6 +23,12 @@ public class TutorialManager : GameManager {
 
         playerController = FindObjectOfType<PlayerController>();
         UIController = FindObjectOfType<UIController>();
+
+        Transform firstCheckpoint = checkpoints[currCheckpoint].transform;
+        playerController.transform.position = firstCheckpoint.position;
+        playerController.transform.rotation = firstCheckpoint.rotation;
+        playerController.SetLookRotations(0f, firstCheckpoint.rotation.eulerAngles.y);
+        playerController.ResetVelocity();
 
         for (int i = 2; i < checkpoints.Length; i++)
             checkpoints[i].gameObject.SetActive(false);
@@ -106,6 +113,7 @@ public class TutorialManager : GameManager {
         playerController.transform.position = spawn.position;
         playerController.transform.rotation = spawn.rotation;
         playerController.SetLookRotations(0f, spawn.rotation.eulerAngles.y);
+        playerController.ResetVelocity();
         playerController.EnableAllMovement();
         yield return StartCoroutine(UIController.HideDeathScreen());
 

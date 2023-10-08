@@ -12,6 +12,7 @@ public class PlayerController : MonoBehaviour {
     [SerializeField] private Transform cameraPos;
     [SerializeField] private Transform muzzle;
     [SerializeField] private Image crosshair;
+    [SerializeField] private Transform[] obstacleCheckers;
     private GameManager gameManager;
     private Animator animator;
     private Rigidbody rb;
@@ -58,12 +59,16 @@ public class PlayerController : MonoBehaviour {
 
     [Header("Crouching")]
     [SerializeField] private float crouchSpeed;
-    [SerializeField] private float crouchHeight;
+    [SerializeField] private float crouchScale;
+    [SerializeField] private float uncrouchMinClearing;
+    private float startScale;
     private float startHeight;
+    private bool uncrouchQueued;
 
     [Header("Sliding")]
     [SerializeField] private float maxSlideSpeed;
     [SerializeField] private float maxSlideTime;
+    [SerializeField] private float upwardsSlideFactor;
     private float slideTimer;
 
     [Header("Wall Running")]
@@ -155,8 +160,6 @@ public class PlayerController : MonoBehaviour {
     [SerializeField] private float sprintBobAmount;
     [SerializeField] private float crouchBobSpeed;
     [SerializeField] private float crouchBobAmount;
-    [SerializeField] private float slideBobSpeed;
-    [SerializeField] private float slideBobAmount;
     private Vector3 startCameraPos;
     private float timer;
 
@@ -175,6 +178,9 @@ public class PlayerController : MonoBehaviour {
     [Header("Drag Control")]
     [SerializeField] private float groundDrag;
 
+    [Header("Death")]
+    [SerializeField] private string deathZoneTag;
+
     [Header("Keybinds")]
     [SerializeField] private KeyCode sprintKey;
     [SerializeField] private KeyCode jumpKey;
@@ -192,11 +198,11 @@ public class PlayerController : MonoBehaviour {
 
     public enum SlopeType {
 
-        None, Valid, Invalid
+        None, ValidUp, ValidDown, Invalid
 
     }
 
-    private void Start() {
+    private void Awake() {
 
         gameManager = FindObjectOfType<GameManager>();
         animator = GetComponent<Animator>();
@@ -218,7 +224,8 @@ public class PlayerController : MonoBehaviour {
         startCameraFOV = camera.fieldOfView;
         startCameraZTilt = camera.transform.localRotation.z;
 
-        startHeight = transform.localScale.y;
+        startScale = transform.localScale.y;
+        startHeight = GetComponent<CapsuleCollider>().height;
         startCameraPos = cameraPos.localPosition;
 
         predictionObj.gameObject.SetActive(false);
@@ -282,19 +289,32 @@ public class PlayerController : MonoBehaviour {
 
         }
 
-        if (Input.GetKeyDown(slideKey) && movementState != MovementState.Sliding && movementState != MovementState.Crouching && movementState != MovementState.Swinging && movementState != MovementState.WallRunning) {
+        if (uncrouchQueued) {
+
+            foreach (Transform checker in obstacleCheckers) {
+
+                if (!Physics.Raycast(checker.position, Vector3.up, startHeight + uncrouchMinClearing, environmentMask)) {
+
+                    Uncrouch();
+                    break;
+
+                }
+            }
+        }
+
+        if (Input.GetKeyDown(slideKey) && movementState != MovementState.Crouching && movementState != MovementState.Swinging && movementState != MovementState.WallRunning) {
 
             if ((movementState == MovementState.Sprinting || movementState == MovementState.Air) && slideEnabled)
                 StartSlide();
             else if (crouchEnabled)
-                StartCrouch();
+                Crouch();
 
-        } else if (Input.GetKeyUp(slideKey) || Input.GetKeyDown(jumpKey)) {
+        } else if (Input.GetKeyUp(slideKey)) {
 
             if (movementState == MovementState.Sliding)
                 StopSlide();
             else if (movementState == MovementState.Crouching)
-                StopCrouch();
+                Uncrouch();
 
         }
 
@@ -332,7 +352,7 @@ public class PlayerController : MonoBehaviour {
 
             HandleWallRunMovement();
 
-        } else if (CheckSlope() == SlopeType.Valid && !exitingSlope) {
+        } else if (CheckSlope() == SlopeType.ValidUp || CheckSlope() == SlopeType.ValidDown && !exitingSlope) {
 
             rb.AddForce(GetSlopeMoveDirection() * moveSpeed * 30f, ForceMode.Force);
 
@@ -361,6 +381,21 @@ public class PlayerController : MonoBehaviour {
     private void LateUpdate() {
 
         DrawRope();
+
+    }
+
+    private void OnTriggerEnter(Collider collider) {
+
+        if (collider.CompareTag(deathZoneTag)) {
+
+            gameManager.KillPlayer();
+
+        }
+    }
+
+    public void ResetVelocity() {
+
+        rb.velocity = Vector3.zero;
 
     }
 
@@ -569,12 +604,15 @@ public class PlayerController : MonoBehaviour {
 
             movementState = MovementState.Sliding;
 
-            if (CheckSlope() == SlopeType.None && isGrounded)
+            if (CheckSlope() == SlopeType.None || CheckSlope() == SlopeType.ValidUp && isGrounded)
                 slideTimer -= Time.deltaTime;
-            else if (CheckSlope() == SlopeType.Valid)
+            else if (CheckSlope() == SlopeType.ValidDown)
                 desiredMoveSpeed = maxSlideSpeed;
             else
                 desiredMoveSpeed = sprintSpeed;
+
+            if (CheckSlope() == SlopeType.ValidUp)
+                desiredMoveSpeed = maxSlideSpeed * upwardsSlideFactor;
 
             if (slideTimer <= 0f)
                 StopSlide();
@@ -640,7 +678,7 @@ public class PlayerController : MonoBehaviour {
 
             moveSpeed = Mathf.Lerp(startValue, desiredMoveSpeed, timer / difference);
 
-            if (CheckSlope() == SlopeType.Valid) {
+            if (CheckSlope() == SlopeType.ValidDown) {
 
                 timer += Time.deltaTime * speedIncreaseMultiplier * slopeIncreaseMultiplier * (1f + (Vector3.Angle(Vector3.up, slopeHit.normal) / 90f));
 
@@ -660,7 +698,7 @@ public class PlayerController : MonoBehaviour {
 
     private void ControlSpeed() {
 
-        if (CheckSlope() == SlopeType.Valid || CheckSlope() == SlopeType.Invalid && !exitingSlope) {
+        if (CheckSlope() == SlopeType.ValidUp || CheckSlope() == SlopeType.ValidDown || CheckSlope() == SlopeType.Invalid && !exitingSlope) {
 
             if (rb.velocity.magnitude > moveSpeed)
                 rb.velocity = rb.velocity.normalized * moveSpeed;
@@ -682,7 +720,7 @@ public class PlayerController : MonoBehaviour {
 
         jumpReady = false;
         exitingSlope = true;
-        rb.velocity = new Vector3(rb.velocity.x, 0f, rb.velocity.z);
+        // rb.velocity = new Vector3(rb.velocity.x, 0f, rb.velocity.z);
         rb.AddForce(transform.up * jumpForce, ForceMode.Impulse);
 
     }
@@ -694,7 +732,10 @@ public class PlayerController : MonoBehaviour {
 
     }
 
-    private void StartCrouch() {
+    private void Crouch() {
+
+        if (uncrouchQueued)
+            return;
 
         movementState = MovementState.Crouching;
         crosshair.gameObject.SetActive(true);
@@ -702,28 +743,33 @@ public class PlayerController : MonoBehaviour {
         animator.SetBool("isWalking", false);
         animator.SetBool("isSprinting", false);
         animator.SetBool("isSliding", false);
-        Crouch();
+        ForceCrouch();
 
     }
 
-    private void Crouch() {
+    private void ForceCrouch() {
 
-        transform.localScale = new Vector3(transform.localScale.x, crouchHeight, transform.localScale.z);
+        transform.localScale = new Vector3(transform.localScale.x, crouchScale, transform.localScale.z);
         rb.AddForce(Vector3.down * 5f, ForceMode.Impulse);
-
-    }
-
-    private void StopCrouch() {
-
-        movementState = MovementState.None;
-        animator.SetBool("isCrouching", false);
-        Uncrouch();
 
     }
 
     private void Uncrouch() {
 
-        transform.localScale = new Vector3(transform.localScale.x, startHeight, transform.localScale.z);
+        foreach (Transform checker in obstacleCheckers) {
+
+            if (Physics.Raycast(checker.position, Vector3.up, startHeight + uncrouchMinClearing, environmentMask)) {
+
+                uncrouchQueued = true;
+                return;
+
+            }
+        }
+
+        movementState = MovementState.None;
+        animator.SetBool("isCrouching", false);
+        uncrouchQueued = false;
+        transform.localScale = new Vector3(transform.localScale.x, startScale, transform.localScale.z);
 
     }
 
@@ -732,7 +778,7 @@ public class PlayerController : MonoBehaviour {
         movementState = MovementState.Sliding;
         crosshair.gameObject.SetActive(true);
         animator.SetBool("isSliding", true);
-        Crouch();
+        ForceCrouch();
         slideTimer = maxSlideTime;
 
     }
@@ -805,7 +851,7 @@ public class PlayerController : MonoBehaviour {
             return;
 
         if (movementState == MovementState.Crouching)
-            StopCrouch();
+            Uncrouch();
 
         if (movementState == MovementState.Sliding)
             StopSlide();
@@ -829,7 +875,7 @@ public class PlayerController : MonoBehaviour {
 
         }
 
-        wallForward = Vector3.Cross(wallNormal, transform.up);
+        wallForward = lastWall.forward;
 
         if ((transform.forward - wallForward).magnitude > (transform.forward - -wallForward).magnitude)
             wallForward = -wallForward;
@@ -884,7 +930,9 @@ public class PlayerController : MonoBehaviour {
 
         }
 
-        rb.AddForce(wallForward * wallRunForce, ForceMode.Force);
+        Vector3 direction = wallForward * wallRunForce;
+        direction.y /= (200f / 60f);
+        rb.AddForce(direction, ForceMode.Force);
 
         if (wallRunningUpwards)
             rb.velocity = new Vector3(rb.velocity.x, wallClimbSpeed, rb.velocity.z);
@@ -916,6 +964,9 @@ public class PlayerController : MonoBehaviour {
     }
 
     private void WallJump() {
+
+        if (movementState != MovementState.WallRunning)
+            return;
 
         exitingWall = true;
         exitWallTimer = exitWallTime;
@@ -1119,12 +1170,6 @@ public class PlayerController : MonoBehaviour {
 
                 switch (movementState) {
 
-                    case MovementState.Sliding:
-
-                    timer += slideBobSpeed * Time.deltaTime;
-                    cameraPos.localPosition = new Vector3(cameraPos.localPosition.x, startCameraPos.y + Mathf.Sin(timer) * slideBobAmount, cameraPos.localPosition.z);
-                    break;
-
                     case MovementState.Crouching:
 
                     timer += crouchBobSpeed * Time.deltaTime;
@@ -1156,11 +1201,20 @@ public class PlayerController : MonoBehaviour {
 
             if (angle != 0f) {
 
-                if (angle <= maxSlopeAngle)
-                    return SlopeType.Valid;
-                else
+                if (angle <= maxSlopeAngle) {
+
+                    float dot = Vector3.Dot(slopeHit.normal, transform.forward);
+
+                    if (dot < 0f)
+                        return SlopeType.ValidUp;
+                    else if (dot > 0f)
+                        return SlopeType.ValidDown;
+
+                } else {
+
                     return SlopeType.Invalid;
 
+                }
             }
         }
 

@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using UnityEngine;
 
 public class LevelManager : GameManager {
@@ -10,6 +11,7 @@ public class LevelManager : GameManager {
 
     [Header("Level")]
     private Level currentLevel;
+    private Stopwatch stopwatch;
 
     private void Start() {
 
