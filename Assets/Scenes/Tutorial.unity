@@ -1849,7 +1849,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 8
+  m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &440714549
 MonoBehaviour:
@@ -1871,7 +1871,7 @@ MonoBehaviour:
   - {fileID: 546621882}
   - {fileID: 851490894}
   - {fileID: 287720894}
-  currentLevel: {fileID: 2036679320}
+  currentLevel: {fileID: 11400000, guid: 5abd01bcf67cbbf40a46d8d1a0e7ab56, type: 2}
   fadeOutDuration: 0.8
 --- !u!1 &444665423
 GameObject:
@@ -1989,7 +1989,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 444665423}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 22a33023f89338c4fad451e419fd4b9d, type: 3}
+  m_Script: {fileID: 11500000, guid: d6d49e535992ea348969c201bd065b7a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   levelCompleteScreen: {fileID: 1358854113}
@@ -1999,10 +1999,10 @@ MonoBehaviour:
   deathScreen: {fileID: 1407196514}
   nextLevelButton: {fileID: 902633577}
   timerText: {fileID: 174790080}
-  subtitleTypeDuration: 0.3
-  subtitleFadeDuration: 0.4
-  deathScreenFadeDuration: 0.3
-  levelCompleteFadeInDuration: 0.3
+  subtitleTypeDuration: 1
+  subtitleFadeDuration: 0.5
+  deathScreenFadeDuration: 0.5
+  levelCompleteFadeInDuration: 0.5
 --- !u!1 &459093955
 GameObject:
   m_ObjectHideFlags: 0
@@ -5532,8 +5532,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1037276502}
   m_LocalRotation: {x: -0.7071068, y: -0, z: -0, w: 0.7071068}
-  m_LocalPosition: {x: 0, y: 0, z: -1.5000007}
-  m_LocalScale: {x: 1, y: 4, z: 0.24999994}
+  m_LocalPosition: {x: 0, y: 0, z: -1.5}
+  m_LocalScale: {x: 1, y: 4, z: 0.25}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1979616649}
@@ -6014,7 +6014,7 @@ Transform:
   m_GameObject: {fileID: 1205875870}
   m_LocalRotation: {x: -0.7071068, y: -0, z: -0, w: 0.7071068}
   m_LocalPosition: {x: 0, y: 0, z: -1.5000002}
-  m_LocalScale: {x: 1, y: 4, z: 0.24999994}
+  m_LocalScale: {x: 1, y: 4, z: 0.25}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1492256449}
@@ -7204,7 +7204,7 @@ MonoBehaviour:
   uncrouchMinClearing: 0.4
   maxSlideSpeed: 25
   maxSlideTime: 0.75
-  upwardsSlideFactor: 0.5
+  upwardsSlideFactor: 0.4
   wallRunSpeed: 10
   wallRunForce: 200
   wallNormalForce: 100
@@ -8706,7 +8706,7 @@ Transform:
   m_GameObject: {fileID: 1908541142}
   m_LocalRotation: {x: -0.7071068, y: -0, z: -0, w: 0.7071068}
   m_LocalPosition: {x: 0, y: 0, z: -1.5000002}
-  m_LocalScale: {x: 1, y: 4, z: 0.24999994}
+  m_LocalScale: {x: 1, y: 4, z: 0.25}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 287720890}
@@ -9666,56 +9666,6 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2029029226}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
---- !u!1 &2036679318
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 2036679319}
-  - component: {fileID: 2036679320}
-  m_Layer: 0
-  m_Name: Level
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &2036679319
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2036679318}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_RootOrder: 7
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &2036679320
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2036679318}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 33a7cf2d42ead5b4b8e84dd7a8f71db3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  levelNumber: 1
-  timeLimit: 120
-  spawn: {fileID: 1979616649}
-  checkpoints: []
-  objective: {fileID: 1373272212}
-  isTutorial: 1
 --- !u!1 &2038682556
 GameObject:
   m_ObjectHideFlags: 0
@@ -9763,7 +9713,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 9
+  m_RootOrder: 8
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2040401307
 GameObject:

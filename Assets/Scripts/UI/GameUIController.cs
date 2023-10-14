@@ -2,13 +2,12 @@ using System.Collections;
 using System.Diagnostics;
 using TMPro;
 using UnityEngine;
-using UnityEngine.Device;
 using UnityEngine.UI;
 
-public class UIController : MonoBehaviour {
+public class GameUIController : MonoBehaviour {
 
     [Header("References")]
-    private LevelManager gameManager;
+    private GameManager gameManager;
 
     [Header("UI References")]
     [SerializeField] private CanvasGroup levelCompleteScreen;
@@ -36,7 +35,7 @@ public class UIController : MonoBehaviour {
 
     private void Start() {
 
-        gameManager = FindObjectOfType<LevelManager>();
+        gameManager = FindObjectOfType<GameManager>();
 
         FadeOutScreen(levelCompleteScreen, 0f);
 
@@ -80,12 +79,13 @@ public class UIController : MonoBehaviour {
         }
     }
 
-    private IEnumerator HandleLevelTimer() {
+    public IEnumerator HandleLevelTimer() {
 
-        Stopwatch stopwatch = new Stopwatch();
-        stopwatch.Start();
+        Stopwatch stopwatch;
 
         while (true) {
+
+            stopwatch = gameManager.GetTimer();
 
             timerText.text = string.Format("{0:00}{1:00}.{2:00}", (stopwatch.Elapsed.Minutes >= 1 ? stopwatch.Elapsed.Minutes + ":" : ""), stopwatch.Elapsed.Seconds, Mathf.Round(stopwatch.Elapsed.Milliseconds / 10f));
             yield return null;
@@ -148,15 +148,11 @@ public class UIController : MonoBehaviour {
         }
 
         screen.alpha = targetOpacity;
+        screenFadeInCoroutine = null;
 
-        if (fadeIn) {
-
-            screenFadeInCoroutine = null;
-
-        } else {
+        if (!fadeIn) {
 
             screen.gameObject.SetActive(false);
-            screenFadeOutCoroutine = null;
 
         }
     }
@@ -194,15 +190,11 @@ public class UIController : MonoBehaviour {
         }
 
         text.alpha = targetOpacity;
+        textFadeInCoroutine = null;
 
-        if (fadeIn) {
-
-            textFadeInCoroutine = null;
-
-        } else {
+        if (!fadeIn) {
 
             text.gameObject.SetActive(false);
-            textFadeOutCoroutine = null;
             textFaded = true;
 
         }

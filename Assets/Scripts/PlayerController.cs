@@ -50,6 +50,7 @@ public class PlayerController : MonoBehaviour {
     private Vector3 movementDirection;
     private MovementState movementState;
     private Coroutine moveSpeedCoroutine;
+    private bool firstMovementDetected;
 
     [Header("Jumping")]
     [SerializeField] private float jumpForce;
@@ -70,6 +71,7 @@ public class PlayerController : MonoBehaviour {
     [SerializeField] private float maxSlideTime;
     [SerializeField] private float upwardsSlideFactor;
     private float slideTimer;
+    private bool slideQueued;
 
     [Header("Wall Running")]
     [SerializeField] private float wallRunSpeed;
@@ -271,6 +273,13 @@ public class PlayerController : MonoBehaviour {
         isGrounded = Physics.CheckSphere(feet.position, groundCheckRadius, environmentMask);
         animator.SetBool("isGrounded", isGrounded);
 
+        if (slideQueued && jumpReady && Input.GetKey(slideKey) && isGrounded && movementState == MovementState.Air) {
+
+            StartSlide();
+            slideQueued = false;
+
+        }
+
         if (isGrounded && lastWall != null)
             lastWall = null;
 
@@ -282,6 +291,13 @@ public class PlayerController : MonoBehaviour {
         HandleMovementState();
 
         if (Input.GetKeyDown(jumpKey) && jumpReady && jumpEnabled && isGrounded) {
+
+            if (movementState == MovementState.Sliding) {
+
+                StopSlide();
+                slideQueued = true;
+
+            }
 
             jumpReady = false;
             Jump();
@@ -344,6 +360,13 @@ public class PlayerController : MonoBehaviour {
 
         movementDirection = transform.forward * verticalInput + transform.right * horizontalInput;
 
+        if (!firstMovementDetected && movementDirection != Vector3.zero) {
+
+            gameManager.StartTimer();
+            firstMovementDetected = true;
+
+        }
+
         if (movementState == MovementState.Swinging && joint != null) {
 
             HandleSwingMovement();
@@ -395,6 +418,7 @@ public class PlayerController : MonoBehaviour {
 
     public void ResetVelocity() {
 
+        desiredMoveSpeed = 0f;
         rb.velocity = Vector3.zero;
 
     }
@@ -648,6 +672,16 @@ public class PlayerController : MonoBehaviour {
             animator.SetBool("isWalking", false);
             animator.SetBool("isSprinting", false);
             movementState = MovementState.Air;
+
+        } else {
+
+            animator.SetBool("isWalking", false);
+            animator.SetBool("isSprinting", false);
+            animator.SetBool("isCrouching", false);
+            animator.SetBool("isSliding", false);
+            animator.SetBool("isWallRunningLeft", false);
+            animator.SetBool("isWallRunningRight", false);
+            movementState = MovementState.None;
 
         }
 

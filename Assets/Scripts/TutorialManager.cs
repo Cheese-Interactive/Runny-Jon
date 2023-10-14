@@ -1,20 +1,7 @@
-using System.Collections;
 using System.Diagnostics;
 using UnityEngine;
 
 public class TutorialManager : GameManager {
-
-    [Header("References")]
-    private PlayerController playerController;
-    private UIController UIController;
-
-    [Header("Checkpoints")]
-    [SerializeField] private Checkpoint[] checkpoints;
-    private int currCheckpoint;
-
-    [Header("Level")]
-    [SerializeField] private Level currentLevel;
-    private Stopwatch stopwatch;
 
     [Header("Animations")]
     [SerializeField] private float fadeOutDuration;
@@ -22,7 +9,9 @@ public class TutorialManager : GameManager {
     private void Start() {
 
         playerController = FindObjectOfType<PlayerController>();
-        UIController = FindObjectOfType<UIController>();
+        UIController = FindObjectOfType<GameUIController>();
+
+        UIController.TypeSubtitleText(checkpoints[currCheckpoint].GetSubtitleText());
 
         Transform firstCheckpoint = checkpoints[currCheckpoint].transform;
         playerController.transform.position = firstCheckpoint.position;
@@ -33,13 +22,25 @@ public class TutorialManager : GameManager {
         for (int i = 2; i < checkpoints.Length; i++)
             checkpoints[i].gameObject.SetActive(false);
 
-        UIController.TypeSubtitleText(checkpoints[currCheckpoint].GetSubtitleText());
+    }
+
+    public override void StartTimer() {
+
+        stopwatch = new Stopwatch();
+        stopwatch.Start();
+        StartCoroutine(UIController.HandleLevelTimer());
+
+    }
+
+    public override Stopwatch GetTimer() {
+
+        return stopwatch;
 
     }
 
     public void CheckpointReached(Checkpoint.CheckpointType checkpointType) {
 
-        if (checkpointType != checkpoints[currCheckpoint + 1].GetCheckpointType())
+        if (currCheckpoint + 1 >= checkpoints.Length || checkpointType != checkpoints[currCheckpoint + 1].GetCheckpointType())
             return;
 
         currCheckpoint++;
@@ -101,21 +102,7 @@ public class TutorialManager : GameManager {
 
     public override void KillPlayer() {
 
-        StartCoroutine(HandlePlayerDeath());
-
-    }
-
-    private IEnumerator HandlePlayerDeath() {
-
-        playerController.DisableAllMovement();
-        yield return StartCoroutine(UIController.ShowDeathScreen());
-        Transform spawn = checkpoints[currCheckpoint].GetPlayerSpawn();
-        playerController.transform.position = spawn.position;
-        playerController.transform.rotation = spawn.rotation;
-        playerController.SetLookRotations(0f, spawn.rotation.eulerAngles.y);
-        playerController.ResetVelocity();
-        playerController.EnableAllMovement();
-        yield return StartCoroutine(UIController.HideDeathScreen());
+        StartCoroutine(RespawnPlayer());
 
     }
 }
