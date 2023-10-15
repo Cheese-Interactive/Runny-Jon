@@ -10,6 +10,7 @@ public class TutorialManager : GameManager {
 
         playerController = FindObjectOfType<PlayerController>();
         UIController = FindObjectOfType<GameUIController>();
+        playerData = FindObjectOfType<PlayerData>();
 
         UIController.TypeSubtitleText(checkpoints[currCheckpoint].GetSubtitleText());
 
@@ -85,6 +86,9 @@ public class TutorialManager : GameManager {
 
     public override void CompleteLevel() {
 
+        UnityEngine.Debug.Log("Completed!");
+        stopwatch.Stop();
+        playerData.OnLevelComplete(currentLevel, (float) stopwatch.Elapsed.TotalSeconds);
 
     }
 

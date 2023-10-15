@@ -1,10 +1,14 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class MenuManager : MonoBehaviour {
+
+    [Header("References")]
+    private PlayerData playerData;
 
     [Header("Levels")]
     [SerializeField] private List<Level> levels;
@@ -15,6 +19,8 @@ public class MenuManager : MonoBehaviour {
     [SerializeField] private LevelButton levelButton;
 
     private void Start() {
+
+        playerData = FindObjectOfType<PlayerData>();
 
         int currLevelIndex = 0;
         Level level;
@@ -30,10 +36,17 @@ public class MenuManager : MonoBehaviour {
 
                 level = levels[currLevelIndex];
                 button = Instantiate(levelButton, row);
+                RectTransform buttonRect = button.GetComponent<RectTransform>();
                 button.level = level;
                 button.levelNameText.text = level.levelName;
-                button.playsText.text = "0";
-                button.recordText.text = "NONE";
+                button.playsText.text = "Plays: " + playerData.GetLevelPlays(level);
+
+                float? record = playerData.GetLevelRecord(level);
+                float seconds = 0f;
+                if (record != null)
+                    seconds = Mathf.Round((float) record % 60 * 100f) / 100f;
+                button.recordText.text = "Record: " + (record == null ? "None" : (record > 60f ? string.Format("{0:0}:{1:00}.{2:00}", (int) record / 60, (int) seconds, seconds % 1 * 100) : string.Format("{0:00}.{1:00}", (int) seconds, seconds % 1 * 100)));
+
                 button.image.sprite = level.icon;
                 currLevelIndex++;
 
@@ -41,8 +54,9 @@ public class MenuManager : MonoBehaviour {
         }
     }
 
-    private void LoadLevel() {
+    public List<Level> GetLevels() {
 
+        return levels;
 
     }
 }

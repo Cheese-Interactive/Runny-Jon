@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Level1
   m_EditorClassIdentifier: 
   levelName: Level 1
-  levelNumber: 1
+  ID: 1
   scene: {fileID: 102900000, guid: 5722c9ddde83a3d45ae2e3833725fa59, type: 3}
   icon: {fileID: 0}
   timeLimit: 0

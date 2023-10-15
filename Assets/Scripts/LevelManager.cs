@@ -7,11 +7,11 @@ public class LevelManager : GameManager {
 
         playerController = FindObjectOfType<PlayerController>();
         UIController = FindObjectOfType<GameUIController>();
+        playerData = FindObjectOfType<PlayerData>();
 
         Transform firstCheckpoint = checkpoints[currCheckpoint].transform;
         playerController.transform.position = firstCheckpoint.position;
         playerController.transform.rotation = firstCheckpoint.rotation;
-        UnityEngine.Debug.Log(playerController.transform.rotation.eulerAngles);
         playerController.SetLookRotations(0f, firstCheckpoint.rotation.eulerAngles.y);
         playerController.ResetVelocity();
 
@@ -36,6 +36,8 @@ public class LevelManager : GameManager {
 
     public override void CompleteLevel() {
 
+        stopwatch.Stop();
+        playerData.OnLevelComplete(currentLevel, (float) stopwatch.Elapsed.TotalSeconds);
         playerController.DisableAllMovement();
         UIController.ShowLevelCompleteScreen();
         Cursor.lockState = CursorLockMode.None;

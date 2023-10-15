@@ -22,7 +22,7 @@ public class LevelButton : MonoBehaviour {
 
     private void LoadLevel() {
 
-        SceneManager.LoadScene(level.scene.name);
+        SceneManager.LoadSceneAsync(level.scene.name);
 
     }
 }

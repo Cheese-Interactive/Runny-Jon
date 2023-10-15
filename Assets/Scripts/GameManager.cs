@@ -8,6 +8,7 @@ public abstract class GameManager : MonoBehaviour {
     [SerializeField] protected Checkpoint[] checkpoints;
     protected PlayerController playerController;
     protected GameUIController UIController;
+    protected PlayerData playerData;
 
     [Header("Level")]
     [SerializeField] protected Level currentLevel;

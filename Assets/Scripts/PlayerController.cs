@@ -1,7 +1,6 @@
 using System.Collections;
 using TMPro;
 using UnityEngine;
-using UnityEngine.Device;
 using UnityEngine.UI;
 
 public class PlayerController : MonoBehaviour {
