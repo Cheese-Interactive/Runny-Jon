@@ -30,6 +30,7 @@ public abstract class GameManager : MonoBehaviour {
     protected IEnumerator RespawnPlayer() {
 
         playerController.DisableAllMovement();
+        playerController.DisableLook();
         yield return StartCoroutine(UIController.ShowDeathScreen());
         Transform spawn = checkpoints[currCheckpoint].GetPlayerSpawn();
         playerController.transform.position = spawn.position;
@@ -37,6 +38,7 @@ public abstract class GameManager : MonoBehaviour {
         playerController.SetLookRotations(0f, spawn.rotation.eulerAngles.y);
         playerController.ResetVelocity();
         playerController.EnableAllMovement();
+        playerController.EnableLook();
         yield return StartCoroutine(UIController.HideDeathScreen());
 
     }

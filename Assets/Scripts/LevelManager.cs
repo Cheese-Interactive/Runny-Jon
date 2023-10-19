@@ -39,6 +39,7 @@ public class LevelManager : GameManager {
         stopwatch.Stop();
         playerData.OnLevelComplete(currentLevel, (float) stopwatch.Elapsed.TotalSeconds);
         playerController.DisableAllMovement();
+        playerController.DisableLook();
         UIController.ShowLevelCompleteScreen();
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
