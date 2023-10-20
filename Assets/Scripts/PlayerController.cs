@@ -13,6 +13,7 @@ public class PlayerController : MonoBehaviour {
     [SerializeField] private Image crosshair;
     [SerializeField] private Transform[] obstacleCheckers;
     private GameManager gameManager;
+    private GameUIController gameUIController;
     private Animator animator;
     private Rigidbody rb;
     private LineRenderer lineRenderer;
@@ -34,13 +35,22 @@ public class PlayerController : MonoBehaviour {
     [SerializeField] private float sprintSpeed;
     [SerializeField] private float speedIncreaseMultiplier;
     [SerializeField] private float slopeIncreaseMultiplier;
-    [SerializeField] private bool walkEnabled;
-    [SerializeField] private bool sprintEnabled;
-    [SerializeField] private bool jumpEnabled;
-    [SerializeField] private bool crouchEnabled;
-    [SerializeField] private bool slideEnabled;
-    [SerializeField] private bool wallRunEnabled;
-    [SerializeField] private bool swingEnabled;
+    private bool levelWalkEnabled;
+    private bool levelSprintEnabled;
+    private bool levelJumpEnabled;
+    private bool levelCrouchEnabled;
+    private bool levelSlideEnabled;
+    private bool levelWallRunEnabled;
+    private bool levelSwingEnabled;
+    private bool levelZiplineEnabled;
+    private bool walkEnabled;
+    private bool sprintEnabled;
+    private bool jumpEnabled;
+    private bool crouchEnabled;
+    private bool slideEnabled;
+    private bool wallRunEnabled;
+    private bool swingEnabled;
+    private bool ziplineEnabled;
     private float moveSpeed;
     private float desiredMoveSpeed;
     private float lastDesiredMoveSpeed;
@@ -157,8 +167,7 @@ public class PlayerController : MonoBehaviour {
     [Header("Ziplining")]
     [SerializeField] private float ziplineCheckOffset;
     [SerializeField] private float ziplineCheckRadius;
-    [SerializeField] private string ziplineTag;
-    private bool zipliningEnabled;
+    [SerializeField] private LayerMask ziplineMask;
     private Zipline currZipline;
 
     [Header("Headbob")]
@@ -216,6 +225,7 @@ public class PlayerController : MonoBehaviour {
     private void Awake() {
 
         gameManager = FindObjectOfType<GameManager>();
+        gameUIController = FindObjectOfType<GameUIController>();
         animator = GetComponent<Animator>();
         rb = GetComponent<Rigidbody>();
         lineRenderer = GetComponent<LineRenderer>();
@@ -242,6 +252,16 @@ public class PlayerController : MonoBehaviour {
         predictionObj.gameObject.SetActive(false);
 
         gravityCounterForce = initialGravityCounterForce;
+
+        Level level = gameManager.GetCurrentLevel();
+        walkEnabled = levelWalkEnabled = level.walkEnabled;
+        sprintEnabled = levelSprintEnabled = level.sprintEnabled;
+        jumpEnabled = levelJumpEnabled = level.jumpEnabled;
+        crouchEnabled = levelCrouchEnabled = level.crouchEnabled;
+        slideEnabled = levelSlideEnabled = level.slideEnabled;
+        wallRunEnabled = levelWallRunEnabled = level.wallRunEnabled;
+        swingEnabled = levelSwingEnabled = level.swingEnabled;
+        ziplineEnabled = levelZiplineEnabled = level.ziplineEnabled;
 
     }
 
@@ -294,13 +314,37 @@ public class PlayerController : MonoBehaviour {
 
         }
 
+        HandleMovementState();
         HandleHeadbob();
-
-        if (movementState == MovementState.Ziplining)
-            return;
 
         isGrounded = Physics.CheckSphere(feet.position, groundCheckRadius, environmentMask);
         animator.SetBool("isGrounded", isGrounded);
+
+        Collider[] colliders = Physics.OverlapSphere(transform.position, ziplineCheckRadius, ziplineMask);
+
+        if (colliders.Length > 0 && movementState != MovementState.Ziplining) {
+
+            if (ziplineEnabled) {
+
+                if (Input.GetKeyDown(interactKey)) {
+
+                    currZipline = colliders[0].GetComponent<Zipline>();
+                    movementState = MovementState.Ziplining;
+                    currZipline.StartZipline();
+
+                }
+
+                gameUIController.FadeInInteractIcon();
+
+            }
+        } else {
+
+            gameUIController.FadeOutInteractIcon();
+
+        }
+
+        if (movementState == MovementState.Ziplining)
+            return;
 
         if (slideQueued && jumpReady && Input.GetKey(slideKey) && isGrounded && movementState == MovementState.Air) {
 
@@ -317,7 +361,6 @@ public class PlayerController : MonoBehaviour {
 
         ControlSpeed();
         speedText.text = "Speed: " + (Mathf.Round(rb.velocity.magnitude * 100f) / 100f);
-        HandleMovementState();
 
         if (uncrouchQueued) {
 
@@ -358,22 +401,6 @@ public class PlayerController : MonoBehaviour {
             StopSwing();
 
         CheckSwingPoints();
-
-        if (Input.GetKeyDown(interactKey)) {
-
-            RaycastHit[] hits = Physics.SphereCastAll(transform.position + new Vector3(0f, ziplineCheckOffset, 0f), ziplineCheckRadius, Vector3.up);
-
-            foreach (RaycastHit hit in hits) {
-
-                if (hit.collider.CompareTag(ziplineTag)) {
-
-                    movementState = MovementState.Ziplining;
-                    currZipline = hit.collider.GetComponent<Zipline>();
-                    currZipline.StartZipline();
-
-                }
-            }
-        }
 
         if (isGrounded)
             rb.drag = groundDrag;
@@ -418,11 +445,11 @@ public class PlayerController : MonoBehaviour {
 
             rb.AddForce(Vector3.Cross(slopeHit.normal, Vector3.Cross(slopeHit.normal, Vector3.up)) * 500f, ForceMode.Acceleration);
 
-        } else if (isGrounded) {
+        } else if (isGrounded && movementState != MovementState.None) {
 
             rb.AddForce(movementDirection.normalized * moveSpeed * 10f, ForceMode.Force);
 
-        } else {
+        } else if (movementState != MovementState.None) {
 
             rb.AddForce(movementDirection.normalized * moveSpeed * airMultiplier * 10f, ForceMode.Force);
 
@@ -446,148 +473,6 @@ public class PlayerController : MonoBehaviour {
             gameManager.KillPlayer();
 
         }
-    }
-
-    public void ResetVelocity() {
-
-        desiredMoveSpeed = 0f;
-        rb.velocity = Vector3.zero;
-
-    }
-
-    public void SetLookRotations(float xRotation, float yRotation) {
-
-        this.xRotation = xRotation;
-        this.yRotation = yRotation;
-
-    }
-
-    public void EnableAllMovement() {
-
-        walkEnabled = true;
-        sprintEnabled = true;
-        jumpEnabled = true;
-        crouchEnabled = true;
-        slideEnabled = true;
-        wallRunEnabled = true;
-        swingEnabled = true;
-
-    }
-
-    public void DisableAllMovement() {
-
-        walkEnabled = false;
-        sprintEnabled = false;
-        jumpEnabled = false;
-        crouchEnabled = false;
-        slideEnabled = false;
-        wallRunEnabled = false;
-        swingEnabled = false;
-        movementState = MovementState.None;
-        animator.SetBool("isWalking", false);
-        animator.SetBool("isSprinting", false);
-        animator.SetBool("isCrouching", false);
-        animator.SetBool("isSliding", false);
-        animator.SetBool("isWallRunningLeft", false);
-        animator.SetBool("isWallRunningRight", false);
-        animator.SetBool("isGrounded", true);
-
-    }
-
-    public void EnableLook() {
-
-        lookEnabled = true;
-
-    }
-
-    public void DisableLook() {
-
-        lookEnabled = false;
-
-    }
-
-    public void EnableWalk() {
-
-        walkEnabled = true;
-
-    }
-
-    public void DisableWalk() {
-
-        walkEnabled = false;
-
-    }
-
-    public void EnableSprint() {
-
-        sprintEnabled = true;
-
-    }
-
-    public void DisableSprint() {
-
-        sprintEnabled = false;
-
-    }
-
-    public void EnableJump() {
-
-        jumpEnabled = true;
-
-    }
-
-    public void DisableJump() {
-
-        jumpEnabled = false;
-
-    }
-
-    private void EnableCrouch() {
-
-        crouchEnabled = true;
-
-    }
-
-    private void DisableCrouch() {
-
-        crouchEnabled = false;
-
-    }
-
-    public void EnableSlide() {
-
-        slideEnabled = true;
-
-    }
-
-    public void DisableSlide() {
-
-        slideEnabled = false;
-
-    }
-
-    public void EnableWallRun() {
-
-        wallRunEnabled = true;
-
-    }
-
-    public void DisableWallRun() {
-
-        wallRunEnabled = false;
-
-    }
-
-    public void EnableSwing() {
-
-        swingEnabled = true;
-
-    }
-
-    public void DisableSwing() {
-
-        swingEnabled = false;
-
     }
 
     private void StartLerpCameraFOV(float targetFOV) {
@@ -644,7 +529,7 @@ public class PlayerController : MonoBehaviour {
 
     private void HandleMovementState() {
 
-        if (movementState == MovementState.Ziplining && zipliningEnabled) {
+        if (movementState == MovementState.Ziplining && ziplineEnabled) {
 
             animator.SetBool("isZiplining", true);
             animator.SetBool("isWalking", false);
@@ -695,6 +580,7 @@ public class PlayerController : MonoBehaviour {
             animator.SetBool("isSliding", false);
             animator.SetBool("isWallRunningLeft", false);
             animator.SetBool("isWallRunningRight", false);
+            animator.SetBool("isZiplining", false);
             movementState = MovementState.None;
             desiredMoveSpeed = walkSpeed;
 
@@ -706,6 +592,7 @@ public class PlayerController : MonoBehaviour {
             animator.SetBool("isSliding", false);
             animator.SetBool("isWallRunningLeft", false);
             animator.SetBool("isWallRunningRight", false);
+            animator.SetBool("isZiplining", false);
             movementState = MovementState.Sprinting;
             desiredMoveSpeed = sprintSpeed;
 
@@ -717,6 +604,7 @@ public class PlayerController : MonoBehaviour {
             animator.SetBool("isSliding", false);
             animator.SetBool("isWallRunningLeft", false);
             animator.SetBool("isWallRunningRight", false);
+            animator.SetBool("isZiplining", false);
             movementState = MovementState.Walking;
             desiredMoveSpeed = walkSpeed;
 
@@ -728,6 +616,7 @@ public class PlayerController : MonoBehaviour {
             animator.SetBool("isSliding", false);
             animator.SetBool("isWallRunningLeft", false);
             animator.SetBool("isWallRunningRight", false);
+            animator.SetBool("isZiplining", false);
             movementState = MovementState.Air;
 
         } else {
@@ -738,6 +627,7 @@ public class PlayerController : MonoBehaviour {
             animator.SetBool("isSliding", false);
             animator.SetBool("isWallRunningLeft", false);
             animator.SetBool("isWallRunningRight", false);
+            animator.SetBool("isZiplining", false);
             movementState = MovementState.None;
 
         }
@@ -1348,6 +1238,194 @@ public class PlayerController : MonoBehaviour {
     public float GetPlayerHeight() {
 
         return startHeight;
+
+    }
+
+    public void ResetVelocity() {
+
+        desiredMoveSpeed = 0f;
+        rb.velocity = Vector3.zero;
+
+    }
+
+    public void SetLookRotations(float xRotation, float yRotation) {
+
+        this.xRotation = xRotation;
+        this.yRotation = yRotation;
+
+    }
+
+    public void EnableAllMovement() {
+
+        if (levelWalkEnabled)
+            walkEnabled = true;
+
+        if (levelSprintEnabled)
+            sprintEnabled = true;
+
+        if (levelJumpEnabled)
+            jumpEnabled = true;
+
+        if (levelCrouchEnabled)
+            crouchEnabled = true;
+
+        if (levelSlideEnabled)
+            slideEnabled = true;
+
+        if (levelWallRunEnabled)
+            wallRunEnabled = true;
+
+        if (levelSwingEnabled)
+            swingEnabled = true;
+
+        if (levelZiplineEnabled)
+            ziplineEnabled = true;
+
+    }
+
+    public void DisableAllMovement() {
+
+        if (levelWalkEnabled)
+            walkEnabled = false;
+
+        if (levelSprintEnabled)
+            sprintEnabled = false;
+
+        if (levelJumpEnabled)
+            jumpEnabled = false;
+
+        if (levelCrouchEnabled)
+            crouchEnabled = false;
+
+        if (levelSlideEnabled)
+            slideEnabled = false;
+
+        if (levelWallRunEnabled)
+            wallRunEnabled = false;
+
+        if (levelSwingEnabled)
+            swingEnabled = false;
+
+        if (levelZiplineEnabled)
+            ziplineEnabled = false;
+
+        movementState = MovementState.None;
+        animator.SetBool("isWalking", false);
+        animator.SetBool("isSprinting", false);
+        animator.SetBool("isCrouching", false);
+        animator.SetBool("isSliding", false);
+        animator.SetBool("isWallRunningLeft", false);
+        animator.SetBool("isWallRunningRight", false);
+        animator.SetBool("isZiplining", false);
+        animator.SetBool("isGrounded", true);
+
+    }
+
+    public void EnableLook() {
+
+        lookEnabled = true;
+
+    }
+
+    public void DisableLook() {
+
+        lookEnabled = false;
+
+    }
+
+    public void EnableWalk() {
+
+        walkEnabled = true;
+
+    }
+
+    public void DisableWalk() {
+
+        walkEnabled = false;
+
+    }
+
+    public void EnableSprint() {
+
+        sprintEnabled = true;
+
+    }
+
+    public void DisableSprint() {
+
+        sprintEnabled = false;
+
+    }
+
+    public void EnableJump() {
+
+        jumpEnabled = true;
+
+    }
+
+    public void DisableJump() {
+
+        jumpEnabled = false;
+
+    }
+
+    private void EnableCrouch() {
+
+        crouchEnabled = true;
+
+    }
+
+    private void DisableCrouch() {
+
+        crouchEnabled = false;
+
+    }
+
+    public void EnableSlide() {
+
+        slideEnabled = true;
+
+    }
+
+    public void DisableSlide() {
+
+        slideEnabled = false;
+
+    }
+
+    public void EnableWallRun() {
+
+        wallRunEnabled = true;
+
+    }
+
+    public void DisableWallRun() {
+
+        wallRunEnabled = false;
+
+    }
+
+    public void EnableSwing() {
+
+        swingEnabled = true;
+
+    }
+
+    public void DisableSwing() {
+
+        swingEnabled = false;
+
+    }
+
+    public void EnableZipline() {
+
+        ziplineEnabled = true;
+
+    }
+
+    public void DisableZipline() {
+
+        ziplineEnabled = false;
 
     }
 }

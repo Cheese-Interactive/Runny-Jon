@@ -12,4 +12,14 @@ public class Level : ScriptableObject {
     public Transform objective;
     public bool isTutorial;
 
+    [Header("Movement")]
+    public bool walkEnabled;
+    public bool sprintEnabled;
+    public bool jumpEnabled;
+    public bool crouchEnabled;
+    public bool slideEnabled;
+    public bool wallRunEnabled;
+    public bool swingEnabled;
+    public bool ziplineEnabled;
+
 }

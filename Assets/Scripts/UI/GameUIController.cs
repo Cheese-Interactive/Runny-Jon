@@ -16,6 +16,7 @@ public class GameUIController : MonoBehaviour {
     [SerializeField] private TMP_Text timeText;
     [SerializeField] private CanvasGroup deathScreen;
     [SerializeField] private Button nextLevelButton;
+    [SerializeField] private CanvasGroup interactIcon;
 
     [Header("Timer")]
     [SerializeField] private TMP_Text timerText;
@@ -24,13 +25,13 @@ public class GameUIController : MonoBehaviour {
     [Header("Animations")]
     [SerializeField] private float subtitleTypeDuration;
     [SerializeField] private float subtitleFadeDuration;
+    [SerializeField] private float interactIconFadeDuration;
     [SerializeField] private float deathScreenFadeDuration;
     [SerializeField] private float levelCompleteFadeInDuration;
     private Coroutine typeCoroutine;
-    private Coroutine screenFadeInCoroutine;
-    private Coroutine screenFadeOutCoroutine;
-    private Coroutine textFadeInCoroutine;
-    private Coroutine textFadeOutCoroutine;
+    private Coroutine screenFadeCoroutine;
+    private Coroutine textFadeCoroutine;
+    private Coroutine interactIconFadeCoroutine;
     private bool textFaded;
 
     private void Start() {
@@ -41,6 +42,7 @@ public class GameUIController : MonoBehaviour {
 
         deathScreen.alpha = 0f;
         deathScreen.gameObject.SetActive(false);
+        interactIcon.gameObject.SetActive(false);
 
     }
 
@@ -93,6 +95,48 @@ public class GameUIController : MonoBehaviour {
         }
     }
 
+    public void FadeInInteractIcon() {
+
+        if (interactIconFadeCoroutine != null)
+            StopCoroutine(interactIconFadeCoroutine);
+
+        interactIconFadeCoroutine = StartCoroutine(FadeInteractIcon(1f, interactIconFadeDuration, true));
+
+    }
+
+    public void FadeOutInteractIcon() {
+
+        if (interactIconFadeCoroutine != null)
+            StopCoroutine(interactIconFadeCoroutine);
+
+        interactIconFadeCoroutine = StartCoroutine(FadeInteractIcon(0f, interactIconFadeDuration, false));
+
+    }
+
+    private IEnumerator FadeInteractIcon(float targetOpacity, float duration, bool fadeIn) {
+
+        float currentTime = 0f;
+        float startOpacity = interactIcon.alpha;
+        interactIcon.gameObject.SetActive(true);
+
+        while (currentTime < duration) {
+
+            currentTime += Time.deltaTime;
+            interactIcon.alpha = Mathf.Lerp(startOpacity, targetOpacity, currentTime / duration);
+            yield return null;
+
+        }
+
+        interactIcon.alpha = targetOpacity;
+        interactIconFadeCoroutine = null;
+
+        if (!fadeIn) {
+
+            interactIcon.gameObject.SetActive(false);
+
+        }
+    }
+
     public IEnumerator ShowDeathScreen() {
 
         yield return StartCoroutine(FadeScreen(deathScreen, 1f, deathScreenFadeDuration, true));
@@ -117,19 +161,19 @@ public class GameUIController : MonoBehaviour {
 
     private void FadeInScreen(CanvasGroup screen, float targetOpacity, float duration) {
 
-        if (screenFadeInCoroutine != null)
-            StopCoroutine(screenFadeInCoroutine);
+        if (screenFadeCoroutine != null)
+            StopCoroutine(screenFadeCoroutine);
 
-        screenFadeInCoroutine = StartCoroutine(FadeScreen(screen, targetOpacity, duration, true));
+        screenFadeCoroutine = StartCoroutine(FadeScreen(screen, targetOpacity, duration, true));
 
     }
 
     private void FadeOutScreen(CanvasGroup screen, float duration) {
 
-        if (screenFadeOutCoroutine != null)
-            StopCoroutine(screenFadeOutCoroutine);
+        if (screenFadeCoroutine != null)
+            StopCoroutine(screenFadeCoroutine);
 
-        screenFadeOutCoroutine = StartCoroutine(FadeScreen(screen, 0f, duration, false));
+        screenFadeCoroutine = StartCoroutine(FadeScreen(screen, 0f, duration, false));
 
     }
 
@@ -148,7 +192,7 @@ public class GameUIController : MonoBehaviour {
         }
 
         screen.alpha = targetOpacity;
-        screenFadeInCoroutine = null;
+        screenFadeCoroutine = null;
 
         if (!fadeIn) {
 
@@ -159,19 +203,19 @@ public class GameUIController : MonoBehaviour {
 
     private void FadeInText(TMP_Text text, float targetOpacity, float duration) {
 
-        if (textFadeInCoroutine != null)
-            StopCoroutine(textFadeInCoroutine);
+        if (textFadeCoroutine != null)
+            StopCoroutine(textFadeCoroutine);
 
-        textFadeInCoroutine = StartCoroutine(FadeText(text, targetOpacity, duration, true));
+        textFadeCoroutine = StartCoroutine(FadeText(text, targetOpacity, duration, true));
 
     }
 
     private void FadeOutText(TMP_Text text, float duration) {
 
-        if (textFadeOutCoroutine != null)
-            StopCoroutine(textFadeOutCoroutine);
+        if (textFadeCoroutine != null)
+            StopCoroutine(textFadeCoroutine);
 
-        textFadeOutCoroutine = StartCoroutine(FadeText(text, 0f, duration, false));
+        textFadeCoroutine = StartCoroutine(FadeText(text, 0f, duration, false));
 
     }
 
@@ -190,7 +234,7 @@ public class GameUIController : MonoBehaviour {
         }
 
         text.alpha = targetOpacity;
-        textFadeInCoroutine = null;
+        textFadeCoroutine = null;
 
         if (!fadeIn) {
 

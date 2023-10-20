@@ -5,7 +5,6 @@ TagManager:
   serializedVersion: 2
   tags:
   - DeathZone
-  - Zipline
   layers:
   - Default
   - TransparentFX
@@ -17,7 +16,7 @@ TagManager:
   - Wall
   - Swingable
   - Player
-  - 
+  - Zipline
   - 
   - 
   - 
