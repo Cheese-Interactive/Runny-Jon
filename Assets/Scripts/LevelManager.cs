@@ -18,6 +18,8 @@ public class LevelManager : GameManager {
         for (int i = 2; i < checkpoints.Length; i++)
             checkpoints[i].gameObject.SetActive(false);
 
+        stopwatch = new Stopwatch();
+
     }
 
     public override void StartTimer() {
@@ -25,6 +27,18 @@ public class LevelManager : GameManager {
         stopwatch = new Stopwatch();
         stopwatch.Start();
         StartCoroutine(UIController.HandleLevelTimer());
+
+    }
+
+    public override void PauseTimer() {
+
+        stopwatch.Stop();
+
+    }
+
+    public override void ResumeTimer() {
+
+        stopwatch.Start();
 
     }
 

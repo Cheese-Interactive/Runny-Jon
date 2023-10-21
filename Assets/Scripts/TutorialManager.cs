@@ -23,13 +23,26 @@ public class TutorialManager : GameManager {
         for (int i = 2; i < checkpoints.Length; i++)
             checkpoints[i].gameObject.SetActive(false);
 
+        stopwatch = new Stopwatch();
+
     }
 
     public override void StartTimer() {
 
-        stopwatch = new Stopwatch();
         stopwatch.Start();
         StartCoroutine(UIController.HandleLevelTimer());
+
+    }
+
+    public override void PauseTimer() {
+
+        stopwatch.Stop();
+
+    }
+
+    public override void ResumeTimer() {
+
+        stopwatch.Start();
 
     }
 
@@ -86,7 +99,6 @@ public class TutorialManager : GameManager {
 
     public override void CompleteLevel() {
 
-        UnityEngine.Debug.Log("Completed!");
         stopwatch.Stop();
         playerData.OnLevelComplete(currentLevel, (float) stopwatch.Elapsed.TotalSeconds);
 

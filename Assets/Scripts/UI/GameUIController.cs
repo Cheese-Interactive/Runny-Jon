@@ -14,6 +14,7 @@ public class GameUIController : MonoBehaviour {
     [SerializeField] private TMP_Text subtitleText;
     [SerializeField] private TMP_Text timeLimitText;
     [SerializeField] private TMP_Text timeText;
+    [SerializeField] private CanvasGroup pauseMenu;
     [SerializeField] private CanvasGroup deathScreen;
     [SerializeField] private Button nextLevelButton;
     [SerializeField] private CanvasGroup interactIcon;
@@ -26,6 +27,7 @@ public class GameUIController : MonoBehaviour {
     [SerializeField] private float subtitleTypeDuration;
     [SerializeField] private float subtitleFadeDuration;
     [SerializeField] private float interactIconFadeDuration;
+    [SerializeField] private float pauseMenuFadeDuration;
     [SerializeField] private float deathScreenFadeDuration;
     [SerializeField] private float levelCompleteFadeInDuration;
     private Coroutine typeCoroutine;
@@ -38,9 +40,14 @@ public class GameUIController : MonoBehaviour {
 
         gameManager = FindObjectOfType<GameManager>();
 
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
+
         FadeOutScreen(levelCompleteScreen, 0f);
 
+        pauseMenu.alpha = 0f;
         deathScreen.alpha = 0f;
+        pauseMenu.gameObject.SetActive(false);
         deathScreen.gameObject.SetActive(false);
         interactIcon.gameObject.SetActive(false);
 
@@ -93,6 +100,28 @@ public class GameUIController : MonoBehaviour {
             yield return null;
 
         }
+    }
+
+    public void PauseGame() {
+
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
+        timerText.gameObject.SetActive(false);
+        subtitleText.gameObject.SetActive(false);
+        gameManager.PauseTimer();
+        FadeInScreen(pauseMenu, 1f, pauseMenuFadeDuration);
+
+    }
+
+    public void ResumeGame() {
+
+        FadeOutScreen(pauseMenu, pauseMenuFadeDuration);
+        gameManager.ResumeTimer();
+        timerText.gameObject.SetActive(true);
+        subtitleText.gameObject.SetActive(true);
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
+
     }
 
     public void FadeInInteractIcon() {

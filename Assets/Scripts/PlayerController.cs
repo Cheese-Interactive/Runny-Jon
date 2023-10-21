@@ -170,6 +170,9 @@ public class PlayerController : MonoBehaviour {
     [SerializeField] private LayerMask ziplineMask;
     private Zipline currZipline;
 
+    [Header("Pausing")]
+    private bool gamePaused;
+
     [Header("Headbob")]
     [SerializeField] private float walkBobSpeed;
     [SerializeField] private float walkBobAmount;
@@ -209,6 +212,7 @@ public class PlayerController : MonoBehaviour {
     [SerializeField] private KeyCode cableExtendKey;
     [SerializeField] private KeyCode interactKey;
     [SerializeField] private KeyCode resetKey;
+    [SerializeField] private KeyCode pauseKey;
 
     public enum MovementState {
 
@@ -233,9 +237,6 @@ public class PlayerController : MonoBehaviour {
 
         rb.freezeRotation = true;
         spring.SetTarget(0);
-
-        Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;
 
         movementState = MovementState.None;
 
@@ -299,6 +300,18 @@ public class PlayerController : MonoBehaviour {
 
         }
 
+        isGrounded = Physics.CheckSphere(feet.position, groundCheckRadius, environmentMask);
+        animator.SetBool("isGrounded", isGrounded);
+
+        if (isGrounded && lastWall != null)
+            lastWall = null;
+
+        horizontalInput = Input.GetAxisRaw("Horizontal");
+        verticalInput = Input.GetAxisRaw("Vertical");
+
+        ControlSpeed();
+        speedText.text = "Speed: " + (Mathf.Round(rb.velocity.magnitude * 100f) / 100f);
+
         if (Input.GetKeyDown(jumpKey) && jumpReady && jumpEnabled && (isGrounded || movementState == MovementState.Ziplining)) {
 
             if (movementState == MovementState.Sliding) {
@@ -317,51 +330,6 @@ public class PlayerController : MonoBehaviour {
         HandleMovementState();
         HandleHeadbob();
 
-        isGrounded = Physics.CheckSphere(feet.position, groundCheckRadius, environmentMask);
-        animator.SetBool("isGrounded", isGrounded);
-
-        Collider[] colliders = Physics.OverlapSphere(transform.position, ziplineCheckRadius, ziplineMask);
-
-        if (colliders.Length > 0 && movementState != MovementState.Ziplining) {
-
-            if (ziplineEnabled) {
-
-                if (Input.GetKeyDown(interactKey)) {
-
-                    currZipline = colliders[0].GetComponent<Zipline>();
-                    movementState = MovementState.Ziplining;
-                    currZipline.StartZipline();
-
-                }
-
-                gameUIController.FadeInInteractIcon();
-
-            }
-        } else {
-
-            gameUIController.FadeOutInteractIcon();
-
-        }
-
-        if (movementState == MovementState.Ziplining)
-            return;
-
-        if (slideQueued && jumpReady && Input.GetKey(slideKey) && isGrounded && movementState == MovementState.Air) {
-
-            StartSlide();
-            slideQueued = false;
-
-        }
-
-        if (isGrounded && lastWall != null)
-            lastWall = null;
-
-        horizontalInput = Input.GetAxisRaw("Horizontal");
-        verticalInput = Input.GetAxisRaw("Vertical");
-
-        ControlSpeed();
-        speedText.text = "Speed: " + (Mathf.Round(rb.velocity.magnitude * 100f) / 100f);
-
         if (uncrouchQueued) {
 
             foreach (Transform checker in obstacleCheckers) {
@@ -373,6 +341,13 @@ public class PlayerController : MonoBehaviour {
 
                 }
             }
+        }
+
+        if (slideQueued && jumpReady && Input.GetKey(slideKey) && isGrounded && movementState == MovementState.Air) {
+
+            StartSlide();
+            slideQueued = false;
+
         }
 
         if (Input.GetKeyDown(slideKey) && movementState != MovementState.Crouching && movementState != MovementState.Swinging && movementState != MovementState.WallRunning) {
@@ -402,6 +377,29 @@ public class PlayerController : MonoBehaviour {
 
         CheckSwingPoints();
 
+        Collider[] colliders = Physics.OverlapSphere(transform.position, ziplineCheckRadius, ziplineMask);
+
+        if (colliders.Length > 0 && movementState != MovementState.Ziplining) {
+
+            if (ziplineEnabled) {
+
+                if (Input.GetKeyDown(interactKey)) {
+
+                    currZipline = colliders[0].GetComponent<Zipline>();
+                    movementState = MovementState.Ziplining;
+                    currZipline.StartZipline();
+
+                }
+
+                gameUIController.FadeInInteractIcon();
+
+            }
+        } else {
+
+            gameUIController.FadeOutInteractIcon();
+
+        }
+
         if (isGrounded)
             rb.drag = groundDrag;
         else
@@ -410,6 +408,25 @@ public class PlayerController : MonoBehaviour {
         if (Input.GetKeyDown(resetKey))
             gameManager.KillPlayer();
 
+        if (Input.GetKeyDown(pauseKey)) {
+
+            if (gamePaused) {
+
+                gameUIController.ResumeGame();
+                EnableAllMovement();
+                EnableLook();
+
+            } else {
+
+                gameUIController.PauseGame();
+                DisableAllMovement();
+                DisableLook();
+
+            }
+
+            gamePaused = !gamePaused;
+
+        }
     }
 
     private void FixedUpdate() {
@@ -1156,6 +1173,7 @@ public class PlayerController : MonoBehaviour {
 
     public void ResetZipline() {
 
+        rb.AddForce(transform.forward);
         currZipline = null;
         movementState = MovementState.None;
 

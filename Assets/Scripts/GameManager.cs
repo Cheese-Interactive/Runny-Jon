@@ -17,6 +17,10 @@ public abstract class GameManager : MonoBehaviour {
 
     public abstract void StartTimer();
 
+    public abstract void PauseTimer();
+
+    public abstract void ResumeTimer();
+
     public abstract Stopwatch GetTimer();
 
     public abstract void CompleteLevel();
