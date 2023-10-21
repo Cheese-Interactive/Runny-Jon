@@ -167,6 +167,7 @@ public class PlayerController : MonoBehaviour {
     [Header("Ziplining")]
     [SerializeField] private float ziplineCheckOffset;
     [SerializeField] private float ziplineCheckRadius;
+    [SerializeField] private float ziplineExitForce;
     [SerializeField] private LayerMask ziplineMask;
     private Zipline currZipline;
 
@@ -1173,7 +1174,7 @@ public class PlayerController : MonoBehaviour {
 
     public void ResetZipline() {
 
-        rb.AddForce(transform.forward);
+        rb.AddForce(transform.forward * ziplineExitForce, ForceMode.Force);
         currZipline = null;
         movementState = MovementState.None;
 
