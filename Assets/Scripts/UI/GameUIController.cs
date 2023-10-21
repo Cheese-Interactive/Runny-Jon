@@ -8,6 +8,8 @@ public class GameUIController : MonoBehaviour {
 
     [Header("References")]
     private GameManager gameManager;
+    private Vector3 startTimerTextPos;
+    private Transform startTimerTextParent;
 
     [Header("UI References")]
     [SerializeField] private CanvasGroup levelCompleteScreen;
@@ -15,6 +17,7 @@ public class GameUIController : MonoBehaviour {
     [SerializeField] private TMP_Text timeLimitText;
     [SerializeField] private TMP_Text timeText;
     [SerializeField] private CanvasGroup pauseMenu;
+    [SerializeField] private Transform pauseTimerTextPos;
     [SerializeField] private CanvasGroup deathScreen;
     [SerializeField] private Button nextLevelButton;
     [SerializeField] private CanvasGroup interactIcon;
@@ -44,6 +47,9 @@ public class GameUIController : MonoBehaviour {
         Cursor.visible = false;
 
         FadeOutScreen(levelCompleteScreen, 0f);
+
+        startTimerTextPos = timerText.rectTransform.localPosition;
+        startTimerTextParent = timerText.rectTransform.parent;
 
         pauseMenu.alpha = 0f;
         deathScreen.alpha = 0f;
@@ -106,7 +112,8 @@ public class GameUIController : MonoBehaviour {
 
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
-        timerText.gameObject.SetActive(false);
+        timerText.transform.SetParent(pauseTimerTextPos);
+        timerText.rectTransform.localPosition = Vector3.zero;
         subtitleText.gameObject.SetActive(false);
         gameManager.PauseTimer();
         FadeInScreen(pauseMenu, 1f, pauseMenuFadeDuration);
@@ -117,7 +124,8 @@ public class GameUIController : MonoBehaviour {
 
         FadeOutScreen(pauseMenu, pauseMenuFadeDuration);
         gameManager.ResumeTimer();
-        timerText.gameObject.SetActive(true);
+        timerText.transform.SetParent(startTimerTextParent);
+        timerText.rectTransform.localPosition = startTimerTextPos;
         subtitleText.gameObject.SetActive(true);
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;

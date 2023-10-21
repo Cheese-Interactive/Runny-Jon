@@ -165,7 +165,6 @@ public class PlayerController : MonoBehaviour {
     private RaycastHit predictionHit;
 
     [Header("Ziplining")]
-    [SerializeField] private float ziplineCheckOffset;
     [SerializeField] private float ziplineCheckRadius;
     [SerializeField] private float ziplineExitForce;
     [SerializeField] private LayerMask ziplineMask;
@@ -370,7 +369,7 @@ public class PlayerController : MonoBehaviour {
         CheckWall();
         HandleWallRunState();
 
-        if (Input.GetMouseButtonDown(1) && swingEnabled)
+        if (Input.GetMouseButtonDown(1) && swingEnabled && movementState != MovementState.WallRunning)
             StartSwing();
 
         if (Input.GetMouseButtonUp(1) && movementState == MovementState.Swinging)
@@ -719,7 +718,7 @@ public class PlayerController : MonoBehaviour {
 
         if (movementState == MovementState.Ziplining) {
 
-            currZipline.ResetZipline();
+            currZipline.ResetZipline(false);
             jumpReady = false;
             exitingSlope = true;
             rb.velocity = new Vector3(rb.velocity.x, 0f, rb.velocity.z);
@@ -1172,9 +1171,15 @@ public class PlayerController : MonoBehaviour {
 
     }
 
-    public void ResetZipline() {
+    public void ResetZipline(bool jump) {
 
-        rb.AddForce(transform.forward * ziplineExitForce, ForceMode.Force);
+        if (jump) {
+
+            rb.velocity = new Vector3(rb.velocity.x, 0f, rb.velocity.z);
+            rb.AddForce(transform.up * ziplineExitForce, ForceMode.Impulse);
+
+        }
+
         currZipline = null;
         movementState = MovementState.None;
 

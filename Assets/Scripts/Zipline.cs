@@ -45,7 +45,7 @@ public class Zipline : MonoBehaviour {
         playerController.transform.position = currZipline.transform.position - offset;
 
         if (Vector3.Distance(currZipline.transform.position, targetZipline.ziplineConnector.position) <= arrivalThreshold)
-            ResetZipline();
+            ResetZipline(true);
 
     }
 
@@ -89,7 +89,7 @@ public class Zipline : MonoBehaviour {
 
     }
 
-    public void ResetZipline() {
+    public void ResetZipline(bool jump) {
 
         if (!isZiplining)
             return;
@@ -97,7 +97,7 @@ public class Zipline : MonoBehaviour {
         Destroy(currZipline);
         currZipline = null;
         isZiplining = false;
-        playerController.ResetZipline();
+        playerController.ResetZipline(jump);
 
     }
 }

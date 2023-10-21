@@ -10,20 +10,20 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 33a7cf2d42ead5b4b8e84dd7a8f71db3, type: 3}
-  m_Name: New Level1
+  m_Name: Castle1
   m_EditorClassIdentifier: 
-  levelName: 
-  ID: 0
-  scene: {fileID: 0}
+  levelName: Castle 1
+  ID: 2
+  scene: {fileID: 102900000, guid: 2a2235926dd82f647aac47b0ee194699, type: 3}
   icon: {fileID: 0}
   timeLimit: 0
   objective: {fileID: 0}
   isTutorial: 0
-  walkEnabled: 0
-  sprintEnabled: 0
-  jumpEnabled: 0
-  crouchEnabled: 0
-  slideEnabled: 0
-  wallRunEnabled: 0
-  swingEnabled: 0
-  ziplineEnabled: 0
+  walkEnabled: 1
+  sprintEnabled: 1
+  jumpEnabled: 1
+  crouchEnabled: 1
+  slideEnabled: 1
+  wallRunEnabled: 1
+  swingEnabled: 1
+  ziplineEnabled: 1
