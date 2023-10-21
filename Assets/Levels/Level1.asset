@@ -15,7 +15,7 @@ MonoBehaviour:
   levelName: Level 1
   ID: 1
   scene: {fileID: 102900000, guid: 5722c9ddde83a3d45ae2e3833725fa59, type: 3}
-  icon: {fileID: 0}
+  icon: {fileID: 21300000, guid: c59fa12644399a74090dd10bb3d676f3, type: 3}
   timeLimit: 0
   objective: {fileID: 0}
   isTutorial: 0
