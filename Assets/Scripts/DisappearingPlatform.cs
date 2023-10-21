@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Device;
 
 public class DisappearingPlatform : MonoBehaviour {
 
@@ -11,9 +10,16 @@ public class DisappearingPlatform : MonoBehaviour {
 
     [Header("Disappearing")]
     [SerializeField] private float disappearDuration;
-    [SerializeField] private float resetDuration;
-    [SerializeField] private float resetFadeDuration;
     [SerializeField] private string playerTag;
+    [SerializeField] private float resetDuration;
+    private Coroutine disappearCoroutine;
+
+    [Header("Fading")]
+    [SerializeField] private float resetAnimationsDuration;
+
+    [Header("Falling")]
+    [SerializeField] private float fallDistance;
+    [SerializeField] private float resetFallDuration;
 
     private void Start() {
 
@@ -24,26 +30,33 @@ public class DisappearingPlatform : MonoBehaviour {
 
     private void OnCollisionEnter(Collision collision) {
 
+        if (disappearCoroutine != null)
+            return;
+
         if (collision.gameObject.CompareTag(playerTag))
-            StartCoroutine(HandleDisappear());
+            disappearCoroutine = StartCoroutine(HandleFade());
 
     }
 
-    private IEnumerator HandleDisappear() {
+    private IEnumerator HandleFade() {
 
         float currentTime = 0f;
         Color startColor = meshRenderer.material.color;
         Color targetColor = new Color(startColor.r, startColor.g, startColor.b, 0f);
+        Vector3 startPosition = transform.position;
+        Vector3 targetPosition = new Vector3(startPosition.x, startPosition.y - fallDistance, startPosition.z);
 
         while (currentTime < disappearDuration) {
 
             currentTime += Time.deltaTime;
             meshRenderer.material.color = Color.Lerp(startColor, targetColor, currentTime / disappearDuration);
+            transform.position = Vector3.Lerp(startPosition, targetPosition, currentTime / disappearDuration);
             yield return null;
 
         }
 
         meshRenderer.material.color = targetColor;
+        transform.position = targetPosition;
 
         collider.enabled = false;
         meshRenderer.enabled = false;
@@ -57,15 +70,19 @@ public class DisappearingPlatform : MonoBehaviour {
 
         currentTime = 0f;
 
-        while (currentTime < resetFadeDuration) {
+        while (currentTime < resetAnimationsDuration) {
 
             currentTime += Time.deltaTime;
-            meshRenderer.material.color = Color.Lerp(targetColor, startColor, currentTime / resetFadeDuration);
+            meshRenderer.material.color = Color.Lerp(targetColor, startColor, currentTime / resetAnimationsDuration);
+            transform.position = Vector3.Lerp(targetPosition, startPosition, currentTime / resetAnimationsDuration);
             yield return null;
 
         }
 
         meshRenderer.material.color = startColor;
+        transform.position = startPosition;
+
+        disappearCoroutine = null;
 
     }
 }

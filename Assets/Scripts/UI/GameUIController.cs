@@ -18,6 +18,9 @@ public class GameUIController : MonoBehaviour {
     [SerializeField] private TMP_Text timeText;
     [SerializeField] private CanvasGroup pauseMenu;
     [SerializeField] private Transform pauseTimerTextPos;
+    [SerializeField] private Button resumeButton;
+    [SerializeField] private Button settingsButton;
+    [SerializeField] private Button mainMenuButton;
     [SerializeField] private CanvasGroup deathScreen;
     [SerializeField] private Button nextLevelButton;
     [SerializeField] private CanvasGroup interactIcon;
@@ -50,6 +53,8 @@ public class GameUIController : MonoBehaviour {
 
         startTimerTextPos = timerText.rectTransform.localPosition;
         startTimerTextParent = timerText.rectTransform.parent;
+
+        resumeButton.onClick.AddListener(ResumeGame);
 
         pauseMenu.alpha = 0f;
         deathScreen.alpha = 0f;
