@@ -312,6 +312,13 @@ public class PlayerController : MonoBehaviour {
         ControlSpeed();
         speedText.text = "Speed: " + (Mathf.Round(rb.velocity.magnitude * 100f) / 100f);
 
+        if (slideQueued && jumpReady && Input.GetKey(slideKey) && isGrounded && movementState == MovementState.Air) {
+
+            StartSlide();
+            slideQueued = false;
+
+        }
+
         if (Input.GetKeyDown(jumpKey) && jumpReady && jumpEnabled && (isGrounded || movementState == MovementState.Ziplining)) {
 
             if (movementState == MovementState.Sliding) {
@@ -341,13 +348,6 @@ public class PlayerController : MonoBehaviour {
 
                 }
             }
-        }
-
-        if (slideQueued && jumpReady && Input.GetKey(slideKey) && isGrounded && movementState == MovementState.Air) {
-
-            StartSlide();
-            slideQueued = false;
-
         }
 
         if (Input.GetKeyDown(slideKey) && movementState != MovementState.Crouching && movementState != MovementState.Swinging && movementState != MovementState.WallRunning) {

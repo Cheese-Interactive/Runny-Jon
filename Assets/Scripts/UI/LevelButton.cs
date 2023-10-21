@@ -8,6 +8,7 @@ using UnityEngine.UI;
 public class LevelButton : MonoBehaviour {
 
     [Header("References")]
+    private MenuUIController menuUIController;
     public TMP_Text levelNameText;
     public TMP_Text playsText;
     public TMP_Text recordText;
@@ -16,13 +17,15 @@ public class LevelButton : MonoBehaviour {
 
     private void Start() {
 
+        menuUIController = FindObjectOfType<MenuUIController>();
         GetComponent<Button>().onClick.AddListener(LoadLevel);
 
     }
 
     private void LoadLevel() {
 
-        SceneManager.LoadSceneAsync(level.scene.name);
+        menuUIController.FadeInLoadingScreen();
+        StartCoroutine(menuUIController.LoadLevel(level));
 
     }
 }

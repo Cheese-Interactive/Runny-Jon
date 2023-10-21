@@ -8,9 +8,11 @@ public abstract class GameManager : MonoBehaviour {
     [SerializeField] protected Checkpoint[] checkpoints;
     protected PlayerController playerController;
     protected GameUIController UIController;
+    protected AudioManager audioManager;
     protected PlayerData playerData;
 
     [Header("Level")]
+    [SerializeField] protected Object mainMenuScene;
     [SerializeField] protected Level currentLevel;
     protected Stopwatch stopwatch;
     protected int currCheckpoint;
@@ -23,6 +25,8 @@ public abstract class GameManager : MonoBehaviour {
 
     public abstract Stopwatch GetTimer();
 
+    public abstract void CheckpointReached(Checkpoint.CheckpointType checkpointType);
+
     public abstract void CompleteLevel();
 
     public abstract Level GetCurrentLevel();
@@ -30,6 +34,8 @@ public abstract class GameManager : MonoBehaviour {
     public abstract int GetLevelTimeLimit();
 
     public abstract void KillPlayer();
+
+    public abstract Object GetMainMenuScene();
 
     protected IEnumerator RespawnPlayer() {
 

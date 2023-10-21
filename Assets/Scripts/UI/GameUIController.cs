@@ -2,6 +2,7 @@ using System.Collections;
 using System.Diagnostics;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class GameUIController : MonoBehaviour {
@@ -24,6 +25,7 @@ public class GameUIController : MonoBehaviour {
     [SerializeField] private CanvasGroup deathScreen;
     [SerializeField] private Button nextLevelButton;
     [SerializeField] private CanvasGroup interactIcon;
+    [SerializeField] private CanvasGroup loadingScreen;
 
     [Header("Timer")]
     [SerializeField] private TMP_Text timerText;
@@ -36,6 +38,7 @@ public class GameUIController : MonoBehaviour {
     [SerializeField] private float pauseMenuFadeDuration;
     [SerializeField] private float deathScreenFadeDuration;
     [SerializeField] private float levelCompleteFadeInDuration;
+    [SerializeField] private float loadingScreenFadeDuration;
     private Coroutine typeCoroutine;
     private Coroutine screenFadeCoroutine;
     private Coroutine textFadeCoroutine;
@@ -49,12 +52,14 @@ public class GameUIController : MonoBehaviour {
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
 
-        FadeOutScreen(levelCompleteScreen, 0f);
+        loadingScreen.alpha = 1f;
+        FadeOutScreen(loadingScreen, loadingScreenFadeDuration);
 
         startTimerTextPos = timerText.rectTransform.localPosition;
         startTimerTextParent = timerText.rectTransform.parent;
 
         resumeButton.onClick.AddListener(ResumeGame);
+        mainMenuButton.onClick.AddListener(OpenMainMenu);
 
         pauseMenu.alpha = 0f;
         deathScreen.alpha = 0f;
@@ -134,6 +139,12 @@ public class GameUIController : MonoBehaviour {
         subtitleText.gameObject.SetActive(true);
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
+
+    }
+
+    public void OpenMainMenu() {
+
+        SceneManager.LoadScene(gameManager.GetMainMenuScene().name);
 
     }
 

@@ -14,13 +14,14 @@ public class Checkpoint : MonoBehaviour {
     [SerializeField] private CheckpointType checkpointType;
     [SerializeField] private string subtitleText;
     [SerializeField] private Transform playerSpawn;
+    [SerializeField] private float fadeOutDuration;
 
     [Header("Animations")]
     private Coroutine fadeOutCoroutine;
 
     public enum CheckpointType {
 
-        Spawn, Normal, Sprint, Jump, Slide, WallRun, Swing, Finish
+        Spawn, Normal, Sprint, Jump, Slide, WallRun, Swing
 
     }
 
@@ -39,17 +40,16 @@ public class Checkpoint : MonoBehaviour {
 
     private void OnTriggerEnter(Collider collider) {
 
-        if (isTutorial)
-            tutorialManager.CheckpointReached(checkpointType);
+        gameManager.CheckpointReached(checkpointType);
 
     }
 
-    public void StartFadeOutCheckpoint(float duration) {
+    public void StartFadeOutCheckpoint() {
 
         if (fadeOutCoroutine != null)
             fadeOutCoroutine = null;
 
-        fadeOutCoroutine = StartCoroutine(FadeOutCheckpoint(duration));
+        fadeOutCoroutine = StartCoroutine(FadeOutCheckpoint(fadeOutDuration));
 
     }
 
@@ -89,6 +89,12 @@ public class Checkpoint : MonoBehaviour {
     public Transform GetPlayerSpawn() {
 
         return playerSpawn;
+
+    }
+
+    public float GetFadeOutDuration() {
+
+        return fadeOutDuration;
 
     }
 }

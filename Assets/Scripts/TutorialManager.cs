@@ -3,13 +3,11 @@ using UnityEngine;
 
 public class TutorialManager : GameManager {
 
-    [Header("Animations")]
-    [SerializeField] private float fadeOutDuration;
-
     private void Start() {
 
         playerController = FindObjectOfType<PlayerController>();
         UIController = FindObjectOfType<GameUIController>();
+        audioManager = FindObjectOfType<AudioManager>();
         playerData = FindObjectOfType<PlayerData>();
 
         UIController.TypeSubtitleText(checkpoints[currCheckpoint].GetSubtitleText());
@@ -24,6 +22,8 @@ public class TutorialManager : GameManager {
             checkpoints[i].gameObject.SetActive(false);
 
         stopwatch = new Stopwatch();
+
+        audioManager.PlayMusic(AudioManager.MusicType.EverythingIsAwesome);
 
     }
 
@@ -52,7 +52,7 @@ public class TutorialManager : GameManager {
 
     }
 
-    public void CheckpointReached(Checkpoint.CheckpointType checkpointType) {
+    public override void CheckpointReached(Checkpoint.CheckpointType checkpointType) {
 
         if (currCheckpoint + 1 >= checkpoints.Length || checkpointType != checkpoints[currCheckpoint + 1].GetCheckpointType())
             return;
@@ -89,8 +89,8 @@ public class TutorialManager : GameManager {
 
         }
 
-        checkpoints[currCheckpoint].StartFadeOutCheckpoint(fadeOutDuration);
-        checkpoints[currCheckpoint].GetComponentInChildren<CheckpointArrow>().StartFadeOutArrow(fadeOutDuration);
+        checkpoints[currCheckpoint].StartFadeOutCheckpoint();
+        checkpoints[currCheckpoint].GetComponentInChildren<CheckpointArrow>().StartFadeOutArrow();
 
         if (currCheckpoint != checkpoints.Length - 1)
             checkpoints[currCheckpoint + 1].gameObject.SetActive(true);
@@ -119,6 +119,12 @@ public class TutorialManager : GameManager {
     public override void KillPlayer() {
 
         StartCoroutine(RespawnPlayer());
+
+    }
+
+    public override Object GetMainMenuScene() {
+
+        return mainMenuScene;
 
     }
 }
