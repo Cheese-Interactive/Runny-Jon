@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.1919891, g: 0.5946699, b: 0.7773259, a: 1}
+  m_IndirectSpecularColor: {r: 0.19202137, g: 0.59462655, b: 0.7770628, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -534,7 +534,7 @@ RectTransform:
   m_Children:
   - {fileID: 2066611436}
   m_Father: {fileID: 444665427}
-  m_RootOrder: 8
+  m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
@@ -2801,10 +2801,10 @@ RectTransform:
   - {fileID: 459093956}
   - {fileID: 940646744}
   - {fileID: 1407196513}
-  - {fileID: 1358854112}
   - {fileID: 1295561221}
-  - {fileID: 1984704382}
   - {fileID: 82587671}
+  - {fileID: 1984704382}
+  - {fileID: 1358854112}
   m_Father: {fileID: 0}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -2834,6 +2834,7 @@ MonoBehaviour:
   deathScreen: {fileID: 1407196514}
   interactIcon: {fileID: 1295561224}
   loadingScreen: {fileID: 82587672}
+  loadingText: {fileID: 2066611438}
   timerText: {fileID: 174790080}
   levelCompleteScreen: {fileID: 1358854113}
   timeText: {fileID: 672841539}
@@ -2848,6 +2849,7 @@ MonoBehaviour:
   deathScreenFadeDuration: 0.5
   levelCompleteFadeInDuration: 0.5
   loadingScreenFadeDuration: 0.5
+  minMainMenuLoadingDuration: 1
 --- !u!1 &459093955
 GameObject:
   m_ObjectHideFlags: 0
@@ -8238,7 +8240,7 @@ RectTransform:
   - {fileID: 940791028}
   - {fileID: 74045602}
   m_Father: {fileID: 444665427}
-  m_RootOrder: 6
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0}
   m_AnchorMax: {x: 0.5, y: 0}
@@ -8673,7 +8675,7 @@ RectTransform:
   - {fileID: 146084918}
   - {fileID: 1566450153}
   m_Father: {fileID: 444665427}
-  m_RootOrder: 5
+  m_RootOrder: 8
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}

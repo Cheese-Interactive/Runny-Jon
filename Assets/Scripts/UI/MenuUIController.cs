@@ -1,4 +1,5 @@
 using System.Collections;
+using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -12,6 +13,7 @@ public class MenuUIController : MonoBehaviour {
     [SerializeField] private Button settingsButton;
     [SerializeField] private Button quitButton;
     [SerializeField] private CanvasGroup loadingScreen;
+    [SerializeField] private TMP_Text loadingText;
 
     [Header("Animations")]
     [SerializeField] private float mainMenuFadeDuration;
@@ -23,13 +25,15 @@ public class MenuUIController : MonoBehaviour {
 
     private void Start() {
 
+        SetLoadingText("Loading Main Menu...");
+        loadingScreen.alpha = 1f;
+        FadeOutScreen(loadingScreen, loadingScreenFadeDuration);
+
         playButton.onClick.AddListener(PlayClicked);
         quitButton.onClick.AddListener(QuitClicked);
 
         levelMenu.gameObject.SetActive(false);
         mainMenu.alpha = 0f;
-        loadingScreen.alpha = 0f;
-        FadeOutLoadingScreen();
         FadeInScreen(mainMenu, 1f, mainMenuFadeDuration);
 
     }
@@ -49,6 +53,7 @@ public class MenuUIController : MonoBehaviour {
 
     public IEnumerator LoadLevel(Object level) {
 
+        SetLoadingText("Loading Level...");
         AsyncOperation operation = SceneManager.LoadSceneAsync(level.name);
         operation.allowSceneActivation = false;
         float currentTime = 0f;
@@ -61,7 +66,6 @@ public class MenuUIController : MonoBehaviour {
         }
 
         yield return new WaitForSeconds(minLoadingDuration - currentTime);
-
         operation.allowSceneActivation = true;
 
     }
@@ -125,5 +129,11 @@ public class MenuUIController : MonoBehaviour {
             screenFadeOutCoroutine = null;
 
         }
+    }
+
+    public void SetLoadingText(string text) {
+
+        loadingText.text = text;
+
     }
 }

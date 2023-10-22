@@ -38,11 +38,8 @@ public class MenuManager : MonoBehaviour {
                 level = levels[currLevelIndex];
                 currLevelIndex++;
 
-                if (level == null) {
-
+                if (level == null)
                     continue;
-
-                }
 
                 button = Instantiate(levelButton, row);
                 button.level = level;

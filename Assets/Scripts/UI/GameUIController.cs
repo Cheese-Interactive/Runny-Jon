@@ -2,6 +2,8 @@ using System.Collections;
 using System.Diagnostics;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Device;
+using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
@@ -23,6 +25,7 @@ public class GameUIController : MonoBehaviour {
     [SerializeField] private CanvasGroup deathScreen;
     [SerializeField] private CanvasGroup interactIcon;
     [SerializeField] private CanvasGroup loadingScreen;
+    [SerializeField] private TMP_Text loadingText;
 
     [Header("Timer")]
     [SerializeField] private TMP_Text timerText;
@@ -43,6 +46,7 @@ public class GameUIController : MonoBehaviour {
     [SerializeField] private float deathScreenFadeDuration;
     [SerializeField] private float levelCompleteFadeInDuration;
     [SerializeField] private float loadingScreenFadeDuration;
+    [SerializeField] private float minMainMenuLoadingDuration;
     private Coroutine typeCoroutine;
     private Coroutine screenFadeCoroutine;
     private Coroutine textFadeCoroutine;
@@ -54,11 +58,13 @@ public class GameUIController : MonoBehaviour {
         playerController = FindObjectOfType<PlayerController>();
         gameManager = FindObjectOfType<GameManager>();
 
+        // DELETE
         if (SceneManager.GetActiveScene().name != "Skyline1") {
 
             Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible = false;
 
+            SetLoadingText("Loading Level...");
             loadingScreen.alpha = 1f;
             FadeOutScreen(loadingScreen, loadingScreenFadeDuration);
 
@@ -161,7 +167,32 @@ public class GameUIController : MonoBehaviour {
 
     public void OpenMainMenu() {
 
-        SceneManager.LoadScene(gameManager.GetMainMenuScene().name);
+        UnityEngine.Debug.LogError(gameManager);
+        StartCoroutine(LoadMainMenu());
+
+    }
+
+    private IEnumerator LoadMainMenu() {
+
+        // DELETE
+        if (SceneManager.GetActiveScene().name != "Skyline1")
+            StartCoroutine(FadeScreen(pauseMenu, 0f, pauseMenuFadeDuration, false));
+
+        SetLoadingText("Loading Main Menu...");
+        FadeInScreen(loadingScreen, 1f, loadingScreenFadeDuration);
+        AsyncOperation operation = SceneManager.LoadSceneAsync(0);
+        operation.allowSceneActivation = false;
+        float currentTime = 0f;
+
+        while (!operation.isDone && operation.progress < 0.9f) {
+
+            currentTime += Time.deltaTime;
+            yield return null;
+
+        }
+
+        yield return new WaitForSeconds(minMainMenuLoadingDuration - currentTime);
+        operation.allowSceneActivation = true;
 
     }
 
@@ -317,5 +348,11 @@ public class GameUIController : MonoBehaviour {
             textFaded = true;
 
         }
+    }
+
+    public void SetLoadingText(string text) {
+
+        loadingText.text = text;
+
     }
 }

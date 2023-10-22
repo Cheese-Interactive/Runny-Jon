@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Diagnostics;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public abstract class GameManager : MonoBehaviour {
 
@@ -37,7 +38,7 @@ public abstract class GameManager : MonoBehaviour {
 
     public abstract void KillPlayer();
 
-    public abstract Object GetMainMenuScene();
+    public abstract Scene GetMainMenuScene();
 
     public abstract Checkpoint[] GetCheckpoints();
 

@@ -9,7 +9,6 @@ public class Level : ScriptableObject {
     public Object scene;
     public Sprite icon;
     [Range(1, 3599)] public int timeLimit;
-    public Transform objective;
     public bool isTutorial;
 
     [Header("Movement")]

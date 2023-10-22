@@ -106,9 +106,9 @@ public class LevelManager : GameManager {
 
     }
 
-    public override Object GetMainMenuScene() {
+    public override Scene GetMainMenuScene() {
 
-        return mainMenuScene;
+        return SceneManager.GetSceneByName("MainMenu");
 
     }
 
