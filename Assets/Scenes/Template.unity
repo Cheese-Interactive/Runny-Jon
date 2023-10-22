@@ -4949,9 +4949,10 @@ MonoBehaviour:
   soundEffectSource: {fileID: 1262548622}
   everythingIsAwesomeMusic: {fileID: 8300000, guid: dfaefccbc404c4644bf41280a1d20211,
     type: 3}
-  landSound: {fileID: 0}
-  grappleSound: {fileID: 0}
-  victorySound: {fileID: 0}
+  horrorMusic: {fileID: 8300000, guid: 48e759bdac8f36f46aaf81966e1370eb, type: 3}
+  landSound: {fileID: 8300000, guid: bcf9e82c605ce2a458761f849ae410dc, type: 3}
+  grappleSound: {fileID: 8300000, guid: 838ccd40d86fdd345887a6ffe1fcac14, type: 3}
+  victorySound: {fileID: 8300000, guid: d322416b6bb0bad4bbfdc34cb7f46caf, type: 3}
 --- !u!4 &1262548625
 Transform:
   m_ObjectHideFlags: 0

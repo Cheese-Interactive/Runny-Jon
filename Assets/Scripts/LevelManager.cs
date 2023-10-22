@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class LevelManager : GameManager {
 
@@ -21,7 +22,10 @@ public class LevelManager : GameManager {
 
         stopwatch = new Stopwatch();
 
-        audioManager.PlayMusic(AudioManager.MusicType.EverythingIsAwesome);
+        if (SceneManager.GetActiveScene().name == "Castle1")
+            audioManager.PlayMusic(AudioManager.MusicType.Horror);
+        else
+            audioManager.PlayMusic(AudioManager.MusicType.EverythingIsAwesome);
 
     }
 

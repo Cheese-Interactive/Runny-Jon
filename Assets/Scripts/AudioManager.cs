@@ -10,13 +10,14 @@ public class AudioManager : MonoBehaviour {
 
     [Header("Audio Clips")]
     [SerializeField] private AudioClip everythingIsAwesomeMusic;
+    [SerializeField] private AudioClip horrorMusic;
     [SerializeField] private AudioClip landSound;
     [SerializeField] private AudioClip grappleSound;
     [SerializeField] private AudioClip victorySound;
 
     public enum MusicType {
 
-        EverythingIsAwesome
+        EverythingIsAwesome, Horror
 
     }
 
@@ -39,6 +40,12 @@ public class AudioManager : MonoBehaviour {
             case MusicType.EverythingIsAwesome:
 
             musicSource.clip = everythingIsAwesomeMusic;
+            musicSource.Play();
+            break;
+
+            case MusicType.Horror:
+
+            musicSource.clip = horrorMusic;
             musicSource.Play();
             break;
 
