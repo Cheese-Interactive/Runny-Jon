@@ -54,28 +54,39 @@ public class GameUIController : MonoBehaviour {
         playerController = FindObjectOfType<PlayerController>();
         gameManager = FindObjectOfType<GameManager>();
 
-        Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;
+        if (SceneManager.GetActiveScene().name != "Skyline1") {
 
-        loadingScreen.alpha = 1f;
-        FadeOutScreen(loadingScreen, loadingScreenFadeDuration);
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
 
-        startTimerTextPos = timerText.rectTransform.localPosition;
-        startTimerTextParent = timerText.rectTransform.parent;
+            loadingScreen.alpha = 1f;
+            FadeOutScreen(loadingScreen, loadingScreenFadeDuration);
 
-        pauseResumeButton.onClick.AddListener(ResumeGame);
-        pauseMainMenuButton.onClick.AddListener(OpenMainMenu);
-        mainMenuButton.onClick.AddListener(OpenMainMenu);
-        replayButton.onClick.AddListener(ReplayLevel);
+            startTimerTextPos = timerText.rectTransform.localPosition;
+            startTimerTextParent = timerText.rectTransform.parent;
 
-        pauseMenu.alpha = 0f;
-        deathScreen.alpha = 0f;
-        levelCompleteScreen.alpha = 0f;
-        pauseMenu.gameObject.SetActive(false);
-        deathScreen.gameObject.SetActive(false);
-        interactIcon.gameObject.SetActive(false);
-        levelCompleteScreen.gameObject.SetActive(false);
+            pauseResumeButton.onClick.AddListener(ResumeGame);
+            pauseMainMenuButton.onClick.AddListener(OpenMainMenu);
+            mainMenuButton.onClick.AddListener(OpenMainMenu);
+            replayButton.onClick.AddListener(ReplayLevel);
 
+            pauseMenu.alpha = 0f;
+            deathScreen.alpha = 0f;
+            levelCompleteScreen.alpha = 0f;
+            pauseMenu.gameObject.SetActive(false);
+            deathScreen.gameObject.SetActive(false);
+            interactIcon.gameObject.SetActive(false);
+            levelCompleteScreen.gameObject.SetActive(false);
+
+        } else {
+
+            mainMenuButton.onClick.AddListener(OpenMainMenu);
+            playerController.DisableAllMovement();
+            timerText.gameObject.SetActive(false);
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
+
+        }
     }
 
     public void TypeSubtitleText(string text) {

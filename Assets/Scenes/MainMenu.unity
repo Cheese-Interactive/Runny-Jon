@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.1919891, g: 0.5946699, b: 0.7773259, a: 1}
+  m_IndirectSpecularColor: {r: 0.19202137, g: 0.59462655, b: 0.7770628, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -98,7 +98,8 @@ LightmapSettings:
     m_TrainingDataDestination: TrainingData
     m_LightProbeSampleCountMultiplier: 4
   m_LightingDataAsset: {fileID: 0}
-  m_LightingSettings: {fileID: 0}
+  m_LightingSettings: {fileID: 4890085278179872738, guid: e8a964ef366c07e4dbe0c4fecae2ef55,
+    type: 2}
 --- !u!196 &4
 NavMeshSettings:
   serializedVersion: 2
@@ -4406,6 +4407,7 @@ MonoBehaviour:
   soundEffectSource: {fileID: 1203055189}
   everythingIsAwesomeMusic: {fileID: 8300000, guid: dfaefccbc404c4644bf41280a1d20211,
     type: 3}
+  horrorMusic: {fileID: 8300000, guid: 48e759bdac8f36f46aaf81966e1370eb, type: 3}
   landSound: {fileID: 8300000, guid: bcf9e82c605ce2a458761f849ae410dc, type: 3}
   grappleSound: {fileID: 8300000, guid: 838ccd40d86fdd345887a6ffe1fcac14, type: 3}
   victorySound: {fileID: 8300000, guid: d322416b6bb0bad4bbfdc34cb7f46caf, type: 3}
