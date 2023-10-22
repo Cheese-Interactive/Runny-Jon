@@ -4409,7 +4409,9 @@ MonoBehaviour:
   soundEffectSource: {fileID: 1203055189}
   everythingIsAwesomeMusic: {fileID: 8300000, guid: dfaefccbc404c4644bf41280a1d20211,
     type: 3}
-  clickSound: {fileID: 0}
+  landSound: {fileID: 8300000, guid: bcf9e82c605ce2a458761f849ae410dc, type: 3}
+  grappleSound: {fileID: 8300000, guid: 838ccd40d86fdd345887a6ffe1fcac14, type: 3}
+  victorySound: {fileID: 8300000, guid: d322416b6bb0bad4bbfdc34cb7f46caf, type: 3}
 --- !u!4 &1203055192
 Transform:
   m_ObjectHideFlags: 0
