@@ -14,6 +14,7 @@ public abstract class GameManager : MonoBehaviour {
     [Header("Level")]
     [SerializeField] protected Object mainMenuScene;
     [SerializeField] protected Level currentLevel;
+    protected int deaths;
     protected Stopwatch stopwatch;
     protected int currCheckpoint;
 
@@ -37,6 +38,34 @@ public abstract class GameManager : MonoBehaviour {
 
     public abstract Object GetMainMenuScene();
 
+    public abstract Checkpoint[] GetCheckpoints();
+
+    public void SetCheckpoint(Checkpoint checkpoint) {
+
+        for (int i = 0; i < checkpoints.Length; i++) {
+
+            if (checkpoints[i] == checkpoint) {
+
+                currCheckpoint = i;
+                break;
+
+            }
+        }
+
+        for (int i = 1; i < checkpoints.Length - 1; i++) {
+
+            if (i + 1 != currCheckpoint)
+                checkpoints[i].gameObject.SetActive(false);
+
+        }
+
+        if (currCheckpoint != checkpoints.Length - 1)
+            checkpoints[currCheckpoint + 1].gameObject.SetActive(true);
+
+        StartCoroutine(RespawnPlayer());
+
+    }
+
     protected IEnumerator RespawnPlayer() {
 
         playerController.DisableAllMovement();
@@ -46,6 +75,7 @@ public abstract class GameManager : MonoBehaviour {
         playerController.transform.position = spawn.position;
         playerController.transform.rotation = spawn.rotation;
         playerController.SetLookRotations(0f, spawn.rotation.eulerAngles.y);
+        playerController.StopSwing();
         playerController.ResetVelocity();
         playerController.EnableAllMovement();
         playerController.EnableLook();

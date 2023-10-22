@@ -69,7 +69,7 @@ public class LevelManager : GameManager {
     public override void CompleteLevel() {
 
         stopwatch.Stop();
-        playerData.OnLevelComplete(currentLevel, (float) stopwatch.Elapsed.TotalSeconds);
+        playerData.OnLevelComplete(currentLevel, deaths, (float) stopwatch.Elapsed.TotalSeconds);
         playerController.DisableAllMovement();
         playerController.DisableLook();
         UIController.ShowLevelCompleteScreen();
@@ -92,6 +92,7 @@ public class LevelManager : GameManager {
 
     public override void KillPlayer() {
 
+        deaths++;
         StartCoroutine(RespawnPlayer());
 
     }
@@ -99,6 +100,12 @@ public class LevelManager : GameManager {
     public override Object GetMainMenuScene() {
 
         return mainMenuScene;
+
+    }
+
+    public override Checkpoint[] GetCheckpoints() {
+
+        return checkpoints;
 
     }
 }

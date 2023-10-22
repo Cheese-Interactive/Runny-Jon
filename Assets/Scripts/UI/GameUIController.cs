@@ -8,28 +8,30 @@ using UnityEngine.UI;
 public class GameUIController : MonoBehaviour {
 
     [Header("References")]
+    private PlayerController playerController;
     private GameManager gameManager;
     private Vector3 startTimerTextPos;
     private Transform startTimerTextParent;
 
     [Header("UI References")]
-    [SerializeField] private CanvasGroup levelCompleteScreen;
     [SerializeField] private TMP_Text subtitleText;
-    [SerializeField] private TMP_Text timeLimitText;
-    [SerializeField] private TMP_Text timeText;
     [SerializeField] private CanvasGroup pauseMenu;
     [SerializeField] private Transform pauseTimerTextPos;
     [SerializeField] private Button resumeButton;
     [SerializeField] private Button settingsButton;
     [SerializeField] private Button mainMenuButton;
     [SerializeField] private CanvasGroup deathScreen;
-    [SerializeField] private Button nextLevelButton;
     [SerializeField] private CanvasGroup interactIcon;
     [SerializeField] private CanvasGroup loadingScreen;
 
     [Header("Timer")]
     [SerializeField] private TMP_Text timerText;
     private Coroutine timerCoroutine;
+
+    [Header("Level Complete Menu")]
+    [SerializeField] private CanvasGroup levelCompleteScreen;
+    [SerializeField] private TMP_Text timeText;
+    [SerializeField] private GameObject recordText;
 
     [Header("Animations")]
     [SerializeField] private float subtitleTypeDuration;
@@ -47,6 +49,7 @@ public class GameUIController : MonoBehaviour {
 
     private void Start() {
 
+        playerController = FindObjectOfType<PlayerController>();
         gameManager = FindObjectOfType<GameManager>();
 
         Cursor.lockState = CursorLockMode.Locked;
@@ -63,9 +66,11 @@ public class GameUIController : MonoBehaviour {
 
         pauseMenu.alpha = 0f;
         deathScreen.alpha = 0f;
+        levelCompleteScreen.alpha = 0f;
         pauseMenu.gameObject.SetActive(false);
         deathScreen.gameObject.SetActive(false);
         interactIcon.gameObject.SetActive(false);
+        levelCompleteScreen.gameObject.SetActive(false);
 
     }
 
@@ -82,11 +87,8 @@ public class GameUIController : MonoBehaviour {
 
         FadeOutText(subtitleText, subtitleFadeDuration);
 
-        while (!textFaded) {
-
+        while (!textFaded)
             yield return null;
-
-        }
 
         subtitleText.alpha = 1f;
         textFaded = false;
@@ -206,8 +208,6 @@ public class GameUIController : MonoBehaviour {
 
         StopCoroutine(timerCoroutine);
         timeText.text = "Your Time: " + timerText.text;
-        int timeLimit = gameManager.GetLevelTimeLimit();
-        timeLimitText.text = "Time Limit: " + string.Format("{0:00}:{1:00}", timeLimit / 60, timeLimit % 60);
         FadeInScreen(levelCompleteScreen, 1f, levelCompleteFadeInDuration);
 
     }

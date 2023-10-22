@@ -213,6 +213,7 @@ public class PlayerController : MonoBehaviour {
     [SerializeField] private KeyCode interactKey;
     [SerializeField] private KeyCode resetKey;
     [SerializeField] private KeyCode pauseKey;
+    [SerializeField] private KeyCode checkpointMenuKey;
 
     public enum MovementState {
 
@@ -1163,7 +1164,7 @@ public class PlayerController : MonoBehaviour {
         }
     }
 
-    private void StopSwing() {
+    public void StopSwing() {
 
         movementState = MovementState.None;
         crosshair.gameObject.SetActive(true);

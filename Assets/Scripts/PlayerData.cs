@@ -56,7 +56,7 @@ public class PlayerData : MonoBehaviour {
         }
     }
 
-    public void OnLevelComplete(Level level, float time) {
+    public void OnLevelComplete(Level level, int deaths, float time) {
 
         Dictionary<int, LevelData> levelData = dataRootObject.GetLevelData();
         int ID = level.ID;
@@ -64,18 +64,16 @@ public class PlayerData : MonoBehaviour {
         if (levelData.ContainsKey(ID)) {
 
             levelData[ID].IncrementPlays();
+            levelData[ID].AddDeaths(deaths);
 
-            if (time < levelData[ID].GetRecord() || levelData[ID].GetRecord() == null) {
-                Debug.Log("new record");
+            if (time < levelData[ID].GetRecord() || levelData[ID].GetRecord() == null)
                 levelData[ID].SetRecord(time);
-            }
 
-            Debug.Log(levelData[ID].GetRecord());
             SerializeData();
 
         } else {
 
-            levelData.Add(ID, new LevelData(1, time));
+            levelData.Add(ID, new LevelData(1, deaths, time));
 
         }
     }
@@ -137,6 +135,12 @@ public class LevelData {
 
     }
 
+    public int deaths {
+
+        get; set;
+
+    }
+
     public float? record {
 
         get; set;
@@ -146,13 +150,15 @@ public class LevelData {
     public LevelData() {
 
         plays = 0;
+        deaths = 0;
         record = null;
 
     }
 
-    public LevelData(int plays, float record) {
+    public LevelData(int plays, int deaths, float record) {
 
         this.plays = plays;
+        this.deaths = deaths;
         this.record = record;
 
     }
@@ -166,6 +172,18 @@ public class LevelData {
     public void IncrementPlays() {
 
         plays++;
+
+    }
+
+    public int GetDeaths() {
+
+        return deaths;
+
+    }
+
+    public void AddDeaths(int deaths) {
+
+        this.deaths += deaths;
 
     }
 

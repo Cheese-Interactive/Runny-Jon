@@ -15,7 +15,6 @@ public class MenuManager : MonoBehaviour {
     [SerializeField] private List<Level> levels;
     [SerializeField] private int levelRowSize;
     [SerializeField] private Transform levelParent;
-    [SerializeField] private RectTransform levelMenu;
     [SerializeField] private GameObject rowPrefab;
     [SerializeField] private LevelButton levelButton;
 

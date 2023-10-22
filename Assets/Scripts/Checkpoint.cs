@@ -11,6 +11,7 @@ public class Checkpoint : MonoBehaviour {
     private bool isTutorial;
 
     [Header("Checkpoint")]
+    [SerializeField] private int orderNum;
     [SerializeField] private CheckpointType checkpointType;
     [SerializeField] private string subtitleText;
     [SerializeField] private Transform playerSpawn;
@@ -41,6 +42,12 @@ public class Checkpoint : MonoBehaviour {
     private void OnTriggerEnter(Collider collider) {
 
         gameManager.CheckpointReached(checkpointType);
+
+    }
+
+    public int GetOrderNumber() {
+
+        return orderNum;
 
     }
 
