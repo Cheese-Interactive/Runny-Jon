@@ -20,10 +20,10 @@ MonoBehaviour:
   objective: {fileID: 0}
   isTutorial: 1
   walkEnabled: 1
-  sprintEnabled: 1
-  jumpEnabled: 1
-  crouchEnabled: 1
-  slideEnabled: 1
-  wallRunEnabled: 1
-  swingEnabled: 1
-  ziplineEnabled: 1
+  sprintEnabled: 0
+  jumpEnabled: 0
+  crouchEnabled: 0
+  slideEnabled: 0
+  wallRunEnabled: 0
+  swingEnabled: 0
+  ziplineEnabled: 0

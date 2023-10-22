@@ -69,10 +69,9 @@ public class LevelManager : GameManager {
     public override void CompleteLevel() {
 
         stopwatch.Stop();
-        playerData.OnLevelComplete(currentLevel, deaths, (float) stopwatch.Elapsed.TotalSeconds);
         playerController.DisableAllMovement();
         playerController.DisableLook();
-        UIController.ShowLevelCompleteScreen();
+        UIController.ShowLevelCompleteScreen(playerData.OnLevelComplete(currentLevel, deaths, (float) stopwatch.Elapsed.TotalSeconds), deaths);
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
 
@@ -91,6 +90,11 @@ public class LevelManager : GameManager {
     }
 
     public override void KillPlayer() {
+
+        if (playerKilled)
+            return;
+
+        playerKilled = true;
 
         deaths++;
         StartCoroutine(RespawnPlayer());

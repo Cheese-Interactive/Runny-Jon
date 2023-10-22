@@ -10,6 +10,7 @@ public abstract class GameManager : MonoBehaviour {
     protected GameUIController UIController;
     protected AudioManager audioManager;
     protected PlayerData playerData;
+    protected bool playerKilled;
 
     [Header("Level")]
     [SerializeField] protected Object mainMenuScene;
@@ -80,6 +81,7 @@ public abstract class GameManager : MonoBehaviour {
         playerController.EnableAllMovement();
         playerController.EnableLook();
         yield return StartCoroutine(UIController.HideDeathScreen());
+        playerKilled = false;
 
     }
 }
