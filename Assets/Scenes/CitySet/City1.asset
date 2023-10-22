@@ -14,8 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   levelName: Skyline
   ID: 3
-  scene: {fileID: 102900000, guid: 2510979b96f8d8b4d803440c57701072, type: 3}
-  icon: {fileID: 0}
+  scene: {fileID: 102900000, guid: fc3e557fb432a8e4b8fefe1a0273b0d6, type: 3}
+  icon: {fileID: 21300000, guid: 6177886a54a858e48b7f711803d27e13, type: 3}
   timeLimit: 0
   objective: {fileID: 0}
   isTutorial: 0
