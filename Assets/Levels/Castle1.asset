@@ -12,10 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 33a7cf2d42ead5b4b8e84dd7a8f71db3, type: 3}
   m_Name: Castle1
   m_EditorClassIdentifier: 
-  levelName: Castle 1
+  levelName: Dark Castle
   ID: 2
   scene: {fileID: 102900000, guid: 2a2235926dd82f647aac47b0ee194699, type: 3}
-  icon: {fileID: 0}
+  icon: {fileID: 21300000, guid: 71cf5434b09935e46b6c55bf8389a193, type: 3}
   timeLimit: 0
   objective: {fileID: 0}
   isTutorial: 0
