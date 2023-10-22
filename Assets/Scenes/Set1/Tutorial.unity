@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.19202137, g: 0.59462655, b: 0.7770628, a: 1}
+  m_IndirectSpecularColor: {r: 0.1919891, g: 0.5946699, b: 0.7773259, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -538,7 +538,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -0.000061035156, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!225 &82587672
@@ -713,14 +713,14 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 154259234}
-  m_LocalRotation: {x: 0.4999996, y: -0, z: -0, w: 0.8660257}
-  m_LocalPosition: {x: 0, y: -0.129, z: 0.075}
+  m_LocalRotation: {x: 0.5164536, y: 0.027523566, z: -0.01678971, w: 0.85570806}
+  m_LocalPosition: {x: 0.14381616, y: -0.035927743, z: -0.11613929}
   m_LocalScale: {x: 0.2, y: 0.2, z: 0.5}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 351985818}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 60, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 62.226, y: 3.662, z: -0.037}
 --- !u!23 &154259237
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -1173,8 +1173,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   checkpointType: 7
-  subtitleText: Great job! You've learned all the basic movement mechanics. Now use
-    them to complete the rest of the level!
+  subtitleText: Great job! You've learned all the basic movement mechanics.  Now
+    put them all together and get the cheese to finish!
   playerSpawn: {fileID: 1908541143}
   fadeOutDuration: 0.5
 --- !u!65 &287720895
@@ -1925,7 +1925,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 351985817}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: -0, y: 0.30956215, z: -0, w: 0.9508792}
   m_LocalPosition: {x: 0.35, y: -0.563, z: 0.097}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -1934,7 +1934,7 @@ Transform:
   - {fileID: 634555927}
   m_Father: {fileID: 924507703}
   m_RootOrder: 1
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 36.066, z: 0}
 --- !u!1 &366514548
 GameObject:
   m_ObjectHideFlags: 0
@@ -1995,7 +1995,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 376982302}
   m_LocalRotation: {x: 0.4999996, y: -0, z: -0, w: 0.8660257}
-  m_LocalPosition: {x: 0, y: -0.129, z: 0.075}
+  m_LocalPosition: {x: 0, y: -0.13, z: 0.076}
   m_LocalScale: {x: 0.2, y: 0.2, z: 0.5}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -4066,14 +4066,14 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 634555926}
-  m_LocalRotation: {x: 0.2588186, y: -0, z: -0, w: 0.96592593}
-  m_LocalPosition: {x: 0, y: -0.38700008, z: 0.327}
+  m_LocalRotation: {x: 0.3280154, y: 0.030404186, z: -0.010724047, w: 0.9441221}
+  m_LocalPosition: {x: 0.15994279, y: -0.41660342, z: 0.15739581}
   m_LocalScale: {x: 0.2, y: 0.2, z: 0.4}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 351985818}
   m_RootOrder: 1
-  m_LocalEulerAnglesHint: {x: 30, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 38.318, y: 3.681, z: -0.022}
 --- !u!23 &634555929
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -4480,7 +4480,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   checkpointType: 4
-  subtitleText: Use [C] to slide. Slide under the barrier to the next checkpoint.
+  subtitleText: Use [C] while running to slide. Slide under the barrier to the next
+    checkpoint.
   playerSpawn: {fileID: 1131472631}
   fadeOutDuration: 0.5
 --- !u!65 &703350462
@@ -5287,7 +5288,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 824945546}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.35, y: -1.15, z: 0.097}
+  m_LocalPosition: {x: 0.34, y: -2.599, z: 0.097}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -5513,8 +5514,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   checkpointType: 6
-  subtitleText: Use [Right Click] to swing. An indicator should appear on any swingable
-    objects. Swing to the next checkpoint.
+  subtitleText: Use [Right Click] to swing. An indicator will appear on swingable
+    objects when you look at them. Swing to the next checkpoint.
   playerSpawn: {fileID: 1226996833}
   fadeOutDuration: 0.5
 --- !u!65 &851490895
@@ -6222,7 +6223,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 924507702}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.75, z: 0}
+  m_LocalPosition: {x: 0.01, y: 1.449, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -7936,7 +7937,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1233733800}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 6.75, z: 0}
+  m_LocalPosition: {x: 0.01, y: 7.3, z: 0.17}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -8085,7 +8086,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1237306892}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.35, y: -1.15, z: 0.097}
+  m_LocalPosition: {x: -0.35999998, y: -2.599, z: 0.097}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
