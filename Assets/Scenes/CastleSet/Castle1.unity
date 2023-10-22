@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.24722943, g: 0.058138542, b: 0.010910231, a: 1}
+  m_IndirectSpecularColor: {r: 0, g: 0, b: 0, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -9632,7 +9632,8 @@ MonoBehaviour:
   m_fontAsset: {fileID: 11400000, guid: 83a4e450ebd34134c88d6a659737a185, type: 2}
   m_sharedMaterial: {fileID: -3382591621760252506, guid: 83a4e450ebd34134c88d6a659737a185,
     type: 2}
-  m_fontSharedMaterials: []
+  m_fontSharedMaterials:
+  - {fileID: -3382591621760252506, guid: 83a4e450ebd34134c88d6a659737a185, type: 2}
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
   m_fontColor32:
@@ -22119,26 +22120,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d6d49e535992ea348969c201bd065b7a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  checkpointMenuAnimator: {fileID: 0}
-  levelCompleteScreen: {fileID: 1358854113}
   subtitleText: {fileID: 940646741}
-  timeLimitText: {fileID: 937489077}
-  timeText: {fileID: 485847744}
   pauseMenu: {fileID: 1972391264}
   pauseTimerTextPos: {fileID: 385500661}
   resumeButton: {fileID: 0}
   settingsButton: {fileID: 0}
   mainMenuButton: {fileID: 0}
   deathScreen: {fileID: 1407196514}
-  nextLevelButton: {fileID: 902633577}
   interactIcon: {fileID: 1021604968}
   loadingScreen: {fileID: 0}
   timerText: {fileID: 174790080}
-  checkpointRowSize: 0
-  checkpointMenu: {fileID: 0}
-  checkpointParent: {fileID: 0}
-  rowPrefab: {fileID: 0}
-  checkpointButton: {fileID: 0}
+  levelCompleteScreen: {fileID: 1358854113}
+  timeText: {fileID: 485847744}
+  recordText: {fileID: 0}
   subtitleTypeDuration: 1
   subtitleFadeDuration: 0.5
   interactIconFadeDuration: 0.05
@@ -22146,7 +22140,6 @@ MonoBehaviour:
   deathScreenFadeDuration: 0.5
   levelCompleteFadeInDuration: 0.5
   loadingScreenFadeDuration: 0
-  checkpointMenuFadeDuration: 0
 --- !u!43 &448739109
 Mesh:
   m_ObjectHideFlags: 0

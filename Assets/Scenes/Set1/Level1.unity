@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.19202137, g: 0.59462655, b: 0.7770628, a: 1}
+  m_IndirectSpecularColor: {r: 0, g: 0, b: 0, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -156,6 +156,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: efe5e49f77add914dbf5d6000e4570b2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  orderNum: 0
   checkpointType: 1
   subtitleText: 
   playerSpawn: {fileID: 373319962}
@@ -1291,7 +1292,8 @@ MonoBehaviour:
   m_fontAsset: {fileID: 11400000, guid: 83a4e450ebd34134c88d6a659737a185, type: 2}
   m_sharedMaterial: {fileID: -3382591621760252506, guid: 83a4e450ebd34134c88d6a659737a185,
     type: 2}
-  m_fontSharedMaterials: []
+  m_fontSharedMaterials:
+  - {fileID: -3382591621760252506, guid: 83a4e450ebd34134c88d6a659737a185, type: 2}
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
   m_fontColor32:
@@ -3198,7 +3200,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -0.000061035156, y: 0}
+  m_AnchoredPosition: {x: -0.00012207031, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!225 &419895532
@@ -3684,20 +3686,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d6d49e535992ea348969c201bd065b7a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  levelCompleteScreen: {fileID: 1358854113}
   subtitleText: {fileID: 940646741}
-  timeLimitText: {fileID: 937489077}
-  timeText: {fileID: 485847744}
   pauseMenu: {fileID: 1797270209}
   pauseTimerTextPos: {fileID: 1519454944}
   resumeButton: {fileID: 845590164}
   settingsButton: {fileID: 1208339783}
   mainMenuButton: {fileID: 1177236738}
   deathScreen: {fileID: 1407196514}
-  nextLevelButton: {fileID: 902633577}
   interactIcon: {fileID: 962628241}
   loadingScreen: {fileID: 419895532}
   timerText: {fileID: 174790080}
+  levelCompleteScreen: {fileID: 1358854113}
+  timeText: {fileID: 485847744}
+  recordText: {fileID: 0}
   subtitleTypeDuration: 1
   subtitleFadeDuration: 0.5
   interactIconFadeDuration: 0.05
@@ -8280,6 +8281,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: efe5e49f77add914dbf5d6000e4570b2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  orderNum: 0
   checkpointType: 0
   subtitleText: 
   playerSpawn: {fileID: 253070148}
@@ -9664,6 +9666,7 @@ MonoBehaviour:
   interactKey: 0
   resetKey: 9
   pauseKey: 27
+  checkpointMenuKey: 0
 --- !u!54 &1384782514
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -10113,6 +10116,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: efe5e49f77add914dbf5d6000e4570b2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  orderNum: 0
   checkpointType: 7
   subtitleText: 
   playerSpawn: {fileID: 890361875}
@@ -11863,7 +11867,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -0.000061035156, y: 0}
+  m_AnchoredPosition: {x: -0.00012207031, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1797270206
