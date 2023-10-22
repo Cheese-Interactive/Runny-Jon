@@ -9,17 +9,15 @@ public class DisappearingPlatform : MonoBehaviour {
     private MeshRenderer meshRenderer;
 
     [Header("Disappearing")]
-    [SerializeField] private float disappearDuration;
-    [SerializeField] private string playerTag;
-    [SerializeField] private float resetDuration;
-    private Coroutine disappearCoroutine;
-
-    [Header("Fading")]
+    [SerializeField] private float disappearWaitDuration;
+    [SerializeField] private float disappearAnimationsDuration;
+    [SerializeField] private float resetWaitDuration;
     [SerializeField] private float resetAnimationsDuration;
+    [SerializeField] private string playerTag;
+    private Coroutine disappearCoroutine;
 
     [Header("Falling")]
     [SerializeField] private float fallDistance;
-    [SerializeField] private float resetFallDuration;
 
     private void Start() {
 
@@ -40,17 +38,19 @@ public class DisappearingPlatform : MonoBehaviour {
 
     private IEnumerator HandleFade() {
 
+        yield return new WaitForSeconds(disappearWaitDuration);
+
         float currentTime = 0f;
         Color startColor = meshRenderer.material.color;
         Color targetColor = new Color(startColor.r, startColor.g, startColor.b, 0f);
         Vector3 startPosition = transform.position;
         Vector3 targetPosition = new Vector3(startPosition.x, startPosition.y - fallDistance, startPosition.z);
 
-        while (currentTime < disappearDuration) {
+        while (currentTime < disappearAnimationsDuration) {
 
             currentTime += Time.deltaTime;
-            meshRenderer.material.color = Color.Lerp(startColor, targetColor, currentTime / disappearDuration);
-            transform.position = Vector3.Lerp(startPosition, targetPosition, currentTime / disappearDuration);
+            meshRenderer.material.color = Color.Lerp(startColor, targetColor, currentTime / disappearAnimationsDuration);
+            transform.position = Vector3.Lerp(startPosition, targetPosition, currentTime / disappearAnimationsDuration);
             yield return null;
 
         }
@@ -61,7 +61,7 @@ public class DisappearingPlatform : MonoBehaviour {
         collider.enabled = false;
         meshRenderer.enabled = false;
 
-        yield return new WaitForSeconds(resetDuration);
+        yield return new WaitForSeconds(resetWaitDuration);
 
         meshRenderer.material.color = startColor;
 

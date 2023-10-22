@@ -1,5 +1,6 @@
 using System.Collections;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class MenuUIController : MonoBehaviour {
@@ -10,10 +11,13 @@ public class MenuUIController : MonoBehaviour {
     [SerializeField] private Button playButton;
     [SerializeField] private Button settingsButton;
     [SerializeField] private Button quitButton;
+    [SerializeField] private CanvasGroup loadingScreen;
 
     [Header("Animations")]
     [SerializeField] private float mainMenuFadeDuration;
     [SerializeField] private float levelMenuFadeDuration;
+    [SerializeField] private float loadingScreenFadeDuration;
+    [SerializeField] private float minLoadingDuration;
     private Coroutine screenFadeInCoroutine;
     private Coroutine screenFadeOutCoroutine;
 
@@ -24,6 +28,8 @@ public class MenuUIController : MonoBehaviour {
 
         levelMenu.gameObject.SetActive(false);
         mainMenu.alpha = 0f;
+        loadingScreen.alpha = 0f;
+        FadeOutLoadingScreen();
         FadeInScreen(mainMenu, 1f, mainMenuFadeDuration);
 
     }
@@ -41,7 +47,38 @@ public class MenuUIController : MonoBehaviour {
 
     }
 
-    private void FadeInScreen(CanvasGroup screen, float targetOpacity, float duration) {
+    public IEnumerator LoadLevel(Object level) {
+
+        AsyncOperation operation = SceneManager.LoadSceneAsync(level.name);
+        operation.allowSceneActivation = false;
+        float currentTime = 0f;
+
+        while (!operation.isDone && operation.progress < 0.9f) {
+
+            currentTime += Time.deltaTime;
+            yield return null;
+
+        }
+
+        yield return new WaitForSeconds(minLoadingDuration - currentTime);
+
+        operation.allowSceneActivation = true;
+
+    }
+
+    public void FadeInLoadingScreen() {
+
+        FadeInScreen(loadingScreen, 1f, loadingScreenFadeDuration);
+
+    }
+
+    public void FadeOutLoadingScreen() {
+
+        FadeOutScreen(loadingScreen, loadingScreenFadeDuration);
+
+    }
+
+    public void FadeInScreen(CanvasGroup screen, float targetOpacity, float duration) {
 
         if (screenFadeInCoroutine != null)
             StopCoroutine(screenFadeInCoroutine);

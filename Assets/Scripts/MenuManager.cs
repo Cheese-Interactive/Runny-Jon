@@ -8,6 +8,7 @@ using UnityEngine.UI;
 public class MenuManager : MonoBehaviour {
 
     [Header("References")]
+    private AudioManager audioManager;
     private PlayerData playerData;
 
     [Header("Levels")]
@@ -20,6 +21,7 @@ public class MenuManager : MonoBehaviour {
 
     private void Start() {
 
+        audioManager = FindObjectOfType<AudioManager>();
         playerData = FindObjectOfType<PlayerData>();
 
         int currLevelIndex = 0;
@@ -35,8 +37,15 @@ public class MenuManager : MonoBehaviour {
             for (int j = 0; j < levelRowSize && currLevelIndex < levels.Count; j++) {
 
                 level = levels[currLevelIndex];
+                currLevelIndex++;
+
+                if (level == null) {
+
+                    continue;
+
+                }
+
                 button = Instantiate(levelButton, row);
-                RectTransform buttonRect = button.GetComponent<RectTransform>();
                 button.level = level;
                 button.levelNameText.text = level.levelName;
                 button.playsText.text = "Plays: " + playerData.GetLevelPlays(level);
@@ -48,10 +57,12 @@ public class MenuManager : MonoBehaviour {
                 button.recordText.text = "Record: " + (record == null ? "None" : (record > 60f ? string.Format("{0:0}:{1:00}.{2:00}", (int) record / 60, (int) seconds, seconds % 1 * 100) : string.Format("{0:00}.{1:00}", (int) seconds, seconds % 1 * 100)));
 
                 button.image.sprite = level.icon;
-                currLevelIndex++;
 
             }
         }
+
+        audioManager.PlayMusic(AudioManager.MusicType.EverythingIsAwesome);
+
     }
 
     public List<Level> GetLevels() {

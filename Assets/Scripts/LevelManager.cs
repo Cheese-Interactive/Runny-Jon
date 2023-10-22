@@ -7,6 +7,7 @@ public class LevelManager : GameManager {
 
         playerController = FindObjectOfType<PlayerController>();
         UIController = FindObjectOfType<GameUIController>();
+        audioManager = FindObjectOfType<AudioManager>();
         playerData = FindObjectOfType<PlayerData>();
 
         Transform firstCheckpoint = checkpoints[currCheckpoint].transform;
@@ -19,6 +20,8 @@ public class LevelManager : GameManager {
             checkpoints[i].gameObject.SetActive(false);
 
         stopwatch = new Stopwatch();
+
+        audioManager.PlayMusic(AudioManager.MusicType.EverythingIsAwesome);
 
     }
 
@@ -45,6 +48,21 @@ public class LevelManager : GameManager {
     public override Stopwatch GetTimer() {
 
         return stopwatch;
+
+    }
+
+    public override void CheckpointReached(Checkpoint.CheckpointType checkpointType) {
+
+        if (currCheckpoint + 1 >= checkpoints.Length || checkpointType != checkpoints[currCheckpoint + 1].GetCheckpointType())
+            return;
+
+        currCheckpoint++;
+        UIController.TypeSubtitleText(checkpoints[currCheckpoint].GetSubtitleText());
+        checkpoints[currCheckpoint].StartFadeOutCheckpoint();
+        checkpoints[currCheckpoint].GetComponentInChildren<CheckpointArrow>().StartFadeOutArrow();
+
+        if (currCheckpoint != checkpoints.Length - 1)
+            checkpoints[currCheckpoint + 1].gameObject.SetActive(true);
 
     }
 
@@ -75,6 +93,12 @@ public class LevelManager : GameManager {
     public override void KillPlayer() {
 
         StartCoroutine(RespawnPlayer());
+
+    }
+
+    public override Object GetMainMenuScene() {
+
+        return mainMenuScene;
 
     }
 }

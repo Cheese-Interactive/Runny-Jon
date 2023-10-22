@@ -2,8 +2,6 @@ using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 using Newtonsoft.Json;
-using System;
-using UnityEngine.SubsystemsImplementation;
 
 public class PlayerData : MonoBehaviour {
 

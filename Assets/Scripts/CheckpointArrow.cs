@@ -7,6 +7,7 @@ public class CheckpointArrow : MonoBehaviour {
     [Header("References")]
     private Transform player;
     private Material material;
+    private Checkpoint checkpoint;
 
     [Header("Animations")]
     private Coroutine fadeOutCoroutine;
@@ -15,6 +16,7 @@ public class CheckpointArrow : MonoBehaviour {
 
         player = FindObjectOfType<PlayerController>().transform;
         material = GetComponent<MeshRenderer>().material;
+        checkpoint = GetComponentInParent<Checkpoint>();
 
     }
 
@@ -27,12 +29,12 @@ public class CheckpointArrow : MonoBehaviour {
 
     }
 
-    public void StartFadeOutArrow(float duration) {
+    public void StartFadeOutArrow() {
 
         if (fadeOutCoroutine != null)
             fadeOutCoroutine = null;
 
-        fadeOutCoroutine = StartCoroutine(FadeOutArrow(duration));
+        fadeOutCoroutine = StartCoroutine(FadeOutArrow(checkpoint.GetFadeOutDuration()));
 
     }
 
