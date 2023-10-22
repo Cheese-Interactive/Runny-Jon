@@ -65,6 +65,9 @@ public class DisappearingPlatform : MonoBehaviour {
 
         meshRenderer.material.color = startColor;
 
+        collider.enabled = true;
+        meshRenderer.enabled = true;
+
         currentTime = 0f;
 
         while (currentTime < resetAnimationsDuration) {
@@ -78,8 +81,6 @@ public class DisappearingPlatform : MonoBehaviour {
 
         meshRenderer.material.color = startColor;
         transform.position = startPosition;
-        collider.enabled = true;
-        meshRenderer.enabled = true;
 
         disappearCoroutine = null;
 

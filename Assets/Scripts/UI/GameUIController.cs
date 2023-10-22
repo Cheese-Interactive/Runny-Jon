@@ -8,6 +8,7 @@ using UnityEngine.UI;
 public class GameUIController : MonoBehaviour {
 
     [Header("References")]
+    private PlayerController playerController;
     private GameManager gameManager;
     private Vector3 startTimerTextPos;
     private Transform startTimerTextParent;
@@ -16,23 +17,21 @@ public class GameUIController : MonoBehaviour {
     [SerializeField] private TMP_Text subtitleText;
     [SerializeField] private CanvasGroup pauseMenu;
     [SerializeField] private Transform pauseTimerTextPos;
-    [SerializeField] private Button pauseResumeButton;
-    [SerializeField] private Button pauseMainMenuButton;
-    [SerializeField] private Button pauseSettingsButton;
+    [SerializeField] private Button resumeButton;
+    [SerializeField] private Button settingsButton;
+    [SerializeField] private Button mainMenuButton;
     [SerializeField] private CanvasGroup deathScreen;
     [SerializeField] private CanvasGroup interactIcon;
     [SerializeField] private CanvasGroup loadingScreen;
 
     [Header("Timer")]
     [SerializeField] private TMP_Text timerText;
+    private Coroutine timerCoroutine;
 
     [Header("Level Complete Menu")]
     [SerializeField] private CanvasGroup levelCompleteScreen;
     [SerializeField] private TMP_Text timeText;
     [SerializeField] private GameObject recordText;
-    [SerializeField] private TMP_Text deathsText;
-    [SerializeField] private Button mainMenuButton;
-    [SerializeField] private Button replayButton;
 
     [Header("Animations")]
     [SerializeField] private float subtitleTypeDuration;
@@ -50,6 +49,7 @@ public class GameUIController : MonoBehaviour {
 
     private void Start() {
 
+        playerController = FindObjectOfType<PlayerController>();
         gameManager = FindObjectOfType<GameManager>();
 
         Cursor.lockState = CursorLockMode.Locked;
@@ -61,10 +61,8 @@ public class GameUIController : MonoBehaviour {
         startTimerTextPos = timerText.rectTransform.localPosition;
         startTimerTextParent = timerText.rectTransform.parent;
 
-        pauseResumeButton.onClick.AddListener(ResumeGame);
-        pauseMainMenuButton.onClick.AddListener(OpenMainMenu);
+        resumeButton.onClick.AddListener(ResumeGame);
         mainMenuButton.onClick.AddListener(OpenMainMenu);
-        replayButton.onClick.AddListener(ReplayLevel);
 
         pauseMenu.alpha = 0f;
         deathScreen.alpha = 0f;
@@ -152,12 +150,6 @@ public class GameUIController : MonoBehaviour {
 
     }
 
-    private void ReplayLevel() {
-
-        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
-
-    }
-
     public void FadeInInteractIcon() {
 
         if (interactIconFadeCoroutine != null)
@@ -212,13 +204,11 @@ public class GameUIController : MonoBehaviour {
 
     }
 
-    public void ShowLevelCompleteScreen(bool newRecord, int deaths) {
+    public void ShowLevelCompleteScreen() {
 
-        timeText.text = "Time: " + timerText.text;
-        recordText.gameObject.SetActive(newRecord);
-        deathsText.text = "Deaths: " + deaths;
+        StopCoroutine(timerCoroutine);
+        timeText.text = "Your Time: " + timerText.text;
         FadeInScreen(levelCompleteScreen, 1f, levelCompleteFadeInDuration);
-        LayoutRebuilder.ForceRebuildLayoutImmediate(levelCompleteScreen.GetComponent<RectTransform>());
 
     }
 

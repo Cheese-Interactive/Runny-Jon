@@ -10,9 +10,7 @@ public class AudioManager : MonoBehaviour {
 
     [Header("Audio Clips")]
     [SerializeField] private AudioClip everythingIsAwesomeMusic;
-    [SerializeField] private AudioClip landSound;
-    [SerializeField] private AudioClip grappleSound;
-    [SerializeField] private AudioClip victorySound;
+    [SerializeField] private AudioClip clickSound;
 
     public enum MusicType {
 
@@ -22,7 +20,7 @@ public class AudioManager : MonoBehaviour {
 
     public enum SoundEffectType {
 
-        Land, Grapple, Victory
+        Click
 
     }
 
@@ -53,19 +51,9 @@ public class AudioManager : MonoBehaviour {
 
         switch (soundType) {
 
-            case SoundEffectType.Land:
+            case SoundEffectType.Click:
 
-            soundEffectSource.PlayOneShot(landSound);
-            break;
-
-            case SoundEffectType.Grapple:
-
-            soundEffectSource.PlayOneShot(grappleSound);
-            break;
-
-            case SoundEffectType.Victory:
-
-            soundEffectSource.PlayOneShot(victorySound);
+            soundEffectSource.PlayOneShot(clickSound);
             break;
 
             default:
