@@ -17,4 +17,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/CastleSet/Castle1.unity
     guid: 2a2235926dd82f647aac47b0ee194699
+  - enabled: 1
+    path: Assets/Scenes/CitySet/Skyline1.unity
+    guid: fc3e557fb432a8e4b8fefe1a0273b0d6
   m_configObjects: {}
