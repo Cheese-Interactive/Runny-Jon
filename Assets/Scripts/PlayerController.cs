@@ -213,7 +213,6 @@ public class PlayerController : MonoBehaviour {
     [SerializeField] private KeyCode interactKey;
     [SerializeField] private KeyCode resetKey;
     [SerializeField] private KeyCode pauseKey;
-    [SerializeField] private KeyCode checkpointMenuKey;
 
     public enum MovementState {
 

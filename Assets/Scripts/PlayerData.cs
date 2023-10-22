@@ -56,26 +56,35 @@ public class PlayerData : MonoBehaviour {
         }
     }
 
-    public void OnLevelComplete(Level level, int deaths, float time) {
+    public bool OnLevelComplete(Level level, int deaths, float time) {
 
         Dictionary<int, LevelData> levelData = dataRootObject.GetLevelData();
         int ID = level.ID;
+        bool newRecord = false;
 
         if (levelData.ContainsKey(ID)) {
 
             levelData[ID].IncrementPlays();
             levelData[ID].AddDeaths(deaths);
 
-            if (time < levelData[ID].GetRecord() || levelData[ID].GetRecord() == null)
+            if (time < levelData[ID].GetRecord() || levelData[ID].GetRecord() == null) {
+
                 levelData[ID].SetRecord(time);
+                newRecord = true;
+
+            }
 
             SerializeData();
 
         } else {
 
             levelData.Add(ID, new LevelData(1, deaths, time));
+            newRecord = true;
 
         }
+
+        return newRecord;
+
     }
 
 
