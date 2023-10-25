@@ -14,7 +14,6 @@ public abstract class GameManager : MonoBehaviour {
     protected bool playerKilled;
 
     [Header("Level")]
-    [SerializeField] protected Object mainMenuScene;
     [SerializeField] protected Level currentLevel;
     protected int deaths;
     protected Stopwatch stopwatch;

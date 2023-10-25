@@ -1,8 +1,7 @@
 using System.Collections;
 using UnityEngine;
 
-public class MovingPlatform : MonoBehaviour
-{
+public class MovingPlatform : MonoBehaviour {
 
     [Header("References")]
     [SerializeField] private string playerTag;
@@ -13,8 +12,7 @@ public class MovingPlatform : MonoBehaviour
     [SerializeField] private float movementDuration;
     private Coroutine fallCoroutine;
 
-    private void OnCollisionEnter(Collision collision)
-    {
+    private void OnCollisionEnter(Collision collision) {
 
         if (fallCoroutine != null)
             return;
@@ -24,8 +22,7 @@ public class MovingPlatform : MonoBehaviour
 
     }
 
-    private void OnTriggerEnter(Collider collider)
-    {
+    private void OnTriggerEnter(Collider collider) {
 
         if (fallCoroutine != null)
             return;
@@ -35,8 +32,7 @@ public class MovingPlatform : MonoBehaviour
 
     }
 
-    private IEnumerator HandleMovement()
-    {
+    private IEnumerator HandleMovement() {
 
         yield return new WaitForSeconds(movementDelay);
 
@@ -44,8 +40,7 @@ public class MovingPlatform : MonoBehaviour
         Vector3 startPosition = transform.position;
         Vector3 targetPosition = startPosition + movement;
 
-        while (currentTime < movementDuration)
-        {
+        while (currentTime < movementDuration) {
 
             currentTime += Time.deltaTime;
             transform.position = Vector3.Lerp(startPosition, targetPosition, currentTime / movementDuration);

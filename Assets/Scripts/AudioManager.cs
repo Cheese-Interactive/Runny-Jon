@@ -7,19 +7,13 @@ public class AudioManager : MonoBehaviour {
     [Header("References")]
     [SerializeField] private AudioSource musicSource;
     [SerializeField] private AudioSource soundEffectSource;
+    private GameManager gameManager;
 
     [Header("Audio Clips")]
-    [SerializeField] private AudioClip everythingIsAwesomeMusic;
-    [SerializeField] private AudioClip horrorMusic;
+    [SerializeField] private AudioClip menuMusic;
     [SerializeField] private AudioClip landSound;
     [SerializeField] private AudioClip grappleSound;
     [SerializeField] private AudioClip victorySound;
-
-    public enum MusicType {
-
-        EverythingIsAwesome, Horror
-
-    }
 
     public enum SoundEffectType {
 
@@ -27,33 +21,25 @@ public class AudioManager : MonoBehaviour {
 
     }
 
-    private void Start() {
+    private void Awake() {
 
+        gameManager = FindObjectOfType<GameManager>();
         musicSource.loop = true;
 
     }
 
-    public void PlayMusic(MusicType musicType) {
+    public void PlayMenuMusic() {
 
-        switch (musicType) {
+        musicSource.clip = menuMusic;
+        musicSource.Play();
 
-            case MusicType.EverythingIsAwesome:
+    }
 
-            musicSource.clip = everythingIsAwesomeMusic;
-            musicSource.Play();
-            break;
+    public void PlaySceneMusic() {
 
-            case MusicType.Horror:
+        musicSource.clip = gameManager.GetCurrentLevel().backgroundMusic;
+        musicSource.Play();
 
-            musicSource.clip = horrorMusic;
-            musicSource.Play();
-            break;
-
-            default:
-
-            break;
-
-        }
     }
 
     public void PlaySound(SoundEffectType soundType) {

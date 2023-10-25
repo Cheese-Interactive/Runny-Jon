@@ -10,15 +10,14 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 33a7cf2d42ead5b4b8e84dd7a8f71db3, type: 3}
-  m_Name: Castle1
+  m_Name: Template
   m_EditorClassIdentifier: 
-  levelName: Dark Castle
-  ID: 2
-  scene: {fileID: 102900000, guid: 2a2235926dd82f647aac47b0ee194699, type: 3}
-  icon: {fileID: 21300000, guid: 71cf5434b09935e46b6c55bf8389a193, type: 3}
+  levelName: Template
+  ID: -1
+  scene: {fileID: 102900000, guid: f42229e6a71b5534c9c1db80a899c90b, type: 3}
+  icon: {fileID: 0}
   timeLimit: 0
   isTutorial: 0
-  backgroundMusic: {fileID: 8300000, guid: 48e759bdac8f36f46aaf81966e1370eb, type: 3}
   walkEnabled: 1
   sprintEnabled: 1
   jumpEnabled: 1

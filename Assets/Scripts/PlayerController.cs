@@ -1,7 +1,6 @@
 using System.Collections;
 using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class PlayerController : MonoBehaviour {
 
@@ -10,10 +9,9 @@ public class PlayerController : MonoBehaviour {
     [SerializeField] private TMP_Text speedText;
     [SerializeField] private Transform cameraPos;
     [SerializeField] private Transform muzzle;
-    [SerializeField] private Image crosshair;
     [SerializeField] private Transform[] obstacleCheckers;
     private GameManager gameManager;
-    private GameUIController gameUIController;
+    private GameUIController UIController;
     private Animator animator;
     private Rigidbody rb;
     private LineRenderer lineRenderer;
@@ -185,6 +183,10 @@ public class PlayerController : MonoBehaviour {
     private Vector3 startCameraPos;
     private float timer;
 
+    [Header("Interacting")]
+    [SerializeField] private float interactDistance;
+    [SerializeField] private LayerMask interactMask;
+
     [Header("Ground Check")]
     [SerializeField] private Transform feet;
     [SerializeField] private float groundCheckRadius;
@@ -213,7 +215,6 @@ public class PlayerController : MonoBehaviour {
     [SerializeField] private KeyCode interactKey;
     [SerializeField] private KeyCode resetKey;
     [SerializeField] private KeyCode pauseKey;
-    [SerializeField] private KeyCode checkpointMenuKey;
 
     public enum MovementState {
 
@@ -230,7 +231,7 @@ public class PlayerController : MonoBehaviour {
     private void Awake() {
 
         gameManager = FindObjectOfType<GameManager>();
-        gameUIController = FindObjectOfType<GameUIController>();
+        UIController = FindObjectOfType<GameUIController>();
         animator = GetComponent<Animator>();
         rb = GetComponent<Rigidbody>();
         lineRenderer = GetComponent<LineRenderer>();
@@ -392,12 +393,12 @@ public class PlayerController : MonoBehaviour {
 
                 }
 
-                gameUIController.FadeInInteractIcon();
+                UIController.FadeInInteractIcon();
 
             }
         } else {
 
-            gameUIController.FadeOutInteractIcon();
+            UIController.FadeOutInteractIcon();
 
         }
 
@@ -413,19 +414,40 @@ public class PlayerController : MonoBehaviour {
 
             if (gamePaused) {
 
-                gameUIController.ResumeGame();
+                UIController.ResumeGame();
                 EnableAllMovement();
                 EnableLook();
 
             } else {
 
-                gameUIController.PauseGame();
+                UIController.PauseGame();
                 DisableAllMovement();
                 DisableLook();
 
             }
 
             gamePaused = !gamePaused;
+
+        }
+
+        Ray ray = new Ray(camera.transform.position, camera.transform.forward);
+        RaycastHit hitInfo;
+
+        if (Physics.Raycast(ray, out hitInfo, interactDistance, interactMask)) {
+
+            if (hitInfo.collider.GetComponent<Interactable>() != null) {
+
+                UIController.EnableInteractCrosshair();
+                Interactable interactable = hitInfo.collider.GetComponent<Interactable>();
+                // UIController.UpdateInteractText(interactable.interactMessage);
+
+                if (Input.GetKeyDown(interactKey))
+                    interactable.BaseInteract();
+
+            }
+        } else {
+
+            UIController.DisableInteractCrosshair();
 
         }
     }
@@ -748,7 +770,7 @@ public class PlayerController : MonoBehaviour {
             return;
 
         movementState = MovementState.Crouching;
-        crosshair.gameObject.SetActive(true);
+        UIController.EnableCrosshair();
         animator.SetBool("isCrouching", true);
         animator.SetBool("isWalking", false);
         animator.SetBool("isSprinting", false);
@@ -786,7 +808,7 @@ public class PlayerController : MonoBehaviour {
     private void StartSlide() {
 
         movementState = MovementState.Sliding;
-        crosshair.gameObject.SetActive(true);
+        UIController.EnableCrosshair();
         animator.SetBool("isSliding", true);
         ForceCrouch();
         slideTimer = maxSlideTime;
@@ -896,7 +918,7 @@ public class PlayerController : MonoBehaviour {
             lookRotationLerpCoroutine = StartCoroutine(LerpLookRotation(rotation));
 
         rb.useGravity = false;
-        crosshair.gameObject.SetActive(true);
+        UIController.EnableCrosshair();
 
         if (useWallRunTimer)
             wallRunTimer = maxWallRunTime;
@@ -1031,7 +1053,7 @@ public class PlayerController : MonoBehaviour {
 
             // Direct Hit
             predictionHit = raycastHit;
-            crosshair.gameObject.SetActive(false);
+            UIController.DisableCrosshair();
 
         } else {
 
@@ -1042,13 +1064,13 @@ public class PlayerController : MonoBehaviour {
 
                 // Indirect / Predicted Hit
                 predictionHit = sphereCastHit;
-                crosshair.gameObject.SetActive(true);
+                UIController.EnableCrosshair();
 
             } else {
 
                 // Miss
                 predictionHit.point = Vector3.zero;
-                crosshair.gameObject.SetActive(true);
+                UIController.EnableCrosshair();
 
             }
         }
@@ -1076,7 +1098,7 @@ public class PlayerController : MonoBehaviour {
         movementState = MovementState.Swinging;
 
         predictionObj.gameObject.SetActive(false);
-        crosshair.gameObject.SetActive(true);
+        UIController.EnableCrosshair();
 
         swingPoint = predictionHit.point;
         joint = gameObject.AddComponent<SpringJoint>();
@@ -1167,7 +1189,7 @@ public class PlayerController : MonoBehaviour {
     public void StopSwing() {
 
         movementState = MovementState.None;
-        crosshair.gameObject.SetActive(true);
+        UIController.EnableCrosshair();
         Destroy(joint);
 
     }

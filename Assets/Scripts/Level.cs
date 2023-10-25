@@ -10,6 +10,7 @@ public class Level : ScriptableObject {
     public Sprite icon;
     [Range(1, 3599)] public int timeLimit;
     public bool isTutorial;
+    public AudioClip backgroundMusic;
 
     [Header("Movement")]
     public bool walkEnabled;

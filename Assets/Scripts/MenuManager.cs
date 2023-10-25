@@ -57,7 +57,7 @@ public class MenuManager : MonoBehaviour {
             }
         }
 
-        audioManager.PlayMusic(AudioManager.MusicType.EverythingIsAwesome);
+        audioManager.PlaySceneMusic();
 
     }
 

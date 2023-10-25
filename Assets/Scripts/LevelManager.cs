@@ -22,10 +22,7 @@ public class LevelManager : GameManager {
 
         stopwatch = new Stopwatch();
 
-        if (SceneManager.GetActiveScene().name == "Castle1")
-            audioManager.PlayMusic(AudioManager.MusicType.Horror);
-        else
-            audioManager.PlayMusic(AudioManager.MusicType.EverythingIsAwesome);
+        audioManager.PlaySceneMusic();
 
     }
 

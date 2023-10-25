@@ -24,7 +24,7 @@ public class TutorialManager : GameManager {
 
         stopwatch = new Stopwatch();
 
-        audioManager.PlayMusic(AudioManager.MusicType.EverythingIsAwesome);
+        audioManager.PlaySceneMusic();
 
     }
 

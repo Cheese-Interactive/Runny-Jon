@@ -16,6 +16,8 @@ public class GameUIController : MonoBehaviour {
     private Transform startTimerTextParent;
 
     [Header("UI References")]
+    [SerializeField] private Image crosshair;
+    [SerializeField] private Sprite interactCrosshair;
     [SerializeField] private TMP_Text subtitleText;
     [SerializeField] private CanvasGroup pauseMenu;
     [SerializeField] private Transform pauseTimerTextPos;
@@ -26,6 +28,8 @@ public class GameUIController : MonoBehaviour {
     [SerializeField] private CanvasGroup interactIcon;
     [SerializeField] private CanvasGroup loadingScreen;
     [SerializeField] private TMP_Text loadingText;
+    private Sprite defaultCrosshair;
+    private bool defaultCrosshairEnabled;
 
     [Header("Timer")]
     [SerializeField] private TMP_Text timerText;
@@ -58,41 +62,65 @@ public class GameUIController : MonoBehaviour {
         playerController = FindObjectOfType<PlayerController>();
         gameManager = FindObjectOfType<GameManager>();
 
-        // DELETE
-        if (SceneManager.GetActiveScene().name != "Skyline1") {
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
 
-            Cursor.lockState = CursorLockMode.Locked;
-            Cursor.visible = false;
+        SetLoadingText("Loading Level...");
+        loadingScreen.alpha = 1f;
+        FadeOutScreen(loadingScreen, loadingScreenFadeDuration);
 
-            SetLoadingText("Loading Level...");
-            loadingScreen.alpha = 1f;
-            FadeOutScreen(loadingScreen, loadingScreenFadeDuration);
+        startTimerTextPos = timerText.rectTransform.localPosition;
+        startTimerTextParent = timerText.rectTransform.parent;
 
-            startTimerTextPos = timerText.rectTransform.localPosition;
-            startTimerTextParent = timerText.rectTransform.parent;
+        pauseResumeButton.onClick.AddListener(ResumeGame);
+        pauseMainMenuButton.onClick.AddListener(OpenMainMenu);
+        mainMenuButton.onClick.AddListener(OpenMainMenu);
+        replayButton.onClick.AddListener(ReplayLevel);
 
-            pauseResumeButton.onClick.AddListener(ResumeGame);
-            pauseMainMenuButton.onClick.AddListener(OpenMainMenu);
-            mainMenuButton.onClick.AddListener(OpenMainMenu);
-            replayButton.onClick.AddListener(ReplayLevel);
+        pauseMenu.alpha = 0f;
+        deathScreen.alpha = 0f;
+        levelCompleteScreen.alpha = 0f;
+        pauseMenu.gameObject.SetActive(false);
+        deathScreen.gameObject.SetActive(false);
+        interactIcon.gameObject.SetActive(false);
+        levelCompleteScreen.gameObject.SetActive(false);
 
-            pauseMenu.alpha = 0f;
-            deathScreen.alpha = 0f;
-            levelCompleteScreen.alpha = 0f;
-            pauseMenu.gameObject.SetActive(false);
-            deathScreen.gameObject.SetActive(false);
-            interactIcon.gameObject.SetActive(false);
-            levelCompleteScreen.gameObject.SetActive(false);
+        defaultCrosshairEnabled = true;
+        defaultCrosshair = crosshair.sprite;
+        EnableCrosshair();
 
-        } else {
+    }
 
-            mainMenuButton.onClick.AddListener(OpenMainMenu);
-            playerController.DisableAllMovement();
-            timerText.gameObject.SetActive(false);
-            Cursor.lockState = CursorLockMode.None;
-            Cursor.visible = true;
+    public void EnableCrosshair() {
 
-        }
+        crosshair.gameObject.SetActive(true);
+
+    }
+
+    public void DisableCrosshair() {
+
+        crosshair.gameObject.SetActive(false);
+
+    }
+
+    public void EnableInteractCrosshair() {
+
+        if (!defaultCrosshairEnabled)
+            return;
+
+        crosshair.sprite = interactCrosshair;
+        defaultCrosshairEnabled = false;
+
+    }
+
+    public void DisableInteractCrosshair() {
+
+        if (defaultCrosshairEnabled)
+            return;
+
+        crosshair.sprite = defaultCrosshair;
+        defaultCrosshairEnabled = true;
+
     }
 
     public void TypeSubtitleText(string text) {
@@ -174,10 +202,7 @@ public class GameUIController : MonoBehaviour {
 
     private IEnumerator LoadMainMenu() {
 
-        // DELETE
-        if (SceneManager.GetActiveScene().name != "Skyline1")
-            StartCoroutine(FadeScreen(pauseMenu, 0f, pauseMenuFadeDuration, false));
-
+        StartCoroutine(FadeScreen(pauseMenu, 0f, pauseMenuFadeDuration, false));
         SetLoadingText("Loading Main Menu...");
         FadeInScreen(loadingScreen, 1f, loadingScreenFadeDuration);
         AsyncOperation operation = SceneManager.LoadSceneAsync(0);

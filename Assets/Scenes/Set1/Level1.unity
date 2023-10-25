@@ -466,9 +466,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   musicSource: {fileID: 81430095}
   soundEffectSource: {fileID: 81430094}
-  everythingIsAwesomeMusic: {fileID: 8300000, guid: dfaefccbc404c4644bf41280a1d20211,
-    type: 3}
-  horrorMusic: {fileID: 8300000, guid: 48e759bdac8f36f46aaf81966e1370eb, type: 3}
+  menuMusic: {fileID: 0}
   landSound: {fileID: 8300000, guid: bcf9e82c605ce2a458761f849ae410dc, type: 3}
   grappleSound: {fileID: 8300000, guid: 838ccd40d86fdd345887a6ffe1fcac14, type: 3}
   victorySound: {fileID: 8300000, guid: d322416b6bb0bad4bbfdc34cb7f46caf, type: 3}
@@ -4108,7 +4106,6 @@ MonoBehaviour:
   checkpoints:
   - {fileID: 1147193204}
   - {fileID: 4665029}
-  mainMenuScene: {fileID: 102900000, guid: 98a472d19a1df754fb6c925d5d8e96fc, type: 3}
   currentLevel: {fileID: 11400000, guid: f6227696c16d744419417094bf54854e, type: 2}
 --- !u!1 &444665423
 GameObject:
@@ -8593,15 +8590,15 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1147193202}
-  m_LocalRotation: {x: 0, y: -0.7071068, z: 0.7071068, w: 0}
-  m_LocalPosition: {x: -0.01, y: 5.01, z: 0.17}
+  m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
+  m_LocalPosition: {x: 0, y: 5.01, z: 0}
   m_LocalScale: {x: 4, y: 4, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 253070148}
   m_Father: {fileID: 1630037762}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 90, y: 0, z: 180}
+  m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
 --- !u!114 &1147193204
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10214,6 +10211,8 @@ MonoBehaviour:
   - {fileID: 1131873251}
   - {fileID: 1733204546}
   - {fileID: 1755294542}
+  leftArm: {fileID: 0}
+  rightArm: {fileID: 0}
   xSensitivity: 15
   ySensitivity: 15
   topCameraClamp: 90
@@ -10224,7 +10223,7 @@ MonoBehaviour:
   walkSpeed: 8
   sprintSpeed: 12
   speedIncreaseMultiplier: 5
-  slopeIncreaseMultiplier: 1.2
+  slopeIncreaseMultiplier: 2.5
   jumpForce: 15
   jumpCooldown: 0.25
   airMultiplier: 0.6
@@ -10301,11 +10300,11 @@ MonoBehaviour:
     m_RotationOrder: 4
   predictionObj: {fileID: 1610090246}
   predictionRadius: 1.5
-  ziplineCheckRadius: 0
-  ziplineExitForce: 0
+  ziplineCheckRadius: 2
+  ziplineExitForce: 10
   ziplineMask:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 1024
   walkBobSpeed: 10
   walkBobAmount: 0.05
   sprintBobSpeed: 18
@@ -10332,7 +10331,6 @@ MonoBehaviour:
   interactKey: 0
   resetKey: 9
   pauseKey: 27
-  checkpointMenuKey: 0
 --- !u!54 &1384782514
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -13058,7 +13056,7 @@ MonoBehaviour:
   priority: 0
   blendDistance: 0
   weight: 1
-  sharedProfile: {fileID: 11400000, guid: f0c5bf13955383f4190646c380a7aa2a, type: 2}
+  sharedProfile: {fileID: 11400000, guid: 73dc05e45332200448dc8665346f4785, type: 2}
 --- !u!4 &2038682558
 Transform:
   m_ObjectHideFlags: 0
