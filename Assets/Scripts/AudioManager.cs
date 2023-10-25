@@ -1,8 +1,7 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-public class AudioManager : MonoBehaviour {
+public class AudioManager : MonoBehaviour
+{
 
     [Header("References")]
     [SerializeField] private AudioSource musicSource;
@@ -15,55 +14,61 @@ public class AudioManager : MonoBehaviour {
     [SerializeField] private AudioClip grappleSound;
     [SerializeField] private AudioClip victorySound;
 
-    public enum SoundEffectType {
+    public enum SoundEffectType
+    {
 
         Land, Grapple, Victory
 
     }
 
-    private void Awake() {
+    private void Awake()
+    {
 
         gameManager = FindObjectOfType<GameManager>();
         musicSource.loop = true;
 
     }
 
-    public void PlayMenuMusic() {
+    public void PlayMenuMusic()
+    {
 
         musicSource.clip = menuMusic;
         musicSource.Play();
 
     }
 
-    public void PlaySceneMusic() {
+    public void PlaySceneMusic()
+    {
 
-        musicSource.clip = gameManager.GetCurrentLevel().backgroundMusic;
+        //musicSource.clip = gameManager.GetCurrentLevel().backgroundMusic;
         musicSource.Play();
 
     }
 
-    public void PlaySound(SoundEffectType soundType) {
+    public void PlaySound(SoundEffectType soundType)
+    {
 
-        switch (soundType) {
+        switch (soundType)
+        {
 
             case SoundEffectType.Land:
 
-            soundEffectSource.PlayOneShot(landSound);
-            break;
+                soundEffectSource.PlayOneShot(landSound);
+                break;
 
             case SoundEffectType.Grapple:
 
-            soundEffectSource.PlayOneShot(grappleSound);
-            break;
+                soundEffectSource.PlayOneShot(grappleSound);
+                break;
 
             case SoundEffectType.Victory:
 
-            soundEffectSource.PlayOneShot(victorySound);
-            break;
+                soundEffectSource.PlayOneShot(victorySound);
+                break;
 
             default:
 
-            break;
+                break;
 
         }
     }

@@ -20,4 +20,10 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/CitySet/Skyline1.unity
     guid: fc3e557fb432a8e4b8fefe1a0273b0d6
+  - enabled: 0
+    path: Assets/Scenes/P.unity
+    guid: 437a2fa53e6bbb04ab7ccda4ccdbe9e4
+  - enabled: 1
+    path: Assets/Scenes/FunPlace.unity
+    guid: 84a9a2f1872c8014a8273d3ca7741515
   m_configObjects: {}
