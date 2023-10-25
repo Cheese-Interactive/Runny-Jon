@@ -1,8 +1,7 @@
 using System.Collections;
 using UnityEngine;
 
-public class Zipline : MonoBehaviour
-{
+public class Zipline : MonoBehaviour {
 
     [Header("References")]
     [SerializeField] private Zipline targetZipline;
@@ -19,29 +18,27 @@ public class Zipline : MonoBehaviour
     [SerializeField] private float ziplineScale;
     [SerializeField] private float lerpToZiplineDuration;
     [SerializeField] private float arrivalThreshold; // distance from the end to get off
-    [SerializeField] private bool hasDestination = true; //for one way ziplines when needed
     private bool isZiplining;
 
-    private void Awake()
-    {
-        if (hasDestination)
-        {
+    private void Awake() {
+
+        if (targetZipline != null) {
+
             lineRenderer = ziplineConnector.GetComponent<LineRenderer>();
             lineRenderer.SetPosition(0, ziplineConnector.position);
             lineRenderer.SetPosition(1, targetZipline.ziplineConnector.position);
+
         }
     }
 
-    private void Start()
-    {
+    private void Start() {
 
         playerController = FindObjectOfType<PlayerController>();
         offset = new Vector3(0f, playerController.GetPlayerHeight(), 0f);
 
     }
 
-    private void Update()
-    {
+    private void Update() {
 
         if (!isZiplining || currZipline == null)
             return;
@@ -54,17 +51,16 @@ public class Zipline : MonoBehaviour
 
     }
 
-    public void StartZipline()
-    {
+    public bool CanZipline() {
 
-        if (isZiplining)
-            return;
+        return targetZipline != null;
 
-        if (!hasDestination)
-        {
-            ResetZipline(false);
+    }
+
+    public void StartZipline() {
+
+        if (isZiplining || targetZipline == null)
             return;
-        }
 
         if (lerpToZiplineCoroutine != null)
             StopCoroutine(lerpToZiplineCoroutine);
@@ -77,14 +73,12 @@ public class Zipline : MonoBehaviour
 
     }
 
-    private IEnumerator LerpPlayerToZipline(Transform player, Vector3 targetPosition, float duration)
-    {
+    private IEnumerator LerpPlayerToZipline(Transform player, Vector3 targetPosition, float duration) {
 
         float currentTime = 0f;
         Vector3 startPosition = playerController.transform.position;
 
-        while (currentTime < duration)
-        {
+        while (currentTime < duration) {
 
             currentTime += Time.deltaTime;
             player.position = Vector3.Lerp(startPosition, targetPosition, currentTime / duration);
@@ -103,8 +97,7 @@ public class Zipline : MonoBehaviour
 
     }
 
-    public void ResetZipline(bool jump)
-    {
+    public void ResetZipline(bool jump) {
 
         if (!isZiplining)
             return;

@@ -383,11 +383,13 @@ public class PlayerController : MonoBehaviour {
 
         if (colliders.Length > 0 && movementState != MovementState.Ziplining) {
 
-            if (ziplineEnabled) {
+            Zipline zipline = colliders[0].GetComponent<Zipline>();
+
+            if (ziplineEnabled && zipline.CanZipline()) {
 
                 if (Input.GetKeyDown(interactKey)) {
 
-                    currZipline = colliders[0].GetComponent<Zipline>();
+                    currZipline = zipline;
                     movementState = MovementState.Ziplining;
                     currZipline.StartZipline();
 

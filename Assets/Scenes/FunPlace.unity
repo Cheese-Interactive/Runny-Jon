@@ -19314,7 +19314,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1852212756}
   m_Layer: 6
-  m_Name: Lightd
+  m_Name: Lights
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
