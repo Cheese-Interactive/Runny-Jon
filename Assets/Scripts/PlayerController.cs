@@ -437,9 +437,8 @@ public class PlayerController : MonoBehaviour {
 
             if (hitInfo.collider.GetComponent<Interactable>() != null) {
 
-                UIController.EnableInteractCrosshair();
                 Interactable interactable = hitInfo.collider.GetComponent<Interactable>();
-                // UIController.UpdateInteractText(interactable.interactMessage);
+                UIController.EnableInteractCrosshair(interactable.interactText);
 
                 if (Input.GetKeyDown(interactKey))
                     interactable.BaseInteract();

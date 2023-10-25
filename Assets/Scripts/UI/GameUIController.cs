@@ -10,13 +10,13 @@ using UnityEngine.UI;
 public class GameUIController : MonoBehaviour {
 
     [Header("References")]
-    private PlayerController playerController;
     private GameManager gameManager;
     private Vector3 startTimerTextPos;
     private Transform startTimerTextParent;
 
     [Header("UI References")]
     [SerializeField] private Image crosshair;
+    [SerializeField] private TMP_Text interactText;
     [SerializeField] private Sprite interactCrosshair;
     [SerializeField] private TMP_Text subtitleText;
     [SerializeField] private CanvasGroup pauseMenu;
@@ -59,7 +59,6 @@ public class GameUIController : MonoBehaviour {
 
     private void Start() {
 
-        playerController = FindObjectOfType<PlayerController>();
         gameManager = FindObjectOfType<GameManager>();
 
         Cursor.lockState = CursorLockMode.Locked;
@@ -103,10 +102,13 @@ public class GameUIController : MonoBehaviour {
 
     }
 
-    public void EnableInteractCrosshair() {
+    public void EnableInteractCrosshair(string text) {
 
         if (!defaultCrosshairEnabled)
             return;
+
+        interactText.gameObject.SetActive(true);
+        SetInteractText(text);
 
         crosshair.sprite = interactCrosshair;
         defaultCrosshairEnabled = false;
@@ -118,8 +120,17 @@ public class GameUIController : MonoBehaviour {
         if (defaultCrosshairEnabled)
             return;
 
+        interactText.gameObject.SetActive(false);
+        SetInteractText("");
+
         crosshair.sprite = defaultCrosshair;
         defaultCrosshairEnabled = true;
+
+    }
+
+    private void SetInteractText(string text) {
+
+        interactText.text = text;
 
     }
 
