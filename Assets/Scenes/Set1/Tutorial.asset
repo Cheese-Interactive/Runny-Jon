@@ -17,13 +17,13 @@ MonoBehaviour:
   scene: {fileID: 102900000, guid: 0463a6b238a5b1e49a9adf2803f7d413, type: 3}
   icon: {fileID: 21300000, guid: a278a1bd732fe684eb9282c4b04b698e, type: 3}
   timeLimit: 0
-  objective: {fileID: 0}
   isTutorial: 1
+  backgroundMusic: {fileID: 0}
   walkEnabled: 1
-  sprintEnabled: 0
-  jumpEnabled: 0
-  crouchEnabled: 0
-  slideEnabled: 0
-  wallRunEnabled: 0
-  swingEnabled: 0
-  ziplineEnabled: 0
+  sprintEnabled: 1
+  jumpEnabled: 1
+  crouchEnabled: 1
+  slideEnabled: 1
+  wallRunEnabled: 1
+  swingEnabled: 1
+  ziplineEnabled: 1

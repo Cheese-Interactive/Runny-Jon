@@ -12,7 +12,7 @@ public class PlayerController : MonoBehaviour {
     [SerializeField] private Transform[] obstacleCheckers;
     private GameManager gameManager;
     private GameUIController UIController;
-    private Animator animator;
+    [SerializeField] private Animator animator;
     private Rigidbody rb;
     private LineRenderer lineRenderer;
     private Spring spring;
@@ -232,7 +232,6 @@ public class PlayerController : MonoBehaviour {
 
         gameManager = FindObjectOfType<GameManager>();
         UIController = FindObjectOfType<GameUIController>();
-        animator = GetComponent<Animator>();
         rb = GetComponent<Rigidbody>();
         lineRenderer = GetComponent<LineRenderer>();
         spring = new Spring();
@@ -662,13 +661,7 @@ public class PlayerController : MonoBehaviour {
 
         } else {
 
-            animator.SetBool("isWalking", false);
-            animator.SetBool("isSprinting", false);
-            animator.SetBool("isCrouching", false);
-            animator.SetBool("isSliding", false);
-            animator.SetBool("isWallRunningLeft", false);
-            animator.SetBool("isWallRunningRight", false);
-            animator.SetBool("isZiplining", false);
+            ResetAnimations();
             movementState = MovementState.None;
 
         }
@@ -736,6 +729,19 @@ public class PlayerController : MonoBehaviour {
 
             }
         }
+    }
+
+    private void ResetAnimations() {
+
+        animator.SetBool("isGrounded", true);
+        animator.SetBool("isWalking", false);
+        animator.SetBool("isSprinting", false);
+        animator.SetBool("isCrouching", false);
+        animator.SetBool("isSliding", false);
+        animator.SetBool("isWallRunningLeft", false);
+        animator.SetBool("isWallRunningRight", false);
+        animator.SetBool("isZiplining", false);
+
     }
 
     private void Jump() {
@@ -1358,14 +1364,7 @@ public class PlayerController : MonoBehaviour {
             ziplineEnabled = false;
 
         movementState = MovementState.None;
-        animator.SetBool("isWalking", false);
-        animator.SetBool("isSprinting", false);
-        animator.SetBool("isCrouching", false);
-        animator.SetBool("isSliding", false);
-        animator.SetBool("isWallRunningLeft", false);
-        animator.SetBool("isWallRunningRight", false);
-        animator.SetBool("isZiplining", false);
-        animator.SetBool("isGrounded", true);
+        ResetAnimations();
 
     }
 
