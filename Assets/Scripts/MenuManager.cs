@@ -8,7 +8,7 @@ using UnityEngine.UI;
 public class MenuManager : MonoBehaviour {
 
     [Header("References")]
-    private AudioManager audioManager;
+    private MenuAudioManager audioManager;
     private PlayerData playerData;
 
     [Header("Levels")]
@@ -20,7 +20,7 @@ public class MenuManager : MonoBehaviour {
 
     private void Start() {
 
-        audioManager = FindObjectOfType<AudioManager>();
+        audioManager = FindObjectOfType<MenuAudioManager>();
         playerData = FindObjectOfType<PlayerData>();
 
         int currLevelIndex = 0;
@@ -57,7 +57,7 @@ public class MenuManager : MonoBehaviour {
             }
         }
 
-        audioManager.PlaySceneMusic();
+        audioManager.PlayMenuMusic();
 
     }
 

@@ -6,31 +6,54 @@ using Newtonsoft.Json;
 public class PlayerData : MonoBehaviour {
 
     [Header("Statistics")]
-    [SerializeField] private string dataFileName;
-    private DataRootObject dataRootObject;
-    private string dataFilePath;
+    [SerializeField] private string levelDataFileName;
+    [SerializeField] private string gameDataFileName;
+    private LevelDataRootObject dataRootObject;
+    private GameData gameData;
+    private string levelDataFilePath;
+    private string gameDataFilePath;
 
     private void Awake() {
 
         DontDestroyOnLoad(this);
-        dataFilePath = Application.persistentDataPath + System.IO.Path.DirectorySeparatorChar + dataFileName;
+        gameDataFilePath = Application.persistentDataPath + System.IO.Path.DirectorySeparatorChar + gameDataFileName;
+        levelDataFilePath = Application.persistentDataPath + System.IO.Path.DirectorySeparatorChar + levelDataFileName;
 
-        if (File.Exists(dataFilePath)) {
+        if (File.Exists(gameDataFilePath)) {
 
-            using (StreamReader sr = new StreamReader(dataFilePath)) {
+            using (StreamReader sr = new StreamReader(gameDataFilePath)) {
+
+                if (Application.isEditor)
+                    Debug.LogWarning("Importing Game Data...");
+
+                if (sr.EndOfStream)
+                    gameData = new GameData();
+                else
+                    gameData = JsonConvert.DeserializeObject<GameData>(sr.ReadToEnd());
+
+            }
+        } else {
+
+            gameData = new GameData();
+
+        }
+
+        if (File.Exists(levelDataFilePath)) {
+
+            using (StreamReader sr = new StreamReader(levelDataFilePath)) {
 
                 if (Application.isEditor)
                     Debug.LogWarning("Importing Level Data...");
 
                 if (sr.EndOfStream)
-                    dataRootObject = new DataRootObject();
+                    dataRootObject = new LevelDataRootObject();
                 else
-                    dataRootObject = JsonConvert.DeserializeObject<DataRootObject>(sr.ReadToEnd());
+                    dataRootObject = JsonConvert.DeserializeObject<LevelDataRootObject>(sr.ReadToEnd());
 
             }
         } else {
 
-            dataRootObject = new DataRootObject();
+            dataRootObject = new LevelDataRootObject();
 
         }
     }
@@ -43,7 +66,19 @@ public class PlayerData : MonoBehaviour {
 
     private void SerializeData() {
 
-        using (StreamWriter sw = new StreamWriter(dataFilePath)) {
+        using (StreamWriter sw = new StreamWriter(gameDataFilePath)) {
+
+            if (Application.isEditor)
+                Debug.LogWarning("Serializing Game Data...");
+
+            sw.Write(JsonConvert.SerializeObject(gameData, Formatting.Indented, new JsonSerializerSettings {
+
+                ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+
+            }));
+        }
+
+        using (StreamWriter sw = new StreamWriter(levelDataFilePath)) {
 
             if (Application.isEditor)
                 Debug.LogWarning("Serializing Level Data...");
@@ -56,7 +91,11 @@ public class PlayerData : MonoBehaviour {
         }
     }
 
-    public bool OnLevelComplete(Level level, int deaths, float time) {
+    public bool OnLevelComplete(Level level, int deaths, float time, int quesos) {
+
+        gameData.AddQuesos(quesos);
+        gameData.AddTotalDeaths(deaths);
+        gameData.IncrementLevelsCompleted();
 
         Dictionary<int, LevelData> levelData = dataRootObject.GetLevelData();
         int ID = level.ID;
@@ -73,9 +112,6 @@ public class PlayerData : MonoBehaviour {
                 levelData[ID].SetRecord(time);
 
             }
-
-            SerializeData();
-
         } else {
 
             levelData.Add(ID, new LevelData(1, deaths, time));
@@ -83,7 +119,14 @@ public class PlayerData : MonoBehaviour {
 
         }
 
+        SerializeData();
         return newRecord;
+
+    }
+
+    public int GetQuesos() {
+
+        return gameData.GetQuesos();
 
     }
 
@@ -114,7 +157,7 @@ public class PlayerData : MonoBehaviour {
     }
 }
 
-public class DataRootObject {
+public class LevelDataRootObject {
 
     public Dictionary<int, LevelData> levelData {
 
@@ -122,7 +165,7 @@ public class DataRootObject {
 
     }
 
-    public DataRootObject() {
+    public LevelDataRootObject() {
 
         levelData = new Dictionary<int, LevelData>();
 
@@ -204,6 +247,85 @@ public class LevelData {
     public void SetRecord(float record) {
 
         this.record = record;
+
+    }
+}
+
+public class GameData {
+
+    public int quesos {
+
+        get; set;
+
+    }
+
+    public int levelsCompleted {
+
+        get; set;
+
+    }
+
+    public int totalDeaths {
+
+        get; set;
+
+    }
+
+    public GameData() {
+
+        quesos = 0;
+        levelsCompleted = 0;
+        totalDeaths = 0;
+
+    }
+
+    public GameData(int quesos, int levelsCompleted, int totalDeaths) {
+
+        this.quesos = quesos;
+        this.levelsCompleted = levelsCompleted;
+        this.totalDeaths = totalDeaths;
+
+    }
+
+    public int GetQuesos() {
+
+        return quesos;
+
+    }
+
+    public void AddQuesos(int amount) {
+
+        quesos += amount;
+
+    }
+
+    public void RemoveQuesos(int amount) {
+
+        quesos -= amount;
+
+    }
+
+    public int GetLevelsCompleted() {
+
+        return levelsCompleted;
+
+    }
+
+    public void IncrementLevelsCompleted() {
+
+        levelsCompleted++;
+
+    }
+
+    public int GetTotalDeaths() {
+
+        return totalDeaths;
+
+    }
+
+    public void AddTotalDeaths(int deaths) {
+
+        totalDeaths += deaths;
 
     }
 }

@@ -6,8 +6,12 @@ using UnityEngine.UI;
 
 public class MenuUIController : MonoBehaviour {
 
+    [Header("References")]
+    private PlayerData playerData;
+
     [Header("UI References")]
     [SerializeField] private CanvasGroup mainMenu;
+    [SerializeField] private TMP_Text quesoText;
     [SerializeField] private CanvasGroup levelMenu;
     [SerializeField] private Button playButton;
     [SerializeField] private Button settingsButton;
@@ -25,9 +29,13 @@ public class MenuUIController : MonoBehaviour {
 
     private void Start() {
 
+        playerData = FindObjectOfType<PlayerData>();
+
         SetLoadingText("Loading Main Menu...");
         loadingScreen.alpha = 1f;
         FadeOutScreen(loadingScreen, loadingScreenFadeDuration);
+
+        quesoText.text = playerData.GetQuesos() + "";
 
         playButton.onClick.AddListener(PlayClicked);
         quitButton.onClick.AddListener(QuitClicked);

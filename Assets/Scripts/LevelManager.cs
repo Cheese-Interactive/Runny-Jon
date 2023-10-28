@@ -8,13 +8,12 @@ public class LevelManager : GameManager {
 
         playerController = FindObjectOfType<PlayerController>();
         UIController = FindObjectOfType<GameUIController>();
-        audioManager = FindObjectOfType<AudioManager>();
+        audioManager = FindObjectOfType<GameAudioManager>();
         playerData = FindObjectOfType<PlayerData>();
 
-        Transform firstCheckpoint = checkpoints[currCheckpoint].transform;
-        playerController.transform.position = firstCheckpoint.position;
-        playerController.transform.rotation = firstCheckpoint.rotation;
-        playerController.SetLookRotations(0f, firstCheckpoint.rotation.eulerAngles.y);
+        Transform spawn = checkpoints[currCheckpoint].GetPlayerSpawn();
+        playerController.transform.position = spawn.position;
+        playerController.SetLookRotations(0f, spawn.rotation.eulerAngles.y);
         playerController.ResetVelocity();
 
         for (int i = 2; i < checkpoints.Length; i++)
@@ -70,10 +69,10 @@ public class LevelManager : GameManager {
     public override void CompleteLevel() {
 
         stopwatch.Stop();
-        audioManager.PlaySound(AudioManager.SoundEffectType.Victory);
+        audioManager.PlaySound(GameAudioManager.SoundEffectType.Victory);
         playerController.DisableAllMovement();
         playerController.DisableLook();
-        UIController.ShowLevelCompleteScreen(playerData.OnLevelComplete(currentLevel, deaths, (float) stopwatch.Elapsed.TotalSeconds), deaths);
+        UIController.ShowLevelCompleteScreen(playerData.OnLevelComplete(currentLevel, deaths, (float) stopwatch.Elapsed.TotalSeconds, 1), deaths);
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
 

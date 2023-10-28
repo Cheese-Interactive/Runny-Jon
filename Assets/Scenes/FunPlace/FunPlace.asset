@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 33a7cf2d42ead5b4b8e84dd7a8f71db3, type: 3}
+  m_Name: FunPlace
+  m_EditorClassIdentifier: 
+  levelName: Test Environment
+  ID: 999
+  scene: {fileID: 102900000, guid: 84a9a2f1872c8014a8273d3ca7741515, type: 3}
+  icon: {fileID: 21300000, guid: 14ce87d366666924abc1af67bfe35e3b, type: 3}
+  timeLimit: 0
+  isTutorial: 0
+  backgroundMusic: {fileID: 8300000, guid: 149ecf7415bc286448b654a5520c6bec, type: 3}
+  walkEnabled: 1
+  sprintEnabled: 1
+  jumpEnabled: 1
+  crouchEnabled: 1
+  slideEnabled: 1
+  wallRunEnabled: 1
+  swingEnabled: 1
+  ziplineEnabled: 1

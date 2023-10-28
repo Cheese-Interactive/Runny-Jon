@@ -18,7 +18,7 @@ MonoBehaviour:
   icon: {fileID: 21300000, guid: 71cf5434b09935e46b6c55bf8389a193, type: 3}
   timeLimit: 0
   isTutorial: 0
-  backgroundMusic: {fileID: 8300000, guid: 48e759bdac8f36f46aaf81966e1370eb, type: 3}
+  backgroundMusic: {fileID: 8300000, guid: f835b5ac8724d9844911ca0fd583539b, type: 3}
   walkEnabled: 1
   sprintEnabled: 1
   jumpEnabled: 1

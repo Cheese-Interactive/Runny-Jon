@@ -1,6 +1,7 @@
 using System.Collections;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Animations.Rigging;
 
 public class PlayerController : MonoBehaviour {
 
@@ -10,12 +11,21 @@ public class PlayerController : MonoBehaviour {
     [SerializeField] private Transform cameraPos;
     [SerializeField] private Transform muzzle;
     [SerializeField] private Transform[] obstacleCheckers;
-    private GameManager gameManager;
-    private GameUIController UIController;
     [SerializeField] private Animator animator;
+    private GameManager gameManager;
+    private GameAudioManager audioManager;
+    private GameUIController UIController;
     private Rigidbody rb;
     private LineRenderer lineRenderer;
     private Spring spring;
+
+    [Header("Rigs")]
+    [SerializeField] private int leftHandIKRigIndex;
+    [SerializeField] private int rightHandIKRigIndex;
+    [SerializeField] private int rightHandFollowRigIndex;
+    [SerializeField] private int leftFootIKRigIndex;
+    [SerializeField] private int rightFootIKRigIndex;
+    private RigBuilder rigBuilder;
 
     [Header("Looking")]
     [SerializeField][Range(0f, 100f)] private float xSensitivity;
@@ -143,6 +153,7 @@ public class PlayerController : MonoBehaviour {
     [SerializeField] private float jointSpring;
     [SerializeField] private float jointDamper;
     [SerializeField] private float jointMassScale;
+    [SerializeField] private Transform swingIKTarget;
     [SerializeField] private LayerMask swingableMask;
     private Vector3 swingPoint;
     private Vector3 currentSwingPosition;
@@ -192,6 +203,7 @@ public class PlayerController : MonoBehaviour {
     [SerializeField] private float groundCheckRadius;
     [SerializeField] private LayerMask environmentMask;
     private bool isGrounded;
+    private bool lastIsGrounded;
 
     [Header("Slope Handling")]
     [SerializeField] private float maxSlopeAngle;
@@ -231,10 +243,18 @@ public class PlayerController : MonoBehaviour {
     private void Awake() {
 
         gameManager = FindObjectOfType<GameManager>();
+        audioManager = FindObjectOfType<GameAudioManager>();
         UIController = FindObjectOfType<GameUIController>();
         rb = GetComponent<Rigidbody>();
         lineRenderer = GetComponent<LineRenderer>();
+        rigBuilder = GetComponent<RigBuilder>();
         spring = new Spring();
+
+        rigBuilder.layers[leftHandIKRigIndex].active = true;
+        rigBuilder.layers[rightHandIKRigIndex].active = true;
+        rigBuilder.layers[rightHandFollowRigIndex].active = false;
+        rigBuilder.layers[leftFootIKRigIndex].active = true;
+        rigBuilder.layers[rightFootIKRigIndex].active = true;
 
         rb.freezeRotation = true;
         spring.SetTarget(0);
@@ -303,6 +323,15 @@ public class PlayerController : MonoBehaviour {
 
         isGrounded = Physics.CheckSphere(feet.position, groundCheckRadius, environmentMask);
         animator.SetBool("isGrounded", isGrounded);
+
+        if (isGrounded && !lastIsGrounded) { // Just landed
+
+            if (movementDirection == Vector3.zero)
+                desiredMoveSpeed = 0f;
+
+            audioManager.PlaySound(GameAudioManager.SoundEffectType.Land);
+
+        }
 
         if (isGrounded && lastWall != null)
             lastWall = null;
@@ -450,6 +479,9 @@ public class PlayerController : MonoBehaviour {
             UIController.DisableInteractCrosshair();
 
         }
+
+        lastIsGrounded = isGrounded;
+
     }
 
     private void FixedUpdate() {
@@ -459,7 +491,7 @@ public class PlayerController : MonoBehaviour {
 
         movementDirection = transform.forward * verticalInput + transform.right * horizontalInput;
 
-        if (!firstMovementDetected && movementDirection != Vector3.zero) {
+        if (movementDirection != Vector3.zero && !firstMovementDetected) {
 
             gameManager.StartTimer();
             firstMovementDetected = true;
@@ -571,17 +603,15 @@ public class PlayerController : MonoBehaviour {
 
         if (movementState == MovementState.Ziplining && ziplineEnabled) {
 
+            ResetAnimations();
             animator.SetBool("isZiplining", true);
-            animator.SetBool("isWalking", false);
-            animator.SetBool("isSprinting", false);
-            animator.SetBool("isCrouching", false);
-            animator.SetBool("isSliding", false);
-            animator.SetBool("isWallRunningLeft", false);
-            animator.SetBool("isWallRunningRight", false);
             movementState = MovementState.Ziplining;
 
         } else if (movementState == MovementState.Swinging && swingEnabled) {
 
+            ResetAnimations();
+            animator.SetBool("isSwinging", true);
+            swingIKTarget.position = swingPoint;
             movementState = MovementState.Swinging;
             desiredMoveSpeed = maxSwingSpeed;
 
@@ -614,49 +644,29 @@ public class PlayerController : MonoBehaviour {
 
         } else if (isGrounded && movementDirection == Vector3.zero) {
 
-            animator.SetBool("isWalking", false);
-            animator.SetBool("isSprinting", false);
-            animator.SetBool("isCrouching", false);
-            animator.SetBool("isSliding", false);
-            animator.SetBool("isWallRunningLeft", false);
-            animator.SetBool("isWallRunningRight", false);
-            animator.SetBool("isZiplining", false);
+            ResetAnimations();
             movementState = MovementState.None;
             desiredMoveSpeed = walkSpeed;
 
         } else if (isGrounded && Input.GetKey(sprintKey) && sprintEnabled) {
 
+            ResetAnimations();
             animator.SetBool("isSprinting", true);
-            animator.SetBool("isWalking", false);
-            animator.SetBool("isCrouching", false);
-            animator.SetBool("isSliding", false);
-            animator.SetBool("isWallRunningLeft", false);
-            animator.SetBool("isWallRunningRight", false);
-            animator.SetBool("isZiplining", false);
+            audioManager.PlaySound(GameAudioManager.SoundEffectType.SprintFootstep);
             movementState = MovementState.Sprinting;
             desiredMoveSpeed = sprintSpeed;
 
         } else if (isGrounded && walkEnabled) {
 
+            ResetAnimations();
             animator.SetBool("isWalking", true);
-            animator.SetBool("isSprinting", false);
-            animator.SetBool("isCrouching", false);
-            animator.SetBool("isSliding", false);
-            animator.SetBool("isWallRunningLeft", false);
-            animator.SetBool("isWallRunningRight", false);
-            animator.SetBool("isZiplining", false);
+            audioManager.PlaySound(GameAudioManager.SoundEffectType.WalkFootstep);
             movementState = MovementState.Walking;
             desiredMoveSpeed = walkSpeed;
 
         } else if (!isGrounded && rb.velocity.magnitude > 0.01f) {
 
-            animator.SetBool("isWalking", false);
-            animator.SetBool("isSprinting", false);
-            animator.SetBool("isCrouching", false);
-            animator.SetBool("isSliding", false);
-            animator.SetBool("isWallRunningLeft", false);
-            animator.SetBool("isWallRunningRight", false);
-            animator.SetBool("isZiplining", false);
+            ResetAnimations();
             movementState = MovementState.Air;
 
         } else {
@@ -733,13 +743,13 @@ public class PlayerController : MonoBehaviour {
 
     private void ResetAnimations() {
 
-        animator.SetBool("isGrounded", true);
         animator.SetBool("isWalking", false);
         animator.SetBool("isSprinting", false);
         animator.SetBool("isCrouching", false);
         animator.SetBool("isSliding", false);
         animator.SetBool("isWallRunningLeft", false);
         animator.SetBool("isWallRunningRight", false);
+        animator.SetBool("isSwinging", false);
         animator.SetBool("isZiplining", false);
 
     }
@@ -789,7 +799,7 @@ public class PlayerController : MonoBehaviour {
     private void ForceCrouch() {
 
         transform.localScale = new Vector3(transform.localScale.x, crouchScale, transform.localScale.z);
-        rb.AddForce(Vector3.down * 5f, ForceMode.Impulse);
+        cameraPos.localScale = new Vector3(cameraPos.localScale.x, Mathf.Pow(crouchScale, -1f), cameraPos.localScale.z);
 
     }
 
@@ -809,6 +819,7 @@ public class PlayerController : MonoBehaviour {
         animator.SetBool("isCrouching", false);
         uncrouchQueued = false;
         transform.localScale = new Vector3(transform.localScale.x, startScale, transform.localScale.z);
+        cameraPos.localScale = Vector3.one;
 
     }
 
@@ -1103,6 +1114,9 @@ public class PlayerController : MonoBehaviour {
             return;
 
         movementState = MovementState.Swinging;
+        rigBuilder.layers[leftHandIKRigIndex].active = false;
+        rigBuilder.layers[rightHandIKRigIndex].active = false;
+        rigBuilder.layers[rightHandFollowRigIndex].active = true;
 
         predictionObj.gameObject.SetActive(false);
         UIController.EnableCrosshair();
@@ -1120,6 +1134,8 @@ public class PlayerController : MonoBehaviour {
         joint.spring = jointSpring;
         joint.damper = jointDamper;
         joint.massScale = jointMassScale;
+
+        audioManager.PlaySound(GameAudioManager.SoundEffectType.Grapple);
 
     }
 
@@ -1196,6 +1212,10 @@ public class PlayerController : MonoBehaviour {
     public void StopSwing() {
 
         movementState = MovementState.None;
+        rigBuilder.layers[leftHandIKRigIndex].active = true;
+        rigBuilder.layers[rightHandIKRigIndex].active = true;
+        rigBuilder.layers[rightHandFollowRigIndex].active = false;
+        swingIKTarget.localPosition = Vector3.zero;
         UIController.EnableCrosshair();
         Destroy(joint);
 

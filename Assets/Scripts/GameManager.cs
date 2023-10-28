@@ -9,7 +9,7 @@ public abstract class GameManager : MonoBehaviour {
     [SerializeField] protected Checkpoint[] checkpoints;
     protected PlayerController playerController;
     protected GameUIController UIController;
-    protected AudioManager audioManager;
+    protected GameAudioManager audioManager;
     protected PlayerData playerData;
     protected bool playerKilled;
 
