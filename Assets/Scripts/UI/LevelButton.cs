@@ -9,11 +9,13 @@ public class LevelButton : MonoBehaviour {
 
     [Header("References")]
     private MenuUIController menuUIController;
+
+    [Header("UI References")]
     public TMP_Text levelNameText;
     public TMP_Text playsText;
     public TMP_Text recordText;
     public Image image;
-    [HideInInspector] public Level level;
+    private Level level;
 
     private void Start() {
 
@@ -26,6 +28,12 @@ public class LevelButton : MonoBehaviour {
 
         menuUIController.FadeInLoadingScreen();
         StartCoroutine(menuUIController.LoadLevel(level));
+
+    }
+
+    public void SetLevel(Level level) {
+
+        this.level = level;
 
     }
 }

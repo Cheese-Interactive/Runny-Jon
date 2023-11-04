@@ -8,7 +8,7 @@ public class PlayerData : MonoBehaviour {
     [Header("Statistics")]
     [SerializeField] private string levelDataFileName;
     [SerializeField] private string gameDataFileName;
-    private LevelDataRootObject dataRootObject;
+    private LevelDataRoot dataRootObject;
     private GameData gameData;
     private string levelDataFilePath;
     private string gameDataFilePath;
@@ -46,14 +46,14 @@ public class PlayerData : MonoBehaviour {
                     Debug.LogWarning("Importing Level Data...");
 
                 if (sr.EndOfStream)
-                    dataRootObject = new LevelDataRootObject();
+                    dataRootObject = new LevelDataRoot();
                 else
-                    dataRootObject = JsonConvert.DeserializeObject<LevelDataRootObject>(sr.ReadToEnd());
+                    dataRootObject = JsonConvert.DeserializeObject<LevelDataRoot>(sr.ReadToEnd());
 
             }
         } else {
 
-            dataRootObject = new LevelDataRootObject();
+            dataRootObject = new LevelDataRoot();
 
         }
     }
@@ -130,6 +130,18 @@ public class PlayerData : MonoBehaviour {
 
     }
 
+    public bool PurchaseItem(ShopItem item) {
+
+        if (GetQuesos() < item.GetPrice())
+            return false;
+
+        gameData.RemoveQuesos(item.GetPrice());
+        gameData.AddInventoryItem(item);
+        SerializeData();
+        return true;
+
+    }
+
     public int GetLevelPlays(Level level) {
 
         Dictionary<int, LevelData> levelData = dataRootObject.GetLevelData();
@@ -157,7 +169,7 @@ public class PlayerData : MonoBehaviour {
     }
 }
 
-public class LevelDataRootObject {
+public class LevelDataRoot {
 
     public Dictionary<int, LevelData> levelData {
 
@@ -165,7 +177,7 @@ public class LevelDataRootObject {
 
     }
 
-    public LevelDataRootObject() {
+    public LevelDataRoot() {
 
         levelData = new Dictionary<int, LevelData>();
 
@@ -271,19 +283,27 @@ public class GameData {
 
     }
 
+    public List<ShopItem> inventory {
+
+        get; set;
+
+    }
+
     public GameData() {
 
         quesos = 0;
         levelsCompleted = 0;
         totalDeaths = 0;
+        inventory = new List<ShopItem>();
 
     }
 
-    public GameData(int quesos, int levelsCompleted, int totalDeaths) {
+    public GameData(int quesos, int levelsCompleted, int totalDeaths, List<ShopItem> inventory) {
 
         this.quesos = quesos;
         this.levelsCompleted = levelsCompleted;
         this.totalDeaths = totalDeaths;
+        this.inventory = inventory;
 
     }
 
@@ -326,6 +346,18 @@ public class GameData {
     public void AddTotalDeaths(int deaths) {
 
         totalDeaths += deaths;
+
+    }
+
+    public List<ShopItem> GetInventory() {
+
+        return inventory;
+
+    }
+
+    public void AddInventoryItem(ShopItem item) {
+
+        inventory.Add(item);
 
     }
 }

@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -11,17 +12,22 @@ public class MenuUIController : MonoBehaviour {
 
     [Header("UI References")]
     [SerializeField] private CanvasGroup mainMenu;
-    [SerializeField] private TMP_Text quesoText;
-    [SerializeField] private CanvasGroup levelMenu;
     [SerializeField] private Button playButton;
+    [SerializeField] private Button shopButton;
     [SerializeField] private Button settingsButton;
     [SerializeField] private Button quitButton;
+    [SerializeField] private CanvasGroup levelMenu;
     [SerializeField] private CanvasGroup loadingScreen;
     [SerializeField] private TMP_Text loadingText;
+
+    [Header("Shop")]
+    [SerializeField] private CanvasGroup shopMenu;
+    [SerializeField] private TMP_Text shopQuesoText;
 
     [Header("Animations")]
     [SerializeField] private float mainMenuFadeDuration;
     [SerializeField] private float levelMenuFadeDuration;
+    [SerializeField] private float shopMenuFadeDuration;
     [SerializeField] private float loadingScreenFadeDuration;
     [SerializeField] private float minLoadingDuration;
     private Coroutine screenFadeInCoroutine;
@@ -35,12 +41,15 @@ public class MenuUIController : MonoBehaviour {
         loadingScreen.alpha = 1f;
         FadeOutScreen(loadingScreen, loadingScreenFadeDuration);
 
-        quesoText.text = playerData.GetQuesos() + "";
+        shopQuesoText.text = playerData.GetQuesos() + "";
 
         playButton.onClick.AddListener(PlayClicked);
+        shopButton.onClick.AddListener(ShopClicked);
         quitButton.onClick.AddListener(QuitClicked);
 
         levelMenu.gameObject.SetActive(false);
+        shopMenu.gameObject.SetActive(false);
+
         mainMenu.alpha = 0f;
         FadeInScreen(mainMenu, 1f, mainMenuFadeDuration);
 
@@ -50,6 +59,13 @@ public class MenuUIController : MonoBehaviour {
 
         mainMenu.gameObject.SetActive(false);
         FadeInScreen(levelMenu, 1f, levelMenuFadeDuration);
+
+    }
+
+    private void ShopClicked() {
+
+        mainMenu.gameObject.SetActive(false);
+        FadeInScreen(shopMenu, 1f, shopMenuFadeDuration);
 
     }
 
@@ -75,6 +91,12 @@ public class MenuUIController : MonoBehaviour {
 
         yield return new WaitForSeconds(minLoadingDuration - currentTime);
         operation.allowSceneActivation = true;
+
+    }
+
+    public void UpdateQuesoCount() {
+
+        shopQuesoText.text = playerData.GetQuesos() + "";
 
     }
 

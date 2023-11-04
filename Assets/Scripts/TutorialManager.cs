@@ -100,7 +100,7 @@ public class TutorialManager : GameManager {
     public override void CompleteLevel() {
 
         stopwatch.Stop();
-        audioManager.PlaySound(GameAudioManager.SoundEffectType.Victory);
+        audioManager.PlaySound(GameAudioManager.GameSoundEffectType.Victory);
         playerController.DisableAllMovement();
         playerController.DisableLook();
         UIController.ShowLevelCompleteScreen(playerData.OnLevelComplete(currentLevel, deaths, (float) stopwatch.Elapsed.TotalSeconds, 1), deaths);

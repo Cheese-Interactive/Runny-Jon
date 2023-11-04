@@ -15,7 +15,7 @@ public class GameAudioManager : MonoBehaviour {
     [SerializeField] private AudioClip grappleSound;
     [SerializeField] private AudioClip victorySound;
 
-    public enum SoundEffectType {
+    public enum GameSoundEffectType {
 
         WalkFootstep, SprintFootstep, Land, Grapple, Victory
 
@@ -35,33 +35,33 @@ public class GameAudioManager : MonoBehaviour {
 
     }
 
-    public void PlaySound(SoundEffectType soundType) {
+    public void PlaySound(GameSoundEffectType soundType) {
 
         switch (soundType) {
 
-            case SoundEffectType.WalkFootstep:
+            case GameSoundEffectType.WalkFootstep:
 
             if (!footstepSource.isPlaying)
                 footstepSource.PlayOneShot(walkFootstepSound);
             break;
 
-            case SoundEffectType.SprintFootstep:
+            case GameSoundEffectType.SprintFootstep:
 
             if (!footstepSource.isPlaying)
                 footstepSource.PlayOneShot(sprintFootstepSound);
             break;
 
-            case SoundEffectType.Land:
+            case GameSoundEffectType.Land:
 
             soundEffectSource.PlayOneShot(landSound);
             break;
 
-            case SoundEffectType.Grapple:
+            case GameSoundEffectType.Grapple:
 
             soundEffectSource.PlayOneShot(grappleSound);
             break;
 
-            case SoundEffectType.Victory:
+            case GameSoundEffectType.Victory:
 
             soundEffectSource.PlayOneShot(victorySound);
             break;

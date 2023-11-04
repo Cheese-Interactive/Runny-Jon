@@ -329,7 +329,7 @@ public class PlayerController : MonoBehaviour {
             if (movementDirection == Vector3.zero)
                 desiredMoveSpeed = 0f;
 
-            audioManager.PlaySound(GameAudioManager.SoundEffectType.Land);
+            audioManager.PlaySound(GameAudioManager.GameSoundEffectType.Land);
 
         }
 
@@ -652,7 +652,7 @@ public class PlayerController : MonoBehaviour {
 
             ResetAnimations();
             animator.SetBool("isSprinting", true);
-            audioManager.PlaySound(GameAudioManager.SoundEffectType.SprintFootstep);
+            audioManager.PlaySound(GameAudioManager.GameSoundEffectType.SprintFootstep);
             movementState = MovementState.Sprinting;
             desiredMoveSpeed = sprintSpeed;
 
@@ -660,7 +660,7 @@ public class PlayerController : MonoBehaviour {
 
             ResetAnimations();
             animator.SetBool("isWalking", true);
-            audioManager.PlaySound(GameAudioManager.SoundEffectType.WalkFootstep);
+            audioManager.PlaySound(GameAudioManager.GameSoundEffectType.WalkFootstep);
             movementState = MovementState.Walking;
             desiredMoveSpeed = walkSpeed;
 
@@ -1135,7 +1135,7 @@ public class PlayerController : MonoBehaviour {
         joint.damper = jointDamper;
         joint.massScale = jointMassScale;
 
-        audioManager.PlaySound(GameAudioManager.SoundEffectType.Grapple);
+        audioManager.PlaySound(GameAudioManager.GameSoundEffectType.Grapple);
 
     }
 

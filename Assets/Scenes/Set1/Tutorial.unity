@@ -12764,7 +12764,7 @@ MonoBehaviour:
   jointSpring: 4.5
   jointDamper: 7
   jointMassScale: 4.5
-  swingIKTarget: {fileID: 0}
+  swingIKTarget: {fileID: 310533675}
   swingableMask:
     serializedVersion: 2
     m_Bits: 272
@@ -17095,10 +17095,10 @@ MonoBehaviour:
   ziplineMask:
     serializedVersion: 2
     m_Bits: 1024
-  walkBobSpeed: 10
+  walkBobSpeed: 12
   walkBobAmount: 0.15
-  sprintBobSpeed: 18
-  sprintBobAmount: 0.1
+  sprintBobSpeed: 16
+  sprintBobAmount: 0.15
   crouchBobSpeed: 10
   crouchBobAmount: 0.15
   ziplineBobSpeed: 12
