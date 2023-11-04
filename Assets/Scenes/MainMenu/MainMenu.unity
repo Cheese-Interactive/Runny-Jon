@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.19202137, g: 0.59462655, b: 0.7770628, a: 1}
+  m_IndirectSpecularColor: {r: 0.1919891, g: 0.5946699, b: 0.7773259, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -318,6 +318,7 @@ MonoBehaviour:
     type: 3}
   shopCategories:
   - {fileID: 11400000, guid: 570b24e995ce8e44a91c7d82570f5ee2, type: 2}
+  - {fileID: 11400000, guid: 93885b2e4edd02d47b564168c53c4aaa, type: 2}
   shopLayoutParent: {fileID: 1343825737}
   shopLayout: {fileID: 294244209757616308, guid: 41157ca6ac076e64e92ccacaa53aa5ef,
     type: 3}
