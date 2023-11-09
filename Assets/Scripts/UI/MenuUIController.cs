@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
@@ -17,11 +18,13 @@ public class MenuUIController : MonoBehaviour {
     [SerializeField] private Button settingsButton;
     [SerializeField] private Button quitButton;
     [SerializeField] private CanvasGroup levelMenu;
+    [SerializeField] private Button levelMenuBackButton;
     [SerializeField] private CanvasGroup loadingScreen;
     [SerializeField] private TMP_Text loadingText;
 
     [Header("Shop")]
     [SerializeField] private CanvasGroup shopMenu;
+    [SerializeField] private Button shopMenuBackButton;
     [SerializeField] private TMP_Text shopQuesoText;
 
     [Header("Animations")]
@@ -47,6 +50,9 @@ public class MenuUIController : MonoBehaviour {
         shopButton.onClick.AddListener(ShopClicked);
         quitButton.onClick.AddListener(QuitClicked);
 
+        levelMenuBackButton.onClick.AddListener(CloseLevelMenu);
+        shopMenuBackButton.onClick.AddListener(CloseShopMenu);
+
         levelMenu.gameObject.SetActive(false);
         shopMenu.gameObject.SetActive(false);
 
@@ -57,21 +63,47 @@ public class MenuUIController : MonoBehaviour {
 
     private void PlayClicked() {
 
-        mainMenu.gameObject.SetActive(false);
-        FadeInScreen(levelMenu, 1f, levelMenuFadeDuration);
+        OpenLevelMenu();
 
     }
 
     private void ShopClicked() {
 
-        mainMenu.gameObject.SetActive(false);
-        FadeInScreen(shopMenu, 1f, shopMenuFadeDuration);
+        OpenShopMenu();
 
     }
 
     private void QuitClicked() {
 
         Application.Quit();
+
+    }
+
+    private void OpenLevelMenu() {
+
+        mainMenu.gameObject.SetActive(false);
+        FadeInScreen(levelMenu, 1f, levelMenuFadeDuration);
+
+    }
+
+    private void CloseLevelMenu() {
+
+        levelMenu.gameObject.SetActive(false);
+        FadeInScreen(mainMenu, 1f, mainMenuFadeDuration);
+
+    }
+
+    private void OpenShopMenu() {
+
+        mainMenu.gameObject.SetActive(false);
+        FadeInScreen(shopMenu, 1f, shopMenuFadeDuration);
+
+    }
+
+    private void CloseShopMenu() {
+
+        shopMenu.gameObject.SetActive(false);
+        FadeInScreen(mainMenu, 1f, mainMenuFadeDuration);
 
     }
 
@@ -148,17 +180,11 @@ public class MenuUIController : MonoBehaviour {
         }
 
         screen.alpha = targetOpacity;
+        screenFadeOutCoroutine = null;
 
-        if (fadeIn) {
-
-            screenFadeInCoroutine = null;
-
-        } else {
-
+        if (!fadeIn)
             screen.gameObject.SetActive(false);
-            screenFadeOutCoroutine = null;
 
-        }
     }
 
     public void SetLoadingText(string text) {

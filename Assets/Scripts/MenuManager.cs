@@ -29,6 +29,7 @@ public class MenuManager : MonoBehaviour {
     [SerializeField] private int shopRowSize;
     [SerializeField] private Transform shopRowPrefab;
     [SerializeField] private ShopItemButton shopItemButton;
+    private ShopLayout currActiveLayout;
 
     private void Start() {
 
@@ -71,35 +72,28 @@ public class MenuManager : MonoBehaviour {
             }
         }
 
-        int currItemIndex = 0;
+        int currItemIndex;
+        ShopLayout[] layouts = new ShopLayout[shopCategories.Count];
         ShopLayout layout;
         ShopCategory shopCategory;
-        ShopCategoryButton shopCategoryButton;
+        ShopCategoryButton shopCategoryButton = null;
         ShopItem shopItem;
         ShopItemButton shopItemButton;
 
         for (int i = 0; i < shopCategories.Count; i++) {
 
-            shopCategory = shopCategories[i];
+            currItemIndex = 0;
             layout = Instantiate(shopLayout, shopLayoutParent);
+            layouts[i] = layout;
+            shopCategory = shopCategories[i];
             layout.name = shopCategory.GetCategoryName() + "ShopLayout";
-
-            shopCategoryButton = Instantiate(this.shopCategoryButton, layout.GetShopCategoryParent());
-            shopCategoryButton.SetShopCategory(shopCategory);
-            shopCategoryButton.SetShopCategoryLayout(shopLayout);
-            shopCategoryButton.name = shopCategory.GetCategoryName() + "CategoryButton";
-            shopCategoryButton.SetIcon(shopCategory.GetUnselectedIcon());
-            shopCategoryButton.SetNameText(shopCategory.GetCategoryName());
-
-            if (i == 0)
-                shopCategoryButton.SelectCategory();
 
             List<ShopItem> shopItems = shopCategory.GetShopItems();
 
-            for (int j = 0; j < Mathf.Ceil(shopItems.Count / (float) levelRowSize); j++) {
+            for (int j = 0; j < Mathf.RoundToInt(shopItems.Count / (float) levelRowSize); j++) {
 
                 row = Instantiate(shopRowPrefab, layout.GetShopItemsParent());
-                row.name = "Row" + (i + 1);
+                row.name = "Row" + (j + 1);
 
                 for (int k = 0; k < shopRowSize && currItemIndex < shopItems.Count; k++) {
 
@@ -119,6 +113,37 @@ public class MenuManager : MonoBehaviour {
             }
         }
 
+        for (int i = 0; i < layouts.Length; i++) {
+
+            for (int j = 0; j < layouts.Length; j++) {
+
+                shopCategory = shopCategories[i];
+                shopCategoryButton = Instantiate(this.shopCategoryButton, layouts[j].GetShopCategoryParent());
+                shopCategoryButton.SetMenuManager(this);
+                shopCategoryButton.SetShopCategory(shopCategory);
+                shopCategoryButton.SetShopLayout(layouts[i]);
+                shopCategoryButton.name = shopCategory.GetCategoryName() + "CategoryButton";
+                shopCategoryButton.SetNameText(shopCategory.GetCategoryName());
+
+                if (j == i) {
+
+                    shopCategoryButton.SetIcon(shopCategory.GetSelectedIcon());
+                    shopCategoryButton.GetButton().interactable = false;
+
+                } else {
+
+                    shopCategoryButton.SetIcon(shopCategory.GetUnselectedIcon());
+
+                }
+            }
+
+            if (i == 0)
+                currActiveLayout = shopCategoryButton.GetShopLayout();
+            else
+                layouts[i].gameObject.SetActive(false);
+
+        }
+
         audioManager.PlayMenuMusic();
 
     }
@@ -132,6 +157,21 @@ public class MenuManager : MonoBehaviour {
     public List<ShopCategory> GetShopCategoryLayouts() {
 
         return shopCategories;
+
+    }
+
+    public void OpenShopLayout(ShopLayout layout) {
+
+        CloseShopLayout(currActiveLayout);
+        layout.gameObject.SetActive(true);
+        currActiveLayout = layout;
+
+    }
+
+    public void CloseShopLayout(ShopLayout layout) {
+
+        layout.gameObject.SetActive(false);
+        currActiveLayout = null;
 
     }
 

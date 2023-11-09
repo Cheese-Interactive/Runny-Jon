@@ -1383,6 +1383,8 @@ public class PlayerController : MonoBehaviour {
         if (levelZiplineEnabled)
             ziplineEnabled = false;
 
+        StopSwing();
+
         movementState = MovementState.None;
         ResetAnimations();
 

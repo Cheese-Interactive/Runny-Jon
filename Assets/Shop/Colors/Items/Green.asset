@@ -9,11 +9,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2b16e017b6b785d4e9ab8605447da344, type: 3}
-  m_Name: New Shop Category
+  m_Script: {fileID: 11500000, guid: 34a6d06872fedb04d88a24c01a02a3e6, type: 3}
+  m_Name: Green
   m_EditorClassIdentifier: 
-  categoryName: Messis special hotdogs
-  selectedIcon: {fileID: 0}
-  deselectedIcon: {fileID: 0}
-  shopItems:
-  - {fileID: 11400000, guid: 26706b8eb3df8cd42bcc7ec401228e9c, type: 2}
+  itemName: Green
+  icon: {fileID: 0}
+  price: 5
