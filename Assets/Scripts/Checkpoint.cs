@@ -30,7 +30,7 @@ public class Checkpoint : MonoBehaviour {
 
         gameManager = FindObjectOfType<GameManager>();
         material = GetComponent<MeshRenderer>().material;
-        isTutorial = gameManager.GetCurrentLevel().isTutorial;
+        isTutorial = gameManager.GetCurrentLevel().GetIsTutorial();
 
         if (isTutorial) {
 

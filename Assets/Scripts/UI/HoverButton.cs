@@ -34,6 +34,12 @@ public class HoverButton : MonoBehaviour {
 
     }
 
+    private void OnDisable() {
+
+        text.color = startColor;
+
+    }
+
     private void StartHover() {
 
         if (textColorFadeCoroutine != null)

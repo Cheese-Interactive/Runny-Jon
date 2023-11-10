@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 621033328}
   - component: {fileID: 2677967529572511919}
   m_Layer: 5
-  m_Name: LevelName
+  m_Name: NameText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -524,7 +524,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: a278a1bd732fe684eb9282c4b04b698e, type: 3}
+  m_Sprite: {fileID: 0}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -590,8 +590,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4e6cd97001571364697a357cb14df37e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  levelNameText: {fileID: 621033328}
+  nameText: {fileID: 621033328}
   playsText: {fileID: 1390860308}
   recordText: {fileID: 1299492495}
-  image: {fileID: 5114250026686860322}
-  level: {fileID: 0}

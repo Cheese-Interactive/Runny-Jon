@@ -196,7 +196,7 @@ public class PlayerController : MonoBehaviour {
 
     [Header("Interacting")]
     [SerializeField] private float interactDistance;
-    [SerializeField] private LayerMask interactMask;
+    [SerializeField] private string interactTag;
 
     [Header("Ground Check")]
     [SerializeField] private Transform feet;
@@ -276,14 +276,14 @@ public class PlayerController : MonoBehaviour {
         gravityCounterForce = initialGravityCounterForce;
 
         Level level = gameManager.GetCurrentLevel();
-        walkEnabled = levelWalkEnabled = level.walkEnabled;
-        sprintEnabled = levelSprintEnabled = level.sprintEnabled;
-        jumpEnabled = levelJumpEnabled = level.jumpEnabled;
-        crouchEnabled = levelCrouchEnabled = level.crouchEnabled;
-        slideEnabled = levelSlideEnabled = level.slideEnabled;
-        wallRunEnabled = levelWallRunEnabled = level.wallRunEnabled;
-        swingEnabled = levelSwingEnabled = level.swingEnabled;
-        ziplineEnabled = levelZiplineEnabled = level.ziplineEnabled;
+        walkEnabled = levelWalkEnabled = level.GetWalkEnabled();
+        sprintEnabled = levelSprintEnabled = level.GetSprintEnabled();
+        jumpEnabled = levelJumpEnabled = level.GetJumpEnabled();
+        crouchEnabled = levelCrouchEnabled = level.GetCrouchEnabled();
+        slideEnabled = levelSlideEnabled = level.GetSlideEnabled();
+        wallRunEnabled = levelWallRunEnabled = level.GetWallRunEnabled();
+        swingEnabled = levelSwingEnabled = level.GetSwingEnabled();
+        ziplineEnabled = levelZiplineEnabled = level.GetZiplineEnabled();
 
     }
 
@@ -444,16 +444,20 @@ public class PlayerController : MonoBehaviour {
 
             if (gamePaused) {
 
-                UIController.ResumeGame();
-                EnableAllMovement();
-                EnableLook();
+                if (UIController.ResumeGame()) {
 
+                    EnableAllMovement();
+                    EnableLook();
+
+                }
             } else {
 
-                UIController.PauseGame();
-                DisableAllMovement();
-                DisableLook();
+                if (UIController.PauseGame()) {
 
+                    DisableAllMovement();
+                    DisableLook();
+
+                }
             }
 
             gamePaused = !gamePaused;
@@ -463,7 +467,7 @@ public class PlayerController : MonoBehaviour {
         Ray ray = new Ray(camera.transform.position, camera.transform.forward);
         RaycastHit hitInfo;
 
-        if (Physics.Raycast(ray, out hitInfo, interactDistance, interactMask)) {
+        if (Physics.Raycast(ray, out hitInfo, interactDistance) && hitInfo.transform.CompareTag(interactTag)) {
 
             if (hitInfo.collider.GetComponent<Interactable>() != null) {
 

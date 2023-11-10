@@ -619,6 +619,8 @@ MonoBehaviour:
   sprintFootstepSound: {fileID: 8300000, guid: 62fd69e184e8728429f5c2662e8dcabd, type: 3}
   landSound: {fileID: 8300000, guid: 2e26855b9c1d0874c980a3317efcc539, type: 3}
   grappleSound: {fileID: 8300000, guid: ac01e24ac52856c4489609e80b1751fd, type: 3}
+  checkpointSound: {fileID: 8300000, guid: ec0e5a54050f14741a9ce2cb3ace8b2b, type: 3}
+  deathSound: {fileID: 8300000, guid: 533f6bb18c47e114c96534ab65245966, type: 3}
   victorySound: {fileID: 8300000, guid: d322416b6bb0bad4bbfdc34cb7f46caf, type: 3}
 --- !u!4 &50693870
 Transform:
@@ -9707,9 +9709,7 @@ MonoBehaviour:
   ziplineBobSpeed: 12
   ziplineBobAmount: 0.1
   interactDistance: 4
-  interactMask:
-    serializedVersion: 2
-    m_Bits: 2048
+  interactTag: Interactable
   feet: {fileID: 1623353372}
   groundCheckRadius: 0.25
   environmentMask:
@@ -15638,9 +15638,7 @@ MonoBehaviour:
   ziplineBobSpeed: 20
   ziplineBobAmount: 0.1
   interactDistance: 0
-  interactMask:
-    serializedVersion: 2
-    m_Bits: 0
+  interactTag: 
   feet: {fileID: 451558350}
   groundCheckRadius: 0.25
   environmentMask:

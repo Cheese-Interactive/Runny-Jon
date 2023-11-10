@@ -57,6 +57,8 @@ public class TutorialManager : GameManager {
         if (currCheckpoint + 1 >= checkpoints.Length || checkpointType != checkpoints[currCheckpoint + 1].GetCheckpointType())
             return;
 
+        audioManager.PlaySound(GameAudioManager.GameSoundEffectType.Checkpoint);
+
         currCheckpoint++;
         UIController.TypeSubtitleText(checkpoints[currCheckpoint].GetSubtitleText());
 
@@ -117,7 +119,7 @@ public class TutorialManager : GameManager {
 
     public override int GetLevelTimeLimit() {
 
-        return currentLevel.timeLimit;
+        return currentLevel.GetTimeLimit();
 
     }
 

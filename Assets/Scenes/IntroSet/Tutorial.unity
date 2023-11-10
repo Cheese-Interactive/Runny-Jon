@@ -634,7 +634,7 @@ RectTransform:
   m_Children:
   - {fileID: 2066611436}
   m_Father: {fileID: 444665427}
-  m_RootOrder: 6
+  m_RootOrder: 8
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
@@ -3037,9 +3037,9 @@ RectTransform:
   - {fileID: 940646744}
   - {fileID: 1407196513}
   - {fileID: 1295561221}
-  - {fileID: 82587671}
   - {fileID: 1984704382}
   - {fileID: 1358854112}
+  - {fileID: 82587671}
   m_Father: {fileID: 0}
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -10937,7 +10937,7 @@ RectTransform:
   - {fileID: 146084918}
   - {fileID: 1566450153}
   m_Father: {fileID: 444665427}
-  m_RootOrder: 8
+  m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
@@ -12046,6 +12046,8 @@ MonoBehaviour:
   sprintFootstepSound: {fileID: 8300000, guid: 62fd69e184e8728429f5c2662e8dcabd, type: 3}
   landSound: {fileID: 8300000, guid: 2e26855b9c1d0874c980a3317efcc539, type: 3}
   grappleSound: {fileID: 8300000, guid: ac01e24ac52856c4489609e80b1751fd, type: 3}
+  checkpointSound: {fileID: 8300000, guid: ec0e5a54050f14741a9ce2cb3ace8b2b, type: 3}
+  deathSound: {fileID: 8300000, guid: 533f6bb18c47e114c96534ab65245966, type: 3}
   victorySound: {fileID: 8300000, guid: d322416b6bb0bad4bbfdc34cb7f46caf, type: 3}
 --- !u!4 &1600617300
 Transform:
@@ -12814,9 +12816,7 @@ MonoBehaviour:
   ziplineBobSpeed: 12
   ziplineBobAmount: 0.1
   interactDistance: 2
-  interactMask:
-    serializedVersion: 2
-    m_Bits: 2048
+  interactTag: 
   feet: {fileID: 1858642903}
   groundCheckRadius: 0.25
   environmentMask:
@@ -14916,7 +14916,7 @@ RectTransform:
   - {fileID: 389007052}
   - {fileID: 1828178129}
   m_Father: {fileID: 444665427}
-  m_RootOrder: 7
+  m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
@@ -17104,9 +17104,7 @@ MonoBehaviour:
   ziplineBobSpeed: 12
   ziplineBobAmount: 0.1
   interactDistance: 4
-  interactMask:
-    serializedVersion: 2
-    m_Bits: 2048
+  interactTag: Interactable
   feet: {fileID: 1826749340}
   groundCheckRadius: 0.25
   environmentMask:

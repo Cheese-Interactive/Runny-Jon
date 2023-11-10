@@ -98,7 +98,7 @@ public class PlayerData : MonoBehaviour {
         gameData.IncrementLevelsCompleted();
 
         Dictionary<int, LevelData> levelData = dataRootObject.GetLevelData();
-        int ID = level.ID;
+        int ID = level.GetID();
         bool newRecord = false;
 
         if (levelData.ContainsKey(ID)) {
@@ -124,6 +124,12 @@ public class PlayerData : MonoBehaviour {
 
     }
 
+    public List<ShopItem> GetInventory() {
+
+        return gameData.GetInventory();
+
+    }
+
     public int GetQuesos() {
 
         return gameData.GetQuesos();
@@ -145,7 +151,7 @@ public class PlayerData : MonoBehaviour {
     public int GetLevelPlays(Level level) {
 
         Dictionary<int, LevelData> levelData = dataRootObject.GetLevelData();
-        int ID = level.ID;
+        int ID = level.GetID();
 
         if (levelData.ContainsKey(ID))
             return levelData[ID].GetPlays();
@@ -158,7 +164,7 @@ public class PlayerData : MonoBehaviour {
     public float? GetLevelRecord(Level level) {
 
         Dictionary<int, LevelData> levelData = dataRootObject.GetLevelData();
-        int ID = level.ID;
+        int ID = level.GetID();
 
         if (levelData.ContainsKey(ID))
             return levelData[ID].GetRecord();

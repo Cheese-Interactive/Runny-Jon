@@ -5,6 +5,7 @@ TagManager:
   serializedVersion: 2
   tags:
   - DeathZone
+  - Interactable
   layers:
   - Default
   - TransparentFX
@@ -17,7 +18,7 @@ TagManager:
   - Swingable
   - Player
   - Zipline
-  - Interactable
+  - 
   - 
   - 
   - 

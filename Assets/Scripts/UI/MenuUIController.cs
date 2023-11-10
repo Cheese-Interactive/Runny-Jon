@@ -9,7 +9,9 @@ using UnityEngine.UI;
 public class MenuUIController : MonoBehaviour {
 
     [Header("References")]
+    private MenuManager menuManager;
     private PlayerData playerData;
+    private MenuAudioManager audioManager;
 
     [Header("UI References")]
     [SerializeField] private CanvasGroup mainMenu;
@@ -28,17 +30,17 @@ public class MenuUIController : MonoBehaviour {
     [SerializeField] private TMP_Text shopQuesoText;
 
     [Header("Animations")]
-    [SerializeField] private float mainMenuFadeDuration;
-    [SerializeField] private float levelMenuFadeDuration;
-    [SerializeField] private float shopMenuFadeDuration;
     [SerializeField] private float loadingScreenFadeDuration;
     [SerializeField] private float minLoadingDuration;
     private Coroutine screenFadeInCoroutine;
     private Coroutine screenFadeOutCoroutine;
+    private Coroutine loadingScreenFadeCoroutine;
 
     private void Start() {
 
+        menuManager = FindObjectOfType<MenuManager>();
         playerData = FindObjectOfType<PlayerData>();
+        audioManager = FindObjectOfType<MenuAudioManager>();
 
         SetLoadingText("Loading Main Menu...");
         loadingScreen.alpha = 1f;
@@ -56,8 +58,16 @@ public class MenuUIController : MonoBehaviour {
         levelMenu.gameObject.SetActive(false);
         shopMenu.gameObject.SetActive(false);
 
-        mainMenu.alpha = 0f;
-        FadeInScreen(mainMenu, 1f, mainMenuFadeDuration);
+        mainMenu.gameObject.SetActive(true);
+
+        foreach (Button button in FindObjectsOfType<Button>(true))
+            button.onClick.AddListener(PlayClickSound);
+
+    }
+
+    private void PlayClickSound() {
+
+        audioManager.PlaySound(MenuAudioManager.UISoundEffectType.Click);
 
     }
 
@@ -82,65 +92,41 @@ public class MenuUIController : MonoBehaviour {
     private void OpenLevelMenu() {
 
         mainMenu.gameObject.SetActive(false);
-        FadeInScreen(levelMenu, 1f, levelMenuFadeDuration);
+        levelMenu.gameObject.SetActive(true);
 
     }
 
     private void CloseLevelMenu() {
 
+        if (menuManager.IsLevelSectionOpen()) {
+
+            menuManager.CloseLevelLayout(menuManager.GetCurrentActiveLevelLayout());
+            return;
+
+        }
+
         levelMenu.gameObject.SetActive(false);
-        FadeInScreen(mainMenu, 1f, mainMenuFadeDuration);
+        mainMenu.gameObject.SetActive(true);
 
     }
 
     private void OpenShopMenu() {
 
         mainMenu.gameObject.SetActive(false);
-        FadeInScreen(shopMenu, 1f, shopMenuFadeDuration);
+        shopMenu.gameObject.SetActive(true);
 
     }
 
     private void CloseShopMenu() {
 
         shopMenu.gameObject.SetActive(false);
-        FadeInScreen(mainMenu, 1f, mainMenuFadeDuration);
-
-    }
-
-    public IEnumerator LoadLevel(Object level) {
-
-        SetLoadingText("Loading Level...");
-        AsyncOperation operation = SceneManager.LoadSceneAsync(level.name);
-        operation.allowSceneActivation = false;
-        float currentTime = 0f;
-
-        while (!operation.isDone && operation.progress < 0.9f) {
-
-            currentTime += Time.deltaTime;
-            yield return null;
-
-        }
-
-        yield return new WaitForSeconds(minLoadingDuration - currentTime);
-        operation.allowSceneActivation = true;
+        mainMenu.gameObject.SetActive(true);
 
     }
 
     public void UpdateQuesoCount() {
 
         shopQuesoText.text = playerData.GetQuesos() + "";
-
-    }
-
-    public void FadeInLoadingScreen() {
-
-        FadeInScreen(loadingScreen, 1f, loadingScreenFadeDuration);
-
-    }
-
-    public void FadeOutLoadingScreen() {
-
-        FadeOutScreen(loadingScreen, loadingScreenFadeDuration);
 
     }
 
@@ -159,6 +145,16 @@ public class MenuUIController : MonoBehaviour {
             StopCoroutine(screenFadeOutCoroutine);
 
         screenFadeOutCoroutine = StartCoroutine(FadeScreen(screen, 0f, duration, false));
+
+    }
+
+    public IEnumerator FadeInLoadingScreen() {
+
+        if (loadingScreenFadeCoroutine != null)
+            StopCoroutine(loadingScreenFadeCoroutine);
+
+        loadingScreenFadeCoroutine = StartCoroutine(FadeScreen(loadingScreen, 1f, loadingScreenFadeDuration, true));
+        yield return loadingScreenFadeCoroutine;
 
     }
 
@@ -190,6 +186,12 @@ public class MenuUIController : MonoBehaviour {
     public void SetLoadingText(string text) {
 
         loadingText.text = text;
+
+    }
+
+    public float GetMinLoadingDuration() {
+
+        return minLoadingDuration;
 
     }
 }

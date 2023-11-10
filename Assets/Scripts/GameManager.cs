@@ -18,6 +18,7 @@ public abstract class GameManager : MonoBehaviour {
     protected int deaths;
     protected Stopwatch stopwatch;
     protected int currCheckpoint;
+    private bool gamePaused;
 
     public abstract void StartTimer();
 
@@ -82,6 +83,18 @@ public abstract class GameManager : MonoBehaviour {
         playerController.EnableLook();
         yield return StartCoroutine(UIController.HideDeathScreen());
         playerKilled = false;
+
+    }
+
+    public bool GetGamePaused() {
+
+        return gamePaused;
+
+    }
+
+    public void SetGamePaused(bool gamePaused) {
+
+        this.gamePaused = gamePaused;
 
     }
 }

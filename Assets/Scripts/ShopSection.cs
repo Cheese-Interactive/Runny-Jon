@@ -1,20 +1,21 @@
+
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
 [CreateAssetMenu]
-public class ShopCategory : ScriptableObject {
+public class ShopSection : ScriptableObject {
 
     [Header("Information")]
-    [SerializeField] private string categoryName;
+    [SerializeField] private string sectionName;
     [SerializeField] private Image selectedIcon;
     [SerializeField] private Image deselectedIcon;
     [SerializeField] private List<ShopItem> shopItems;
 
-    public string GetCategoryName() {
+    public string GetSectionName() {
 
-        return categoryName;
+        return sectionName;
 
     }
 

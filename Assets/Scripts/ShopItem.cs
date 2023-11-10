@@ -29,4 +29,13 @@ public class ShopItem : ScriptableObject {
         return price;
 
     }
+
+    public bool Equals(ShopItem other) {
+
+        if (itemName == other.GetItemName() && icon == other.GetIcon() && price == other.GetPrice())
+            return true;
+
+        return false;
+
+    }
 }

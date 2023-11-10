@@ -56,6 +56,8 @@ public class LevelManager : GameManager {
         if (currCheckpoint + 1 >= checkpoints.Length || checkpointType != checkpoints[currCheckpoint + 1].GetCheckpointType())
             return;
 
+        audioManager.PlaySound(GameAudioManager.GameSoundEffectType.Checkpoint);
+
         currCheckpoint++;
         UIController.TypeSubtitleText(checkpoints[currCheckpoint].GetSubtitleText());
         checkpoints[currCheckpoint].StartFadeOutCheckpoint();
@@ -86,7 +88,7 @@ public class LevelManager : GameManager {
 
     public override int GetLevelTimeLimit() {
 
-        return currentLevel.timeLimit;
+        return currentLevel.GetTimeLimit();
 
     }
 
@@ -95,6 +97,7 @@ public class LevelManager : GameManager {
         if (playerKilled)
             return;
 
+        audioManager.PlaySound(GameAudioManager.GameSoundEffectType.Death);
         playerKilled = true;
 
         deaths++;

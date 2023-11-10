@@ -5,12 +5,12 @@ using UnityEngine;
 public class ShopLayout : MonoBehaviour {
 
     [Header("References")]
-    [SerializeField] private Transform shopCategoryParent;
+    [SerializeField] private Transform shopSectionParent;
     [SerializeField] private Transform shopItemsParent;
 
-    public Transform GetShopCategoryParent() {
+    public Transform GetShopSectionParent() {
 
-        return shopCategoryParent;
+        return shopSectionParent;
 
     }
 

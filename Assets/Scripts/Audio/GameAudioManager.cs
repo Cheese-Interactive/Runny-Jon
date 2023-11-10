@@ -13,11 +13,13 @@ public class GameAudioManager : MonoBehaviour {
     [SerializeField] private AudioClip sprintFootstepSound;
     [SerializeField] private AudioClip landSound;
     [SerializeField] private AudioClip grappleSound;
+    [SerializeField] private AudioClip checkpointSound;
+    [SerializeField] private AudioClip deathSound;
     [SerializeField] private AudioClip victorySound;
 
     public enum GameSoundEffectType {
 
-        WalkFootstep, SprintFootstep, Land, Grapple, Victory
+        WalkFootstep, SprintFootstep, Land, Grapple, Checkpoint, Death, Victory
 
     }
 
@@ -30,7 +32,7 @@ public class GameAudioManager : MonoBehaviour {
 
     public void PlaySceneMusic() {
 
-        musicSource.clip = gameManager.GetCurrentLevel().backgroundMusic;
+        musicSource.clip = gameManager.GetCurrentLevel().GetBackgroundMusic();
         musicSource.Play();
 
     }
@@ -59,6 +61,16 @@ public class GameAudioManager : MonoBehaviour {
             case GameSoundEffectType.Grapple:
 
             soundEffectSource.PlayOneShot(grappleSound);
+            break;
+
+            case GameSoundEffectType.Checkpoint:
+
+            soundEffectSource.PlayOneShot(checkpointSound);
+            break;
+
+            case GameSoundEffectType.Death:
+
+            soundEffectSource.PlayOneShot(deathSound);
             break;
 
             case GameSoundEffectType.Victory:

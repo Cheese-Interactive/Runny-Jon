@@ -4,7 +4,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class ShopCategoryButton : MonoBehaviour {
+public class ShopSectionButton : MonoBehaviour {
 
     [Header("References")]
     private MenuManager menuManager;
@@ -14,7 +14,7 @@ public class ShopCategoryButton : MonoBehaviour {
     [SerializeField] private Image icon;
     [SerializeField] private TMP_Text nameText;
     private ShopLayout shopLayout;
-    private ShopCategory shopCategory;
+    private ShopSection shopSection;
 
     // Start Function
     public void SetMenuManager(MenuManager menuManager) {
@@ -27,14 +27,14 @@ public class ShopCategoryButton : MonoBehaviour {
 
     public void SelectCategory() {
 
-        icon = shopCategory.GetSelectedIcon();
+        icon = shopSection.GetSelectedIcon();
         menuManager.OpenShopLayout(shopLayout);
 
     }
 
     public void DeselectCategory() {
 
-        icon = shopCategory.GetUnselectedIcon();
+        icon = shopSection.GetUnselectedIcon();
         menuManager.CloseShopLayout(shopLayout);
 
     }
@@ -57,12 +57,6 @@ public class ShopCategoryButton : MonoBehaviour {
 
     }
 
-    public void SetShopCategory(ShopCategory shopCategory) {
-
-        this.shopCategory = shopCategory;
-
-    }
-
     public void SetShopLayout(ShopLayout shopLayout) {
 
         this.shopLayout = shopLayout;
@@ -72,6 +66,12 @@ public class ShopCategoryButton : MonoBehaviour {
     public ShopLayout GetShopLayout() {
 
         return shopLayout;
+
+    }
+
+    public void SetShopSection(ShopSection shopSection) {
+
+        this.shopSection = shopSection;
 
     }
 }

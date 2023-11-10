@@ -14,7 +14,6 @@ public class ShopItemButton : MonoBehaviour {
     private Color startColor;
 
     [Header("UI References")]
-    [SerializeField] private Image icon;
     [SerializeField] private TMP_Text nameText;
     [SerializeField] private TMP_Text priceText;
     private ShopItem shopItem;
@@ -25,9 +24,10 @@ public class ShopItemButton : MonoBehaviour {
     [SerializeField] private float errorResetDuration;
     private Coroutine errorCoroutine;
 
-    private void Start() {
+    // Start Function
+    public void SetMenuManager(MenuManager menuManager) {
 
-        menuManager = FindObjectOfType<MenuManager>();
+        this.menuManager = menuManager;
         audioManager = FindObjectOfType<MenuAudioManager>();
         button = GetComponent<Button>();
         image = GetComponent<Image>();
@@ -55,9 +55,15 @@ public class ShopItemButton : MonoBehaviour {
         }
     }
 
+    public Button GetButton() {
+
+        return button;
+
+    }
+
     public void SetIcon(Image icon) {
 
-        this.icon = icon;
+        this.image = icon;
 
     }
 

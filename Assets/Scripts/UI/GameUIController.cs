@@ -2,8 +2,6 @@ using System.Collections;
 using System.Diagnostics;
 using TMPro;
 using UnityEngine;
-using UnityEngine.Device;
-using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
@@ -33,6 +31,7 @@ public class GameUIController : MonoBehaviour {
 
     [Header("Timer")]
     [SerializeField] private TMP_Text timerText;
+    private bool gamePaused;
 
     [Header("Level Complete Menu")]
     [SerializeField] private CanvasGroup levelCompleteScreen;
@@ -55,7 +54,9 @@ public class GameUIController : MonoBehaviour {
     private Coroutine screenFadeCoroutine;
     private Coroutine textFadeCoroutine;
     private Coroutine interactIconFadeCoroutine;
+    private Coroutine loadingScreenFadeCoroutine;
     private bool textFaded;
+    private bool levelComplete;
 
     private void Start() {
 
@@ -71,7 +72,7 @@ public class GameUIController : MonoBehaviour {
         startTimerTextPos = timerText.rectTransform.localPosition;
         startTimerTextParent = timerText.rectTransform.parent;
 
-        pauseResumeButton.onClick.AddListener(ResumeGame);
+        pauseResumeButton.onClick.AddListener(ResumeButtonClicked);
         pauseMainMenuButton.onClick.AddListener(OpenMainMenu);
         mainMenuButton.onClick.AddListener(OpenMainMenu);
         replayButton.onClick.AddListener(ReplayLevel);
@@ -180,8 +181,18 @@ public class GameUIController : MonoBehaviour {
         }
     }
 
-    public void PauseGame() {
+    private void ResumeButtonClicked() {
 
+        ResumeGame();
+
+    }
+
+    public bool PauseGame() {
+
+        if (gameManager.GetGamePaused() || levelComplete)
+            return false;
+
+        Time.timeScale = 0f;
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
         timerText.transform.SetParent(pauseTimerTextPos);
@@ -189,11 +200,17 @@ public class GameUIController : MonoBehaviour {
         subtitleText.gameObject.SetActive(false);
         gameManager.PauseTimer();
         FadeInScreen(pauseMenu, 1f, pauseMenuFadeDuration);
+        gameManager.SetGamePaused(true);
+        return true;
 
     }
 
-    public void ResumeGame() {
+    public bool ResumeGame() {
 
+        if (!gameManager.GetGamePaused())
+            return false;
+
+        Time.timeScale = 1f;
         FadeOutScreen(pauseMenu, pauseMenuFadeDuration);
         gameManager.ResumeTimer();
         timerText.transform.SetParent(startTimerTextParent);
@@ -201,12 +218,14 @@ public class GameUIController : MonoBehaviour {
         subtitleText.gameObject.SetActive(true);
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
+        gameManager.SetGamePaused(false);
+        return true;
 
     }
 
     public void OpenMainMenu() {
 
-        UnityEngine.Debug.LogError(gameManager);
+        levelComplete = false;
         StartCoroutine(LoadMainMenu());
 
     }
@@ -215,14 +234,14 @@ public class GameUIController : MonoBehaviour {
 
         StartCoroutine(FadeScreen(pauseMenu, 0f, pauseMenuFadeDuration, false));
         SetLoadingText("Loading Main Menu...");
-        FadeInScreen(loadingScreen, 1f, loadingScreenFadeDuration);
+        yield return FadeInLoadingScreen();
         AsyncOperation operation = SceneManager.LoadSceneAsync(0);
         operation.allowSceneActivation = false;
         float currentTime = 0f;
 
         while (!operation.isDone && operation.progress < 0.9f) {
 
-            currentTime += Time.deltaTime;
+            currentTime += Time.unscaledDeltaTime;
             yield return null;
 
         }
@@ -234,6 +253,7 @@ public class GameUIController : MonoBehaviour {
 
     public void ReplayLevel() {
 
+        levelComplete = false;
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
 
     }
@@ -264,7 +284,7 @@ public class GameUIController : MonoBehaviour {
 
         while (currentTime < duration) {
 
-            currentTime += Time.deltaTime;
+            currentTime += Time.unscaledDeltaTime;
             interactIcon.alpha = Mathf.Lerp(startOpacity, targetOpacity, currentTime / duration);
             yield return null;
 
@@ -294,6 +314,7 @@ public class GameUIController : MonoBehaviour {
 
     public void ShowLevelCompleteScreen(bool newRecord, int deaths) {
 
+        levelComplete = true;
         timeText.text = "Your Time: " + timerText.text;
         recordText.gameObject.SetActive(newRecord);
         deathsText.text = "Deaths: " + deaths;
@@ -319,6 +340,16 @@ public class GameUIController : MonoBehaviour {
 
     }
 
+    private IEnumerator FadeInLoadingScreen() {
+
+        if (loadingScreenFadeCoroutine != null)
+            StopCoroutine(loadingScreenFadeCoroutine);
+
+        loadingScreenFadeCoroutine = StartCoroutine(FadeScreen(loadingScreen, 1f, loadingScreenFadeDuration, true));
+        yield return loadingScreenFadeCoroutine;
+
+    }
+
     private IEnumerator FadeScreen(CanvasGroup screen, float targetOpacity, float duration, bool fadeIn) {
 
         float currentTime = 0f;
@@ -327,7 +358,7 @@ public class GameUIController : MonoBehaviour {
 
         while (currentTime < duration) {
 
-            currentTime += Time.deltaTime;
+            currentTime += Time.unscaledDeltaTime;
             screen.alpha = Mathf.Lerp(startOpacity, targetOpacity, currentTime / duration);
             yield return null;
 
@@ -369,7 +400,7 @@ public class GameUIController : MonoBehaviour {
 
         while (currentTime < duration) {
 
-            currentTime += Time.deltaTime;
+            currentTime += Time.unscaledDeltaTime;
             text.alpha = Mathf.Lerp(startOpacity, targetOpacity, currentTime / duration);
             yield return null;
 

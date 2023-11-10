@@ -10,9 +10,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 2b16e017b6b785d4e9ab8605447da344, type: 3}
-  m_Name: RopeCategory
+  m_Name: RopesSection
   m_EditorClassIdentifier: 
-  categoryName: Ropes
+  sectionName: Ropes
   selectedIcon: {fileID: 0}
   deselectedIcon: {fileID: 0}
   shopItems:
