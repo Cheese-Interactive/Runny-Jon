@@ -4678,6 +4678,7 @@ MonoBehaviour:
   - {fileID: 1479511152}
   - {fileID: 260338909}
   currentLevel: {fileID: 11400000, guid: c545961550279884c91c622012c332dd, type: 2}
+  delayedMovementStopDuration: 2
 --- !u!1 &444665423
 GameObject:
   m_ObjectHideFlags: 0
@@ -4810,7 +4811,6 @@ MonoBehaviour:
   pauseMainMenuButton: {fileID: 1637521849}
   pauseSettingsButton: {fileID: 479296454}
   deathScreen: {fileID: 1407196514}
-  interactIcon: {fileID: 1248776265}
   loadingScreen: {fileID: 1302156624}
   loadingText: {fileID: 1339204212}
   timerText: {fileID: 174790080}
@@ -4822,7 +4822,6 @@ MonoBehaviour:
   replayButton: {fileID: 1199212557}
   subtitleTypeDuration: 1
   subtitleFadeDuration: 0.5
-  interactIconFadeDuration: 0.05
   pauseMenuFadeDuration: 0.5
   deathScreenFadeDuration: 0.5
   levelCompleteFadeInDuration: 0.5
@@ -13327,7 +13326,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0, b: 0, a: 0.5882353}
+  m_Color: {r: 0, g: 0, b: 0, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1

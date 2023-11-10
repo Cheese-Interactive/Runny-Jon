@@ -23,7 +23,6 @@ public class GameUIController : MonoBehaviour {
     [SerializeField] private Button pauseMainMenuButton;
     [SerializeField] private Button pauseSettingsButton;
     [SerializeField] private CanvasGroup deathScreen;
-    [SerializeField] private CanvasGroup interactIcon;
     [SerializeField] private CanvasGroup loadingScreen;
     [SerializeField] private TMP_Text loadingText;
     private Sprite defaultCrosshair;
@@ -31,7 +30,6 @@ public class GameUIController : MonoBehaviour {
 
     [Header("Timer")]
     [SerializeField] private TMP_Text timerText;
-    private bool gamePaused;
 
     [Header("Level Complete Menu")]
     [SerializeField] private CanvasGroup levelCompleteScreen;
@@ -44,7 +42,6 @@ public class GameUIController : MonoBehaviour {
     [Header("Animations")]
     [SerializeField] private float subtitleTypeDuration;
     [SerializeField] private float subtitleFadeDuration;
-    [SerializeField] private float interactIconFadeDuration;
     [SerializeField] private float pauseMenuFadeDuration;
     [SerializeField] private float deathScreenFadeDuration;
     [SerializeField] private float levelCompleteFadeInDuration;
@@ -53,7 +50,6 @@ public class GameUIController : MonoBehaviour {
     private Coroutine typeCoroutine;
     private Coroutine screenFadeCoroutine;
     private Coroutine textFadeCoroutine;
-    private Coroutine interactIconFadeCoroutine;
     private Coroutine loadingScreenFadeCoroutine;
     private bool textFaded;
     private bool levelComplete;
@@ -62,6 +58,7 @@ public class GameUIController : MonoBehaviour {
 
         gameManager = FindObjectOfType<GameManager>();
 
+        Time.timeScale = 1f;
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
 
@@ -82,7 +79,6 @@ public class GameUIController : MonoBehaviour {
         levelCompleteScreen.alpha = 0f;
         pauseMenu.gameObject.SetActive(false);
         deathScreen.gameObject.SetActive(false);
-        interactIcon.gameObject.SetActive(false);
         levelCompleteScreen.gameObject.SetActive(false);
 
         defaultCrosshairEnabled = true;
@@ -192,15 +188,13 @@ public class GameUIController : MonoBehaviour {
         if (gameManager.GetGamePaused() || levelComplete)
             return false;
 
-        Time.timeScale = 0f;
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
         timerText.transform.SetParent(pauseTimerTextPos);
         timerText.rectTransform.localPosition = Vector3.zero;
         subtitleText.gameObject.SetActive(false);
-        gameManager.PauseTimer();
         FadeInScreen(pauseMenu, 1f, pauseMenuFadeDuration);
-        gameManager.SetGamePaused(true);
+        gameManager.PauseGame();
         return true;
 
     }
@@ -210,15 +204,13 @@ public class GameUIController : MonoBehaviour {
         if (!gameManager.GetGamePaused())
             return false;
 
-        Time.timeScale = 1f;
         FadeOutScreen(pauseMenu, pauseMenuFadeDuration);
-        gameManager.ResumeTimer();
         timerText.transform.SetParent(startTimerTextParent);
         timerText.rectTransform.localPosition = startTimerTextPos;
         subtitleText.gameObject.SetActive(true);
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
-        gameManager.SetGamePaused(false);
+        gameManager.ResumeGame();
         return true;
 
     }
@@ -246,8 +238,9 @@ public class GameUIController : MonoBehaviour {
 
         }
 
-        yield return new WaitForSeconds(minMainMenuLoadingDuration - currentTime);
+        yield return new WaitForSecondsRealtime(minMainMenuLoadingDuration - currentTime);
         operation.allowSceneActivation = true;
+        Time.timeScale = 1f;
 
     }
 
@@ -256,48 +249,6 @@ public class GameUIController : MonoBehaviour {
         levelComplete = false;
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
 
-    }
-
-    public void FadeInInteractIcon() {
-
-        if (interactIconFadeCoroutine != null)
-            StopCoroutine(interactIconFadeCoroutine);
-
-        interactIconFadeCoroutine = StartCoroutine(FadeInteractIcon(1f, interactIconFadeDuration, true));
-
-    }
-
-    public void FadeOutInteractIcon() {
-
-        if (interactIconFadeCoroutine != null)
-            StopCoroutine(interactIconFadeCoroutine);
-
-        interactIconFadeCoroutine = StartCoroutine(FadeInteractIcon(0f, interactIconFadeDuration, false));
-
-    }
-
-    private IEnumerator FadeInteractIcon(float targetOpacity, float duration, bool fadeIn) {
-
-        float currentTime = 0f;
-        float startOpacity = interactIcon.alpha;
-        interactIcon.gameObject.SetActive(true);
-
-        while (currentTime < duration) {
-
-            currentTime += Time.unscaledDeltaTime;
-            interactIcon.alpha = Mathf.Lerp(startOpacity, targetOpacity, currentTime / duration);
-            yield return null;
-
-        }
-
-        interactIcon.alpha = targetOpacity;
-        interactIconFadeCoroutine = null;
-
-        if (!fadeIn) {
-
-            interactIcon.gameObject.SetActive(false);
-
-        }
     }
 
     public IEnumerator ShowDeathScreen() {

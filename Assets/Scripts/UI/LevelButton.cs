@@ -2,7 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class LevelButton : MonoBehaviour {
@@ -10,7 +9,7 @@ public class LevelButton : MonoBehaviour {
     [Header("References")]
     private MenuManager menuManager;
     private Button button;
-    private Image image;
+    private Image background;
 
     [Header("UI References")]
     [SerializeField] private TMP_Text nameText;
@@ -23,7 +22,7 @@ public class LevelButton : MonoBehaviour {
 
         this.menuManager = menuManager;
         button = GetComponent<Button>();
-        image = GetComponent<Image>();
+        background = GetComponent<Image>();
         button.onClick.AddListener(LoadLevel);
 
     }
@@ -36,7 +35,7 @@ public class LevelButton : MonoBehaviour {
 
     public void SetIcon(Sprite icon) {
 
-        this.image.sprite = icon;
+        this.background.sprite = icon;
 
     }
 

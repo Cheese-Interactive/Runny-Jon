@@ -6,10 +6,9 @@ using UnityEngine.UI;
 [CreateAssetMenu]
 public class ShopItem : ScriptableObject {
 
+    [Header("Settings")]
     public string itemName;
-
     public Image icon;
-
     public int price;
 
     public string GetItemName() {

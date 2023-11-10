@@ -1,16 +1,16 @@
 using System.Collections;
 using TMPro;
 using UnityEngine;
-using UnityEngine.Device;
 using UnityEngine.UI;
 
 public class ShopItemButton : MonoBehaviour {
 
     [Header("References")]
+    [SerializeField] private Image icon;
+    private Image background;
     private MenuManager menuManager;
     private MenuAudioManager audioManager;
     private Button button;
-    private Image image;
     private Color startColor;
 
     [Header("UI References")]
@@ -29,11 +29,11 @@ public class ShopItemButton : MonoBehaviour {
 
         this.menuManager = menuManager;
         audioManager = FindObjectOfType<MenuAudioManager>();
+        background = GetComponent<Image>();
         button = GetComponent<Button>();
-        image = GetComponent<Image>();
         button.onClick.AddListener(PurchaseItem);
 
-        startColor = image.color;
+        startColor = background.color;
 
     }
 
@@ -49,7 +49,7 @@ public class ShopItemButton : MonoBehaviour {
             if (errorCoroutine != null)
                 StopCoroutine(errorCoroutine);
 
-            errorCoroutine = StartCoroutine(ShowErrorButton(image, errorColor, errorDisplayDuration, errorResetDuration));
+            errorCoroutine = StartCoroutine(ShowErrorButton(background, errorColor, errorDisplayDuration, errorResetDuration));
             audioManager.PlaySound(MenuAudioManager.UISoundEffectType.Error);
 
         }
@@ -63,7 +63,7 @@ public class ShopItemButton : MonoBehaviour {
 
     public void SetIcon(Image icon) {
 
-        this.image = icon;
+        this.icon = icon;
 
     }
 

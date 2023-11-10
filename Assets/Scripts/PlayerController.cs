@@ -423,12 +423,12 @@ public class PlayerController : MonoBehaviour {
 
                 }
 
-                UIController.FadeInInteractIcon();
+                UIController.EnableInteractCrosshair("Zipline");
 
             }
         } else {
 
-            UIController.FadeOutInteractIcon();
+            UIController.DisableInteractCrosshair();
 
         }
 
@@ -446,6 +446,7 @@ public class PlayerController : MonoBehaviour {
 
                 if (UIController.ResumeGame()) {
 
+                    Time.timeScale = 1f;
                     EnableAllMovement();
                     EnableLook();
 
@@ -454,6 +455,7 @@ public class PlayerController : MonoBehaviour {
 
                 if (UIController.PauseGame()) {
 
+                    Time.timeScale = 0f;
                     DisableAllMovement();
                     DisableLook();
 

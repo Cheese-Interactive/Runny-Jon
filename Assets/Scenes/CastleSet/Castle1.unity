@@ -23038,6 +23038,7 @@ MonoBehaviour:
   - {fileID: 2092263288}
   - {fileID: 83068958}
   currentLevel: {fileID: 11400000, guid: 6ac8a40bf23b0784c87823217e904154, type: 2}
+  delayedMovementStopDuration: 2
 --- !u!1 &444665423
 GameObject:
   m_ObjectHideFlags: 0
@@ -23170,7 +23171,6 @@ MonoBehaviour:
   pauseMainMenuButton: {fileID: 1393623176}
   pauseSettingsButton: {fileID: 1385886041}
   deathScreen: {fileID: 1407196514}
-  interactIcon: {fileID: 1021604968}
   loadingScreen: {fileID: 637131165}
   loadingText: {fileID: 333218751}
   timerText: {fileID: 174790080}
@@ -23182,7 +23182,6 @@ MonoBehaviour:
   replayButton: {fileID: 1143306395}
   subtitleTypeDuration: 1
   subtitleFadeDuration: 0.5
-  interactIconFadeDuration: 0.05
   pauseMenuFadeDuration: 0.5
   deathScreenFadeDuration: 0.5
   levelCompleteFadeInDuration: 0.5

@@ -30,8 +30,10 @@ public class MenuUIController : MonoBehaviour {
     [SerializeField] private TMP_Text shopQuesoText;
 
     [Header("Animations")]
+    [SerializeField] private float quesoCountUpdateDuration;
     [SerializeField] private float loadingScreenFadeDuration;
     [SerializeField] private float minLoadingDuration;
+    private Coroutine quesoCountCoroutine;
     private Coroutine screenFadeInCoroutine;
     private Coroutine screenFadeOutCoroutine;
     private Coroutine loadingScreenFadeCoroutine;
@@ -126,7 +128,28 @@ public class MenuUIController : MonoBehaviour {
 
     public void UpdateQuesoCount() {
 
-        shopQuesoText.text = playerData.GetQuesos() + "";
+        if (quesoCountCoroutine != null)
+            StopCoroutine(quesoCountCoroutine);
+
+        quesoCountCoroutine = StartCoroutine(LerpQuesoCount(playerData.GetQuesos(), quesoCountUpdateDuration));
+
+    }
+
+    private IEnumerator LerpQuesoCount(int targetCount, float duration) {
+
+        float currentTime = 0f;
+        int startCount = int.Parse(shopQuesoText.text);
+
+        while (currentTime < duration) {
+
+            currentTime += Time.unscaledDeltaTime;
+            shopQuesoText.text = Mathf.RoundToInt(Mathf.Lerp(startCount, targetCount, currentTime / duration)) + "";
+            yield return null;
+
+        }
+
+        shopQuesoText.text = targetCount + "";
+        quesoCountCoroutine = null;
 
     }
 

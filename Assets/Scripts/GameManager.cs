@@ -15,10 +15,27 @@ public abstract class GameManager : MonoBehaviour {
 
     [Header("Level")]
     [SerializeField] protected Level currentLevel;
+    [SerializeField] protected float delayedMovementStopDuration;
     protected int deaths;
     protected Stopwatch stopwatch;
     protected int currCheckpoint;
     private bool gamePaused;
+
+    public void PauseGame() {
+
+        PauseTimer();
+        Time.timeScale = 0f;
+        gamePaused = true;
+
+    }
+
+    public void ResumeGame() {
+
+        ResumeTimer();
+        Time.timeScale = 1f;
+        gamePaused = false;
+
+    }
 
     public abstract void StartTimer();
 
@@ -31,6 +48,13 @@ public abstract class GameManager : MonoBehaviour {
     public abstract void CheckpointReached(Checkpoint.CheckpointType checkpointType);
 
     public abstract void CompleteLevel();
+
+    protected IEnumerator DelayedMovementDisable() {
+
+        yield return new WaitForSeconds(delayedMovementStopDuration);
+        Time.timeScale = 0f;
+
+    }
 
     public abstract Level GetCurrentLevel();
 
@@ -89,12 +113,6 @@ public abstract class GameManager : MonoBehaviour {
     public bool GetGamePaused() {
 
         return gamePaused;
-
-    }
-
-    public void SetGamePaused(bool gamePaused) {
-
-        this.gamePaused = gamePaused;
 
     }
 }
