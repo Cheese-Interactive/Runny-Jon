@@ -46,4 +46,23 @@ public class PhysicsEffect : MonoBehaviour {
 
         }
     }
+
+    public void OnThirdPartyCollision() {
+
+        if (triggered)
+            return;
+
+        if (flipMeshOnCollision)
+            meshRenderer.enabled = !meshVisible;
+
+        if (flipPhysicsOnCollision) {
+
+            rb.constraints = RigidbodyConstraints.None;
+            rb.freezeRotation = false;
+            rb.useGravity = true;
+
+        }
+
+        triggered = true;
+    }
 }

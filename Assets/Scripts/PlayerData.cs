@@ -138,7 +138,7 @@ public class PlayerData : MonoBehaviour {
 
     public bool PurchaseItem(ShopItem item) {
 
-        if (GetQuesos() < item.GetPrice())
+        if (GetQuesos() < item.GetPrice() || GetInventory().Contains(item))
             return false;
 
         gameData.RemoveQuesos(item.GetPrice());
