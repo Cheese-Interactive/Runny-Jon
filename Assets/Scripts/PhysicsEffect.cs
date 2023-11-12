@@ -60,8 +60,12 @@ public class PhysicsEffect : MonoBehaviour {
         if (triggered)
             return;
 
-        if (flipMeshOnCollision)
+        if (flipMeshOnCollision) {
+
             meshRenderer.enabled = !meshVisible;
+            collider.enabled = !meshVisible;
+
+        }
 
         if (flipPhysicsOnCollision) {
 
