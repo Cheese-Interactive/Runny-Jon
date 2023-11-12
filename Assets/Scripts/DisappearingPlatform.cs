@@ -13,7 +13,6 @@ public class DisappearingPlatform : MonoBehaviour {
     [SerializeField] private float disappearAnimationsDuration;
     [SerializeField] private float resetWaitDuration;
     [SerializeField] private float resetAnimationsDuration;
-    [SerializeField] private string playerTag;
     private Coroutine disappearCoroutine;
 
     [Header("Falling")]
@@ -31,7 +30,7 @@ public class DisappearingPlatform : MonoBehaviour {
         if (disappearCoroutine != null)
             return;
 
-        if (collision.gameObject.CompareTag(playerTag))
+        if (collision.gameObject.CompareTag("Player"))
             disappearCoroutine = StartCoroutine(HandleFade());
 
     }

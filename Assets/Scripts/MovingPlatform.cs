@@ -3,9 +3,6 @@ using UnityEngine;
 
 public class MovingPlatform : MonoBehaviour {
 
-    [Header("References")]
-    [SerializeField] private string playerTag;
-
     [Header("Falling")]
     [SerializeField] private Vector3 movement;
     [SerializeField] private float movementDelay;
@@ -17,7 +14,7 @@ public class MovingPlatform : MonoBehaviour {
         if (fallCoroutine != null)
             return;
 
-        if (collision.gameObject.CompareTag(playerTag))
+        if (collision.gameObject.CompareTag("Player"))
             fallCoroutine = StartCoroutine(HandleMovement());
 
     }
@@ -27,7 +24,7 @@ public class MovingPlatform : MonoBehaviour {
         if (fallCoroutine != null)
             return;
 
-        if (collider.gameObject.CompareTag(playerTag))
+        if (collider.gameObject.CompareTag("Player"))
             fallCoroutine = StartCoroutine(HandleMovement());
 
     }

@@ -7,9 +7,6 @@ public class Objective : MonoBehaviour {
     [Header("References")]
     private GameManager gameManager;
 
-    [Header("Collisions")]
-    [SerializeField] private string playerTag;
-
     private void Start() {
 
         gameManager = FindObjectOfType<GameManager>();
@@ -17,7 +14,7 @@ public class Objective : MonoBehaviour {
     }
     private void OnTriggerEnter(Collider collision) {
 
-        if (collision.transform.CompareTag(playerTag)) {
+        if (collision.transform.CompareTag("Player")) {
 
             gameManager.CompleteLevel();
 

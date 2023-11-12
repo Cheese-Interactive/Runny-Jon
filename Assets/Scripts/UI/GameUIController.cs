@@ -2,12 +2,14 @@ using System.Collections;
 using System.Diagnostics;
 using TMPro;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class GameUIController : MonoBehaviour {
 
     [Header("References")]
+    private PlayerController playerController;
     private GameManager gameManager;
     private Vector3 startTimerTextPos;
     private Transform startTimerTextParent;
@@ -56,6 +58,7 @@ public class GameUIController : MonoBehaviour {
 
     private void Start() {
 
+        playerController = FindObjectOfType<PlayerController>();
         gameManager = FindObjectOfType<GameManager>();
 
         Time.timeScale = 1f;
@@ -183,10 +186,10 @@ public class GameUIController : MonoBehaviour {
 
     }
 
-    public bool PauseGame() {
+    public void PauseGame() {
 
         if (gameManager.GetGamePaused() || levelComplete)
-            return false;
+            return;
 
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
@@ -195,23 +198,25 @@ public class GameUIController : MonoBehaviour {
         subtitleText.gameObject.SetActive(false);
         FadeInScreen(pauseMenu, 1f, pauseMenuFadeDuration);
         gameManager.PauseGame();
-        return true;
+        playerController.DisableAllMovement();
+        playerController.DisableLook();
 
     }
 
-    public bool ResumeGame() {
+    public void ResumeGame() {
 
         if (!gameManager.GetGamePaused())
-            return false;
+            return;
 
         FadeOutScreen(pauseMenu, pauseMenuFadeDuration);
         timerText.transform.SetParent(startTimerTextParent);
         timerText.rectTransform.localPosition = startTimerTextPos;
         subtitleText.gameObject.SetActive(true);
+        gameManager.ResumeGame();
+        playerController.EnableAllMovement();
+        playerController.EnableLook();
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
-        gameManager.ResumeGame();
-        return true;
 
     }
 

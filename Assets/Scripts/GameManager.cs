@@ -94,8 +94,10 @@ public abstract class GameManager : MonoBehaviour {
 
     protected IEnumerator RespawnPlayer() {
 
+        playerController.StopWallRun();
         playerController.DisableAllMovement();
         playerController.DisableLook();
+        playerController.Uncrouch();
         yield return StartCoroutine(UIController.ShowDeathScreen());
         Transform spawn = checkpoints[currCheckpoint].GetPlayerSpawn();
         playerController.transform.position = spawn.position;

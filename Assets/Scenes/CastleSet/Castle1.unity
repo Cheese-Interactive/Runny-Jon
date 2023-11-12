@@ -130,7 +130,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh790590
+  m_Name: pb_Mesh53664
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -2346,7 +2346,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh789698
+  m_Name: pb_Mesh52772
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -3333,7 +3333,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh789712
+  m_Name: pb_Mesh52786
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -3544,7 +3544,6 @@ MonoBehaviour:
   disappearAnimationsDuration: 3.8
   resetWaitDuration: 2
   resetAnimationsDuration: 1.5
-  playerTag: Player
   fallDistance: 7
 --- !u!64 &62633340
 MeshCollider:
@@ -4895,7 +4894,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh789906
+  m_Name: pb_Mesh52980
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -5170,7 +5169,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh-1184004
+  m_Name: pb_Mesh-62596
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -5442,7 +5441,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh-1182858
+  m_Name: pb_Mesh-61450
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -5690,7 +5689,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh789662
+  m_Name: pb_Mesh52736
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -5938,7 +5937,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh791912
+  m_Name: pb_Mesh54986
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -6102,7 +6101,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh792878
+  m_Name: pb_Mesh55952
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -6804,7 +6803,6 @@ MonoBehaviour:
   disappearAnimationsDuration: 0.3
   resetWaitDuration: 5
   resetAnimationsDuration: 1.5
-  playerTag: Player
   fallDistance: 10
 --- !u!64 &125115489
 MeshCollider:
@@ -7135,7 +7133,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh789680
+  m_Name: pb_Mesh52754
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -7299,7 +7297,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh792638
+  m_Name: pb_Mesh55712
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -9077,7 +9075,6 @@ MonoBehaviour:
   disappearAnimationsDuration: 0.3
   resetWaitDuration: 5
   resetAnimationsDuration: 1.5
-  playerTag: Player
   fallDistance: 10
 --- !u!64 &169377565
 MeshCollider:
@@ -9440,7 +9437,6 @@ MonoBehaviour:
   disappearAnimationsDuration: 0.3
   resetWaitDuration: 5
   resetAnimationsDuration: 1.5
-  playerTag: Player
   fallDistance: 10
 --- !u!64 &169922412
 MeshCollider:
@@ -10701,7 +10697,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh791448
+  m_Name: pb_Mesh54522
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -11018,7 +11014,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh789310
+  m_Name: pb_Mesh52384
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -11370,7 +11366,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh789844
+  m_Name: pb_Mesh52918
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -11618,7 +11614,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh255174
+  m_Name: pb_Mesh55300
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -11829,7 +11825,6 @@ MonoBehaviour:
   disappearAnimationsDuration: 2
   resetWaitDuration: 0
   resetAnimationsDuration: 1.5
-  playerTag: Player
   fallDistance: 7
 --- !u!64 &222357344
 MeshCollider:
@@ -12145,7 +12140,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh790406
+  m_Name: pb_Mesh53480
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -12685,7 +12680,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh790464
+  m_Name: pb_Mesh53538
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -14930,7 +14925,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh789296
+  m_Name: pb_Mesh52370
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -15094,7 +15089,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh788980
+  m_Name: pb_Mesh52054
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -15258,7 +15253,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh791872
+  m_Name: pb_Mesh54946
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -15428,7 +15423,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh792544
+  m_Name: pb_Mesh55618
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -15795,7 +15790,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh792290
+  m_Name: pb_Mesh55364
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -16023,7 +16018,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh792696
+  m_Name: pb_Mesh55770
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -16187,7 +16182,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh253740
+  m_Name: pb_Mesh53866
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -16415,7 +16410,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 251.12, y: 58.6}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &326946608
 MonoBehaviour:
@@ -16562,7 +16557,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh788526
+  m_Name: pb_Mesh51600
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -20228,7 +20223,6 @@ MonoBehaviour:
   disappearAnimationsDuration: 12
   resetWaitDuration: 0
   resetAnimationsDuration: 3
-  playerTag: Player
   fallDistance: 25
 --- !u!64 &400689726
 MeshCollider:
@@ -20646,7 +20640,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh-1182286
+  m_Name: pb_Mesh-60878
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -20810,7 +20804,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh791124
+  m_Name: pb_Mesh54198
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -21888,7 +21882,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh792600
+  m_Name: pb_Mesh55674
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -22052,7 +22046,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh790330
+  m_Name: pb_Mesh53404
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -22446,7 +22440,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh789050
+  m_Name: pb_Mesh52124
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -22798,7 +22792,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh791290
+  m_Name: pb_Mesh54364
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -23225,7 +23219,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh789818
+  m_Name: pb_Mesh52892
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -23427,7 +23421,6 @@ MonoBehaviour:
   disappearAnimationsDuration: 0.3
   resetWaitDuration: 5
   resetAnimationsDuration: 1.5
-  playerTag: Player
   fallDistance: 10
 --- !u!64 &451288773
 MeshCollider:
@@ -23758,7 +23751,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh791840
+  m_Name: pb_Mesh54914
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -23922,7 +23915,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh254940
+  m_Name: pb_Mesh55066
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -24884,7 +24877,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh788662
+  m_Name: pb_Mesh51736
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -25048,7 +25041,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh788642
+  m_Name: pb_Mesh51716
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -25212,7 +25205,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh791308
+  m_Name: pb_Mesh54382
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -25721,7 +25714,6 @@ MonoBehaviour:
   disappearAnimationsDuration: 3.8
   resetWaitDuration: 2
   resetAnimationsDuration: 1.5
-  playerTag: Player
   fallDistance: 7
 --- !u!64 &485551261
 MeshCollider:
@@ -26445,7 +26437,6 @@ MonoBehaviour:
   disappearAnimationsDuration: 0.3
   resetWaitDuration: 5
   resetAnimationsDuration: 1.5
-  playerTag: Player
   fallDistance: 10
 --- !u!64 &494091985
 MeshCollider:
@@ -26776,7 +26767,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh789458
+  m_Name: pb_Mesh52532
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -27778,7 +27769,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh792066
+  m_Name: pb_Mesh55140
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -28664,7 +28655,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh788918
+  m_Name: pb_Mesh51992
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -29435,10 +29426,10 @@ RectTransform:
   m_Father: {fileID: 1897726197}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 959.884, y: -645.635}
-  m_SizeDelta: {x: 451.22, y: 122.51}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 959.884, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!43 &552068963
 Mesh:
@@ -29446,7 +29437,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh789646
+  m_Name: pb_Mesh52720
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -29610,7 +29601,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh-1184700
+  m_Name: pb_Mesh-63292
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -29806,7 +29797,6 @@ MonoBehaviour:
   disappearAnimationsDuration: 0.3
   resetWaitDuration: 5
   resetAnimationsDuration: 1.5
-  playerTag: Player
   fallDistance: 10
 --- !u!64 &557118900
 MeshCollider:
@@ -30143,7 +30133,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh252550
+  m_Name: pb_Mesh52676
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -30307,7 +30297,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh790120
+  m_Name: pb_Mesh53194
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -31401,7 +31391,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh-1184508
+  m_Name: pb_Mesh-63100
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -31629,7 +31619,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh789540
+  m_Name: pb_Mesh52614
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -32283,7 +32273,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh-1183916
+  m_Name: pb_Mesh-62508
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -32479,7 +32469,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh-1183226
+  m_Name: pb_Mesh-61818
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -32674,7 +32664,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh789786
+  m_Name: pb_Mesh52860
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -33021,7 +33011,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh790148
+  m_Name: pb_Mesh53222
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -33495,7 +33485,6 @@ MonoBehaviour:
   disappearAnimationsDuration: 0.3
   resetWaitDuration: 5
   resetAnimationsDuration: 1.5
-  playerTag: Player
   fallDistance: 10
 --- !u!64 &644409618
 MeshCollider:
@@ -33826,7 +33815,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh252352
+  m_Name: pb_Mesh52478
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -34419,7 +34408,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh790256
+  m_Name: pb_Mesh53330
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -35137,7 +35126,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh789076
+  m_Name: pb_Mesh52150
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -35828,7 +35817,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh790344
+  m_Name: pb_Mesh53418
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -36110,7 +36099,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh789028
+  m_Name: pb_Mesh52102
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -36274,7 +36263,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh790740
+  m_Name: pb_Mesh53814
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -36813,7 +36802,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh792562
+  m_Name: pb_Mesh55636
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -36977,7 +36966,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh792106
+  m_Name: pb_Mesh55180
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -37173,7 +37162,6 @@ MonoBehaviour:
   disappearAnimationsDuration: 0.3
   resetWaitDuration: 5
   resetAnimationsDuration: 1.5
-  playerTag: Player
   fallDistance: 10
 --- !u!64 &728904679
 MeshCollider:
@@ -38120,7 +38108,6 @@ MonoBehaviour:
   disappearAnimationsDuration: 0.3
   resetWaitDuration: 5
   resetAnimationsDuration: 1.5
-  playerTag: Player
   fallDistance: 10
 --- !u!64 &740178568
 MeshCollider:
@@ -38601,7 +38588,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh792614
+  m_Name: pb_Mesh55688
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -39659,7 +39646,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh-1185624
+  m_Name: pb_Mesh-64216
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -39913,7 +39900,6 @@ MonoBehaviour:
   disappearAnimationsDuration: 0.3
   resetWaitDuration: 5
   resetAnimationsDuration: 1.5
-  playerTag: Player
   fallDistance: 10
 --- !u!64 &802769384
 MeshCollider:
@@ -40804,7 +40790,6 @@ MonoBehaviour:
   disappearAnimationsDuration: 2
   resetWaitDuration: 0
   resetAnimationsDuration: 1.5
-  playerTag: Player
   fallDistance: 7
 --- !u!64 &811535628
 MeshCollider:
@@ -41864,7 +41849,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh789330
+  m_Name: pb_Mesh52404
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -42754,7 +42739,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh253776
+  m_Name: pb_Mesh53902
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -43262,7 +43247,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh791752
+  m_Name: pb_Mesh54826
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -43553,10 +43538,10 @@ RectTransform:
   m_Father: {fileID: 1183309631}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 246.66, y: -61.255}
-  m_SizeDelta: {x: 493.32, y: 122.51}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 246.66, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &863466435
 MonoBehaviour:
@@ -43677,7 +43662,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh790946
+  m_Name: pb_Mesh54020
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -44410,7 +44395,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh255696
+  m_Name: pb_Mesh55822
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -44574,7 +44559,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh789752
+  m_Name: pb_Mesh52826
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -44946,7 +44931,6 @@ MonoBehaviour:
   disappearAnimationsDuration: 3.8
   resetWaitDuration: 2
   resetAnimationsDuration: 1.5
-  playerTag: Player
   fallDistance: 7
 --- !u!64 &900824226
 MeshCollider:
@@ -45816,7 +45800,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh790550
+  m_Name: pb_Mesh53624
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -46270,7 +46254,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh791620
+  m_Name: pb_Mesh54694
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -47504,9 +47488,9 @@ RectTransform:
   m_Father: {fileID: 1551444328}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 250, y: -60}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 500, y: 120}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &975378318
@@ -49596,7 +49580,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh790610
+  m_Name: pb_Mesh53684
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -50352,7 +50336,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh-1186164
+  m_Name: pb_Mesh-64756
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -50516,7 +50500,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh789150
+  m_Name: pb_Mesh52224
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -50795,7 +50779,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh791510
+  m_Name: pb_Mesh54584
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -52243,7 +52227,6 @@ MonoBehaviour:
   disappearAnimationsDuration: 0
   resetWaitDuration: 0
   resetAnimationsDuration: 3
-  playerTag: Player
   fallDistance: 10
 --- !u!1 &1075816940
 GameObject:
@@ -52575,7 +52558,6 @@ MonoBehaviour:
   disappearAnimationsDuration: 4.3
   resetWaitDuration: 2
   resetAnimationsDuration: 1.5
-  playerTag: Player
   fallDistance: 7
 --- !u!64 &1089823401
 MeshCollider:
@@ -53321,7 +53303,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh791540
+  m_Name: pb_Mesh54614
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -53517,7 +53499,6 @@ MonoBehaviour:
   disappearAnimationsDuration: 0.3
   resetWaitDuration: 5
   resetAnimationsDuration: 1.5
-  playerTag: Player
   fallDistance: 10
 --- !u!64 &1131666113
 MeshCollider:
@@ -54296,9 +54277,9 @@ RectTransform:
   m_Father: {fileID: 1551444328}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 800, y: -60}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 500, y: 120}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1143306395
@@ -54452,7 +54433,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh-1185638
+  m_Name: pb_Mesh-64230
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -55681,10 +55662,10 @@ RectTransform:
   m_Father: {fileID: 1897726197}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 959.884, y: -498.125}
-  m_SizeDelta: {x: 775.32, y: 122.51}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 959.884, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1183309632
 MonoBehaviour:
@@ -55719,8 +55700,8 @@ MonoBehaviour:
     m_Bottom: 0
   m_ChildAlignment: 4
   m_Spacing: 25
-  m_ChildForceExpandWidth: 1
-  m_ChildForceExpandHeight: 1
+  m_ChildForceExpandWidth: 0
+  m_ChildForceExpandHeight: 0
   m_ChildControlWidth: 0
   m_ChildControlHeight: 0
   m_ChildScaleWidth: 0
@@ -56122,7 +56103,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh789236
+  m_Name: pb_Mesh52310
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -56286,7 +56267,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh251816
+  m_Name: pb_Mesh51942
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -56450,7 +56431,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh791198
+  m_Name: pb_Mesh54272
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -57355,7 +57336,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh792316
+  m_Name: pb_Mesh55390
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -57672,7 +57653,6 @@ MonoBehaviour:
   disappearAnimationsDuration: 3.8
   resetWaitDuration: 2
   resetAnimationsDuration: 1.5
-  playerTag: Player
   fallDistance: 7
 --- !u!64 &1265389966
 MeshCollider:
@@ -58276,7 +58256,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 152.24, y: 58.6}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1284851004
 MonoBehaviour:
@@ -58481,7 +58461,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh791772
+  m_Name: pb_Mesh54846
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -59592,7 +59572,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh788792
+  m_Name: pb_Mesh51866
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -59803,7 +59783,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh-1182872
+  m_Name: pb_Mesh-61464
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -60005,7 +59985,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh792670
+  m_Name: pb_Mesh55744
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -61368,7 +61348,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh-1184018
+  m_Name: pb_Mesh-62610
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -62404,6 +62384,8 @@ GameObject:
   - component: {fileID: 1384782509}
   - component: {fileID: 1384782513}
   - component: {fileID: 1384782515}
+  - component: {fileID: 1384782517}
+  - component: {fileID: 1384782516}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -62592,7 +62574,6 @@ MonoBehaviour:
   ziplineBobSpeed: 0
   ziplineBobAmount: 0
   interactDistance: 0
-  interactTag: 
   feet: {fileID: 1514621584}
   groundCheckRadius: 0.25
   environmentMask:
@@ -62601,7 +62582,6 @@ MonoBehaviour:
   maxSlopeAngle: 45
   slopeCheckDistance: 0.3
   groundDrag: 5
-  deathZoneTag: DeathZone
   sprintKey: 304
   jumpKey: 32
   slideKey: 99
@@ -62609,6 +62589,7 @@ MonoBehaviour:
   downwardsWallRunKey: 0
   cableExtendKey: 0
   interactKey: 0
+  interactKeyAlt: 323
   resetKey: 9
   pauseKey: 27
 --- !u!54 &1384782514
@@ -62726,6 +62707,39 @@ LineRenderer:
     generateLightingData: 0
   m_UseWorldSpace: 1
   m_Loop: 0
+--- !u!114 &1384782516
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1384782507}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b2d8418b0b9634b1892b0268dd9c2743, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  boneShape: 1
+  drawBones: 1
+  drawTripods: 0
+  boneSize: 1
+  tripodSize: 1
+  boneColor: {r: 0, g: 0, b: 1, a: 0.5}
+  m_Transforms: []
+--- !u!114 &1384782517
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1384782507}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fff0960ef4ea6e04eac66b4a7fd2189d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_RigLayers: []
+  m_Effectors: []
 --- !u!4 &1384958492 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 3937860719691375873, guid: d54a7223e9b4ca94fa75d1c0ee5298f9,
@@ -63129,7 +63143,6 @@ MonoBehaviour:
   disappearAnimationsDuration: 0.3
   resetWaitDuration: 5
   resetAnimationsDuration: 1.5
-  playerTag: Player
   fallDistance: 10
 --- !u!64 &1395970802
 MeshCollider:
@@ -63495,7 +63508,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh788808
+  m_Name: pb_Mesh51882
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -64448,7 +64461,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh792198
+  m_Name: pb_Mesh55272
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -64795,7 +64808,6 @@ MonoBehaviour:
   disappearAnimationsDuration: 0.3
   resetWaitDuration: 5
   resetAnimationsDuration: 1.5
-  playerTag: Player
   fallDistance: 10
 --- !u!64 &1436061172
 MeshCollider:
@@ -65192,7 +65204,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh791358
+  m_Name: pb_Mesh54432
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -66102,7 +66114,6 @@ MonoBehaviour:
   ziplineBobSpeed: 12
   ziplineBobAmount: 0.1
   interactDistance: 4
-  interactTag: Interactable
   feet: {fileID: 456374403}
   groundCheckRadius: 0.25
   environmentMask:
@@ -66111,14 +66122,14 @@ MonoBehaviour:
   maxSlopeAngle: 45
   slopeCheckDistance: 0.3
   groundDrag: 5
-  deathZoneTag: DeathZone
   sprintKey: 304
   jumpKey: 32
   slideKey: 99
   upwardsWallRunKey: 0
   downwardsWallRunKey: 0
   cableExtendKey: 0
-  interactKey: 0
+  interactKey: 101
+  interactKeyAlt: 323
   resetKey: 9
   pauseKey: 27
 --- !u!54 &1456561227
@@ -66390,7 +66401,6 @@ MonoBehaviour:
   disappearAnimationsDuration: 0.3
   resetWaitDuration: 5
   resetAnimationsDuration: 1.5
-  playerTag: Player
   fallDistance: 10
 --- !u!64 &1465808245
 MeshCollider:
@@ -66942,7 +66952,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh790240
+  m_Name: pb_Mesh53314
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -67106,7 +67116,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh792462
+  m_Name: pb_Mesh55536
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -67614,7 +67624,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh790314
+  m_Name: pb_Mesh53388
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -68530,7 +68540,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh789122
+  m_Name: pb_Mesh52196
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -69038,7 +69048,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh254584
+  m_Name: pb_Mesh54710
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -69202,7 +69212,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh790098
+  m_Name: pb_Mesh53172
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -69515,7 +69525,6 @@ MonoBehaviour:
   disappearAnimationsDuration: 2
   resetWaitDuration: 0
   resetAnimationsDuration: 1.5
-  playerTag: Player
   fallDistance: 7
 --- !u!64 &1543334221
 MeshCollider:
@@ -69863,7 +69872,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh788548
+  m_Name: pb_Mesh51622
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -70027,7 +70036,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh788682
+  m_Name: pb_Mesh51756
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -70191,7 +70200,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh791426
+  m_Name: pb_Mesh54500
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -70384,10 +70393,10 @@ RectTransform:
   m_Father: {fileID: 1897726197}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 959.884, y: -791.89}
-  m_SizeDelta: {x: 1050, y: 120}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 959.884, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1551444329
 MonoBehaviour:
@@ -70435,7 +70444,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh790046
+  m_Name: pb_Mesh53120
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -70669,7 +70678,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh255072
+  m_Name: pb_Mesh55198
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -71188,7 +71197,6 @@ MonoBehaviour:
   disappearAnimationsDuration: 2
   resetWaitDuration: 9999999
   resetAnimationsDuration: 9999999
-  playerTag: Player
   fallDistance: 60
 --- !u!43 &1571905871
 Mesh:
@@ -71196,7 +71204,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh792792
+  m_Name: pb_Mesh55866
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -71360,7 +71368,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh-1183902
+  m_Name: pb_Mesh-62494
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -71868,7 +71876,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh253146
+  m_Name: pb_Mesh53272
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -72475,7 +72483,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh-1184686
+  m_Name: pb_Mesh-63278
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -73467,7 +73475,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh791584
+  m_Name: pb_Mesh54658
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -74091,7 +74099,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh791018
+  m_Name: pb_Mesh54092
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -74701,7 +74709,6 @@ MonoBehaviour:
   disappearAnimationsDuration: 0.3
   resetWaitDuration: 5
   resetAnimationsDuration: 1.5
-  playerTag: Player
   fallDistance: 10
 --- !u!64 &1683814963
 MeshCollider:
@@ -75095,7 +75102,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh-1183620
+  m_Name: pb_Mesh-62212
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -75287,10 +75294,10 @@ RectTransform:
   m_Father: {fileID: 1897726197}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 959.884, y: -319.99}
-  m_SizeDelta: {x: 1092.45, y: 183.76}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 959.884, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1689927447
 MonoBehaviour:
@@ -75653,7 +75660,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh789982
+  m_Name: pb_Mesh53056
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -76688,7 +76695,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh792434
+  m_Name: pb_Mesh55508
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -77130,7 +77137,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh-1183606
+  m_Name: pb_Mesh-62198
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -77521,7 +77528,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh790486
+  m_Name: pb_Mesh53560
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -78318,7 +78325,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c6a9fa1875db651488c6a487127f635b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerTag: Player
 --- !u!64 &1757005872
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -79110,7 +79116,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh790162
+  m_Name: pb_Mesh53236
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -79399,7 +79405,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh-1183240
+  m_Name: pb_Mesh-61832
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -79686,7 +79692,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh790276
+  m_Name: pb_Mesh53350
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -80022,7 +80028,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh-1186150
+  m_Name: pb_Mesh-64742
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -80218,7 +80224,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh792254
+  m_Name: pb_Mesh55328
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -81331,7 +81337,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh790980
+  m_Name: pb_Mesh54054
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -81677,7 +81683,6 @@ MonoBehaviour:
   disappearAnimationsDuration: 2.6
   resetWaitDuration: 0
   resetAnimationsDuration: 3
-  playerTag: Player
   fallDistance: 14
 --- !u!64 &1825557157
 MeshCollider:
@@ -82025,7 +82030,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh788628
+  m_Name: pb_Mesh51702
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -82225,7 +82230,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh790662
+  m_Name: pb_Mesh53736
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -82421,7 +82426,6 @@ MonoBehaviour:
   disappearAnimationsDuration: 0.3
   resetWaitDuration: 5
   resetAnimationsDuration: 1.5
-  playerTag: Player
   fallDistance: 10
 --- !u!64 &1835261500
 MeshCollider:
@@ -82787,7 +82791,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh792184
+  m_Name: pb_Mesh55258
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -82983,7 +82987,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh788846
+  m_Name: pb_Mesh51920
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -83309,7 +83313,6 @@ MonoBehaviour:
   disappearAnimationsDuration: 0.3
   resetWaitDuration: 5
   resetAnimationsDuration: 1.5
-  playerTag: Player
   fallDistance: 10
 --- !u!64 &1856289081
 MeshCollider:
@@ -83625,7 +83628,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh788712
+  m_Name: pb_Mesh51786
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -83789,7 +83792,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh788562
+  m_Name: pb_Mesh51636
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -84100,7 +84103,6 @@ MonoBehaviour:
   disappearAnimationsDuration: 0.3
   resetWaitDuration: 5
   resetAnimationsDuration: 1.5
-  playerTag: Player
   fallDistance: 10
 --- !u!64 &1869234749
 MeshCollider:
@@ -84431,7 +84433,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh791654
+  m_Name: pb_Mesh54728
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -84857,7 +84859,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh791674
+  m_Name: pb_Mesh54748
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -85234,7 +85236,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh788934
+  m_Name: pb_Mesh52008
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -85626,7 +85628,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1897726197
 RectTransform:
   m_ObjectHideFlags: 0
@@ -87413,7 +87415,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh790918
+  m_Name: pb_Mesh53992
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -88507,7 +88509,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh790870
+  m_Name: pb_Mesh53944
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -89214,7 +89216,6 @@ MonoBehaviour:
   disappearAnimationsDuration: 0.3
   resetWaitDuration: 5
   resetAnimationsDuration: 1.5
-  playerTag: Player
   fallDistance: 10
 --- !u!64 &1985256072
 MeshCollider:
@@ -89576,7 +89577,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh790366
+  m_Name: pb_Mesh53440
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -91173,7 +91174,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh-1182300
+  m_Name: pb_Mesh-60892
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -91464,7 +91465,6 @@ MonoBehaviour:
   disappearAnimationsDuration: 0.3
   resetWaitDuration: 5
   resetAnimationsDuration: 1.5
-  playerTag: Player
   fallDistance: 10
 --- !u!64 &2030549190
 MeshCollider:
@@ -92447,10 +92447,10 @@ RectTransform:
   m_Father: {fileID: 1183309631}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 646.82, y: -61.254997}
-  m_SizeDelta: {x: 257, y: 49.01}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 646.82, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2046598255
 MonoBehaviour:
@@ -92822,7 +92822,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh791704
+  m_Name: pb_Mesh54778
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -92986,7 +92986,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh789366
+  m_Name: pb_Mesh52440
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -93651,7 +93651,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh788608
+  m_Name: pb_Mesh51682
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -94026,7 +94026,6 @@ MonoBehaviour:
   disappearAnimationsDuration: 0.3
   resetWaitDuration: 5
   resetAnimationsDuration: 1.5
-  playerTag: Player
   fallDistance: 10
 --- !u!64 &2085485490
 MeshCollider:
@@ -94859,7 +94858,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh-1184494
+  m_Name: pb_Mesh-63086
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2

@@ -6,18 +6,17 @@ public class InnerElevator : MonoBehaviour {
 
     [Header("Elevator")]
     [SerializeField] private Elevator elevator;
-    [SerializeField] private string playerTag;
 
     private void OnTriggerEnter(Collider collider) {
 
-        if (collider.CompareTag(playerTag))
+        if (collider.CompareTag("Player"))
             elevator.ElevatorEntered();
 
     }
 
     private void OnTriggerExit(Collider collider) {
 
-        if (collider.CompareTag(playerTag))
+        if (collider.CompareTag("Player"))
             elevator.ElevatorExited();
 
     }

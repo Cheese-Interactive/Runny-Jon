@@ -3,6 +3,9 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.Animations.Rigging;
 
+[RequireComponent(typeof(Rigidbody))]
+[RequireComponent(typeof(LineRenderer))]
+[RequireComponent(typeof(RigBuilder))]
 public class PlayerController : MonoBehaviour {
 
     [Header("References")]
@@ -179,9 +182,6 @@ public class PlayerController : MonoBehaviour {
     [SerializeField] private LayerMask ziplineMask;
     private Zipline currZipline;
 
-    [Header("Pausing")]
-    private bool gamePaused;
-
     [Header("Headbob")]
     [SerializeField] private float walkBobSpeed;
     [SerializeField] private float walkBobAmount;
@@ -196,7 +196,6 @@ public class PlayerController : MonoBehaviour {
 
     [Header("Interacting")]
     [SerializeField] private float interactDistance;
-    [SerializeField] private string interactTag;
 
     [Header("Ground Check")]
     [SerializeField] private Transform feet;
@@ -214,9 +213,6 @@ public class PlayerController : MonoBehaviour {
     [Header("Drag Control")]
     [SerializeField] private float groundDrag;
 
-    [Header("Death")]
-    [SerializeField] private string deathZoneTag;
-
     [Header("Keybinds")]
     [SerializeField] private KeyCode sprintKey;
     [SerializeField] private KeyCode jumpKey;
@@ -225,6 +221,7 @@ public class PlayerController : MonoBehaviour {
     [SerializeField] private KeyCode downwardsWallRunKey;
     [SerializeField] private KeyCode cableExtendKey;
     [SerializeField] private KeyCode interactKey;
+    [SerializeField] private KeyCode interactKeyAlt;
     [SerializeField] private KeyCode resetKey;
     [SerializeField] private KeyCode pauseKey;
 
@@ -407,6 +404,7 @@ public class PlayerController : MonoBehaviour {
 
         CheckSwingPoints();
 
+        // Zipline Check
         Collider[] colliders = Physics.OverlapSphere(transform.position, ziplineCheckRadius, ziplineMask);
 
         if (colliders.Length > 0 && movementState != MovementState.Ziplining) {
@@ -415,7 +413,7 @@ public class PlayerController : MonoBehaviour {
 
             if (ziplineEnabled && zipline.CanZipline()) {
 
-                if (Input.GetKeyDown(interactKey)) {
+                if (Input.GetKeyDown(interactKey) || Input.GetKeyDown(interactKeyAlt)) {
 
                     currZipline = zipline;
                     movementState = MovementState.Ziplining;
@@ -442,34 +440,17 @@ public class PlayerController : MonoBehaviour {
 
         if (Input.GetKeyDown(pauseKey)) {
 
-            if (gamePaused) {
-
-                if (UIController.ResumeGame()) {
-
-                    Time.timeScale = 1f;
-                    EnableAllMovement();
-                    EnableLook();
-
-                }
-            } else {
-
-                if (UIController.PauseGame()) {
-
-                    Time.timeScale = 0f;
-                    DisableAllMovement();
-                    DisableLook();
-
-                }
-            }
-
-            gamePaused = !gamePaused;
+            if (gameManager.GetGamePaused())
+                UIController.ResumeGame();
+            else
+                UIController.PauseGame();
 
         }
 
         Ray ray = new Ray(camera.transform.position, camera.transform.forward);
         RaycastHit hitInfo;
 
-        if (Physics.Raycast(ray, out hitInfo, interactDistance) && hitInfo.transform.CompareTag(interactTag)) {
+        if (Physics.Raycast(ray, out hitInfo, interactDistance) && hitInfo.transform.CompareTag("Interactable")) {
 
             if (hitInfo.collider.GetComponent<Interactable>() != null) {
 
@@ -546,7 +527,7 @@ public class PlayerController : MonoBehaviour {
 
     private void OnTriggerEnter(Collider collider) {
 
-        if (collider.CompareTag(deathZoneTag)) {
+        if (collider.CompareTag("DeathZone")) {
 
             gameManager.KillPlayer();
 
@@ -809,7 +790,7 @@ public class PlayerController : MonoBehaviour {
 
     }
 
-    private void Uncrouch() {
+    public void Uncrouch() {
 
         foreach (Transform checker in obstacleCheckers) {
 
@@ -1035,7 +1016,7 @@ public class PlayerController : MonoBehaviour {
 
     }
 
-    private void StopWallRun() {
+    public void StopWallRun() {
 
         if (lookRotationLerpCoroutine != null)
             StopCoroutine(lookRotationLerpCoroutine);
