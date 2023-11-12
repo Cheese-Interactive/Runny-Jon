@@ -514,6 +514,7 @@ MonoBehaviour:
   nameText: {fileID: 2530680380961448131}
   priceText: {fileID: 2530680380872428889}
   selectButton: {fileID: 1748679068615346053}
+  selectButtonText: {fileID: 7544748991744681625}
   selectedOverlay: {fileID: 2402012868325389405}
   errorColor: {r: 1, g: 0.5235849, b: 0.5235849, a: 1}
   errorDisplayDuration: 0.2

@@ -17,6 +17,7 @@ public class ShopItemButton : MonoBehaviour {
     [SerializeField] private TMP_Text nameText;
     [SerializeField] private TMP_Text priceText;
     [SerializeField] private Button selectButton;
+    [SerializeField] private TMP_Text selectButtonText;
     private ShopItem shopItem;
 
     [Header("Selection")]
@@ -30,9 +31,10 @@ public class ShopItemButton : MonoBehaviour {
     private Coroutine errorCoroutine;
 
     // Start Function
-    public void SetMenuManager(MenuManager menuManager) {
+    public void Initialize(MenuManager menuManager, int shopLayout) {
 
         this.menuManager = menuManager;
+
         audioManager = FindObjectOfType<MenuAudioManager>();
         background = GetComponent<Image>();
         button = GetComponent<Button>();
@@ -47,7 +49,7 @@ public class ShopItemButton : MonoBehaviour {
 
     private void PurchaseItem() {
 
-        if (menuManager.PurchaseItem(shopItem)) {
+        if (menuManager.PurchaseItem(shopItem, this)) {
 
             button.interactable = false;
             audioManager.PlaySound(MenuAudioManager.UISoundEffectType.Success);
@@ -119,10 +121,20 @@ public class ShopItemButton : MonoBehaviour {
 
     public void SetSelected(bool selected) {
 
-        if (selected)
+        if (selected) {
+
+            selectButton.gameObject.SetActive(true);
+            selectButton.interactable = false;
+            selectButtonText.text = "Selected";
             selectedOverlay.gameObject.SetActive(true);
-        else
+
+        } else {
+
+            selectButton.interactable = true;
+            selectButtonText.text = "Select";
             selectedOverlay.gameObject.SetActive(false);
+
+        }
 
         this.selected = selected;
 

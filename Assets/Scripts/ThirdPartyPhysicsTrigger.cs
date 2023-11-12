@@ -5,14 +5,17 @@ using UnityEngine;
 public class ThirdPartyPhysicsTrigger : MonoBehaviour {
 
     [Header("References")]
-    [SerializeField] private PhysicsEffect physicsEffect;
+    [SerializeField] private PhysicsEffect[] physicsEffects;
 
     private void OnCollisionEnter(Collision collision) {
 
         if (collision.transform.CompareTag("Player")) {
 
-            physicsEffect.OnThirdPartyCollision();
+            foreach (PhysicsEffect physicsEffect in physicsEffects) {
 
+                physicsEffect.OnThirdPartyCollision();
+
+            }
         }
     }
 }

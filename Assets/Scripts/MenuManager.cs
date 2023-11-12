@@ -37,7 +37,7 @@ public class MenuManager : MonoBehaviour {
     [SerializeField] private Transform shopRowPrefab;
     [SerializeField] private ShopItemButton shopItemButton;
     private ShopLayout currActiveShopLayout;
-    private ShopItem[] selectedItems;
+    private Dictionary<ShopLayout, ShopItemButton> shopItemButtons;
 
     private void Start() {
 
@@ -128,7 +128,8 @@ public class MenuManager : MonoBehaviour {
         ShopItemButton shopItemButton;
         List<ShopItem> inventory = playerData.GetInventory();
         ShopItem defaultItem = null;
-        selectedItems = new ShopItem[shopSections.Count];
+        ShopItem[] selectedItems = new ShopItem[shopSections.Count];
+        shopItemButtons = new Dictionary<ShopLayout, ShopItemButton>();
 
         for (int i = 0; i < shopSections.Count; i++) {
 
@@ -154,6 +155,8 @@ public class MenuManager : MonoBehaviour {
 
         }
 
+        playerData.PurchaseItem(defaultItem);
+
         for (int i = 0; i < shopSections.Count; i++) {
 
             currItemIndex = 0;
@@ -174,23 +177,31 @@ public class MenuManager : MonoBehaviour {
                     shopItem = shopItems[currItemIndex];
 
                     shopItemButton = Instantiate(this.shopItemButton, row);
-                    shopItemButton.SetMenuManager(this);
+                    shopItemButton.Initialize(this, i);
                     shopItemButton.name = shopItem.name + "Button";
                     shopItemButton.SetShopItem(shopItem);
                     shopItemButton.SetIcon(shopItem.GetIcon());
                     shopItemButton.SetNameText(shopItem.GetItemName());
                     shopItemButton.SetPriceText(shopItem.GetPrice() + "");
 
-                    if (shopItem == selectedItems[i])
+                    if (shopItem == selectedItems[i]) {
+
+                        shopItemButtons.Add(shopLayout, shopItemButton);
                         shopItemButton.SetSelected(true);
+
+                    } else {
+
+                        shopItemButton.SetSelectButtonActive(false);
+
+                    }
 
                     for (int g = 0; g < inventory.Count; g++) {
 
                         if (inventory[g].Equals(shopItem)) {
 
                             // owns item
-                            shopItemButton.GetButton().interactable = false;
                             shopItemButton.SetSelectButtonActive(true);
+                            shopItemButton.GetButton().interactable = false;
 
                         }
                     }
@@ -298,10 +309,12 @@ public class MenuManager : MonoBehaviour {
 
     }
 
-    public bool PurchaseItem(ShopItem shopItem) {
+    public bool PurchaseItem(ShopItem shopItem, ShopItemButton button) {
 
         if (playerData.PurchaseItem(shopItem)) {
 
+            shopItemButtons[currActiveShopLayout].SetSelected(false);
+            shopItemButtons.Add(currActiveShopLayout, button);
             UIController.UpdateQuesoCount();
             return true;
 
