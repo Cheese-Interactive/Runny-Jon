@@ -116,19 +116,18 @@ public class ShopItemButton : MonoBehaviour {
 
     public void SetSelected(bool selected) {
 
-        if (selected) {
-
+        if (selected)
             selectedOverlay.gameObject.SetActive(true);
-            selectButton.gameObject.SetActive(true);
-
-        } else {
-
+        else
             selectedOverlay.gameObject.SetActive(false);
-            selectButton.gameObject.SetActive(false);
-
-        }
 
         this.selected = selected;
+
+    }
+
+    public void SetSelectButtonActive(bool active) {
+
+        selectButton.gameObject.SetActive(active);
 
     }
 }

@@ -180,9 +180,18 @@ public class MenuManager : MonoBehaviour {
                     shopItemButton.SetNameText(shopItem.GetItemName());
                     shopItemButton.SetPriceText(shopItem.GetPrice() + "");
 
-                    for (int g = 0; g < inventory.Count; g++)
-                        if (inventory[g].Equals(shopItem))
+                    shopItemButton.SetSelected(shopItem == selectedItems[i]);
+
+                    for (int g = 0; g < inventory.Count; g++) {
+
+                        if (inventory[g].Equals(shopItem)) {
+
+                            // owns item
                             shopItemButton.GetButton().interactable = false;
+                            shopItemButton.SetSelectButtonActive(true);
+
+                        }
+                    }
 
                     currItemIndex++;
 

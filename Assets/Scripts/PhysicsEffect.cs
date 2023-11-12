@@ -21,6 +21,7 @@ public class PhysicsEffect : MonoBehaviour {
         rb = GetComponent<Rigidbody>();
 
         rb.isKinematic = true;
+        rb.useGravity = false;
         meshRenderer.enabled = meshVisible;
 
     }
@@ -32,8 +33,12 @@ public class PhysicsEffect : MonoBehaviour {
             if (flipMeshOnCollision)
                 meshRenderer.enabled = !meshVisible;
 
-            if (flipPhysicsOnCollision)
+            if (flipPhysicsOnCollision) {
+
                 rb.isKinematic = false;
+                rb.useGravity = true;
+
+            }
 
             triggered = true;
 
