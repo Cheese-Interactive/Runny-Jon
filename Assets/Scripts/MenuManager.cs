@@ -37,6 +37,7 @@ public class MenuManager : MonoBehaviour {
     [SerializeField] private Transform shopRowPrefab;
     [SerializeField] private ShopItemButton shopItemButton;
     private ShopLayout currActiveShopLayout;
+    private ShopItem[] selectedItems;
 
     private void Start() {
 
@@ -122,9 +123,35 @@ public class MenuManager : MonoBehaviour {
         ShopLayout shopLayout;
         ShopSection shopSection;
         ShopSectionButton shopSectionButton = null;
+        List<ShopItem> shopItems;
         ShopItem shopItem;
         ShopItemButton shopItemButton;
         List<ShopItem> inventory = playerData.GetInventory();
+        ShopItem defaultItem = null;
+
+        for (int i = 0; i < shopSections.Count; i++) {
+
+            shopSection = shopSections[i];
+            shopItems = shopSection.GetShopItems();
+
+            for (int j = 0; j < shopItems.Count; j++) {
+
+                if (shopItems[j].IsSelected()) {
+
+                    selectedItems[i] = shopItems[j];
+                    break;
+
+                }
+
+                if (shopItems[j].IsDefaultItem())
+                    defaultItem = shopItems[j];
+
+            }
+
+            if (selectedItems[i] == null)
+                selectedItems[i] = defaultItem;
+
+        }
 
         for (int i = 0; i < shopSections.Count; i++) {
 
@@ -134,7 +161,7 @@ public class MenuManager : MonoBehaviour {
             shopSection = shopSections[i];
             shopLayout.name = shopSection.GetSectionName() + "ShopLayout";
 
-            List<ShopItem> shopItems = shopSection.GetShopItems();
+            shopItems = shopSection.GetShopItems();
 
             for (int j = 0; j < Mathf.Ceil(shopItems.Count / (float) shopRowSize); j++) {
 

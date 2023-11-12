@@ -16,7 +16,12 @@ public class ShopItemButton : MonoBehaviour {
     [Header("UI References")]
     [SerializeField] private TMP_Text nameText;
     [SerializeField] private TMP_Text priceText;
+    [SerializeField] private Button selectButton;
     private ShopItem shopItem;
+
+    [Header("Selection")]
+    [SerializeField] private Image selectedOverlay;
+    private bool selected;
 
     [Header("Animations")]
     [SerializeField] private Color errorColor;
@@ -100,6 +105,30 @@ public class ShopItemButton : MonoBehaviour {
 
         image.color = startColor;
         errorCoroutine = null;
+
+    }
+
+    public bool GetSelected() {
+
+        return selected;
+
+    }
+
+    public void SetSelected(bool selected) {
+
+        if (selected) {
+
+            selectedOverlay.gameObject.SetActive(true);
+            selectButton.gameObject.SetActive(true);
+
+        } else {
+
+            selectedOverlay.gameObject.SetActive(false);
+            selectButton.gameObject.SetActive(false);
+
+        }
+
+        this.selected = selected;
 
     }
 }

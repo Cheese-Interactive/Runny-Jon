@@ -4757,9 +4757,8 @@ MonoBehaviour:
   crouchBobSpeed: 10
   crouchBobAmount: 0.15
   ziplineBobSpeed: 12
-  ziplineBobAmount: 0.1
+  ziplineBobAmount: 0.03
   interactDistance: 4
-  interactTag: Interactable
   feet: {fileID: 1935792413}
   groundCheckRadius: 0.25
   environmentMask:
@@ -4768,7 +4767,6 @@ MonoBehaviour:
   maxSlopeAngle: 45
   slopeCheckDistance: 0.3
   groundDrag: 5
-  deathZoneTag: DeathZone
   sprintKey: 304
   jumpKey: 32
   slideKey: 99
@@ -4776,6 +4774,7 @@ MonoBehaviour:
   downwardsWallRunKey: 0
   cableExtendKey: 0
   interactKey: 101
+  interactKeyAlt: 323
   resetKey: 9
   pauseKey: 27
 --- !u!54 &475779655
@@ -15529,6 +15528,7 @@ GameObject:
   - component: {fileID: 2116302922}
   - component: {fileID: 2116302921}
   - component: {fileID: 2116302920}
+  - component: {fileID: 2116302926}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -15764,7 +15764,6 @@ MonoBehaviour:
   ziplineBobSpeed: 20
   ziplineBobAmount: 0.1
   interactDistance: 0
-  interactTag: 
   feet: {fileID: 451558350}
   groundCheckRadius: 0.25
   environmentMask:
@@ -15773,7 +15772,6 @@ MonoBehaviour:
   maxSlopeAngle: 45
   slopeCheckDistance: 0.3
   groundDrag: 5
-  deathZoneTag: DeathZone
   sprintKey: 304
   jumpKey: 32
   slideKey: 99
@@ -15781,6 +15779,7 @@ MonoBehaviour:
   downwardsWallRunKey: 0
   cableExtendKey: 0
   interactKey: 101
+  interactKeyAlt: 0
   resetKey: 9
   pauseKey: 27
 --- !u!95 &2116302922
@@ -15851,6 +15850,20 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2116302926
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2116302919}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fff0960ef4ea6e04eac66b4a7fd2189d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_RigLayers: []
+  m_Effectors: []
 --- !u!1 &2116662850
 GameObject:
   m_ObjectHideFlags: 0

@@ -295,21 +295,29 @@ public class GameData {
 
     }
 
+    public List<ShopItem> selectedItems {
+
+        get; set;
+
+    }
+
     public GameData() {
 
         quesos = 0;
         levelsCompleted = 0;
         totalDeaths = 0;
         inventory = new List<ShopItem>();
+        selectedItems = new List<ShopItem>();
 
     }
 
-    public GameData(int quesos, int levelsCompleted, int totalDeaths, List<ShopItem> inventory) {
+    public GameData(int quesos, int levelsCompleted, int totalDeaths, List<ShopItem> inventory, List<ShopItem> selectedItems) {
 
         this.quesos = quesos;
         this.levelsCompleted = levelsCompleted;
         this.totalDeaths = totalDeaths;
         this.inventory = inventory;
+        this.selectedItems = selectedItems;
 
     }
 
@@ -364,6 +372,24 @@ public class GameData {
     public void AddInventoryItem(ShopItem item) {
 
         inventory.Add(item);
+
+    }
+
+    public List<ShopItem> GetSelectedItems() {
+
+        return selectedItems;
+
+    }
+
+    public void AddSelectedItem(ShopItem item) {
+
+        selectedItems.Add(item);
+
+    }
+
+    public void RemoveSelectedItem(ShopItem item) {
+
+        selectedItems.Remove(item);
 
     }
 }

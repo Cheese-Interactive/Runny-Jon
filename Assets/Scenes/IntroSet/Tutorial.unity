@@ -11052,7 +11052,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c6a9fa1875db651488c6a487127f635b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerTag: Player
 --- !u!64 &1373272210
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -12580,6 +12579,7 @@ GameObject:
   - component: {fileID: 1644799734}
   - component: {fileID: 1644799733}
   - component: {fileID: 1644799732}
+  - component: {fileID: 1644799738}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -12815,7 +12815,6 @@ MonoBehaviour:
   ziplineBobSpeed: 12
   ziplineBobAmount: 0.1
   interactDistance: 2
-  interactTag: 
   feet: {fileID: 1858642903}
   groundCheckRadius: 0.25
   environmentMask:
@@ -12824,7 +12823,6 @@ MonoBehaviour:
   maxSlopeAngle: 45
   slopeCheckDistance: 0.3
   groundDrag: 5
-  deathZoneTag: DeathZone
   sprintKey: 304
   jumpKey: 32
   slideKey: 99
@@ -12832,6 +12830,7 @@ MonoBehaviour:
   downwardsWallRunKey: 0
   cableExtendKey: 0
   interactKey: 0
+  interactKeyAlt: 0
   resetKey: 9
   pauseKey: 27
 --- !u!95 &1644799734
@@ -12902,6 +12901,20 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1644799738
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1644799731}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fff0960ef4ea6e04eac66b4a7fd2189d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_RigLayers: []
+  m_Effectors: []
 --- !u!1 &1663757656
 GameObject:
   m_ObjectHideFlags: 0
@@ -17101,9 +17114,8 @@ MonoBehaviour:
   crouchBobSpeed: 10
   crouchBobAmount: 0.15
   ziplineBobSpeed: 12
-  ziplineBobAmount: 0.1
+  ziplineBobAmount: 0.03
   interactDistance: 4
-  interactTag: Interactable
   feet: {fileID: 1826749340}
   groundCheckRadius: 0.25
   environmentMask:
@@ -17112,7 +17124,6 @@ MonoBehaviour:
   maxSlopeAngle: 45
   slopeCheckDistance: 0.3
   groundDrag: 5
-  deathZoneTag: DeathZone
   sprintKey: 304
   jumpKey: 32
   slideKey: 99
@@ -17120,6 +17131,7 @@ MonoBehaviour:
   downwardsWallRunKey: 0
   cableExtendKey: 0
   interactKey: 101
+  interactKeyAlt: 323
   resetKey: 9
   pauseKey: 27
 --- !u!120 &1828213957948687479

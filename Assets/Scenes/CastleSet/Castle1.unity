@@ -66112,7 +66112,7 @@ MonoBehaviour:
   crouchBobSpeed: 10
   crouchBobAmount: 0.15
   ziplineBobSpeed: 12
-  ziplineBobAmount: 0.1
+  ziplineBobAmount: 0.03
   interactDistance: 4
   feet: {fileID: 456374403}
   groundCheckRadius: 0.25

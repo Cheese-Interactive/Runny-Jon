@@ -11,6 +11,8 @@ public class Level : ScriptableObject {
     [SerializeField][Range(1, 3599)] private int timeLimit;
     [SerializeField] private bool isTutorial;
     [SerializeField] private AudioClip backgroundMusic;
+    [SerializeField] private Color defaultRopeStartColor;
+    [SerializeField] private Color defaultRopeEndColor;
 
     [Header("Movement")]
     [SerializeField] private bool walkEnabled;

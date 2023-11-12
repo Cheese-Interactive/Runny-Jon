@@ -11,6 +11,7 @@ public class TutorialManager : GameManager {
         audioManager = FindObjectOfType<GameAudioManager>();
         playerData = FindObjectOfType<PlayerData>();
 
+        LoadCosmetics();
         UIController.TypeSubtitleText(checkpoints[currCheckpoint].GetSubtitleText());
 
         Transform spawn = checkpoints[currCheckpoint].GetPlayerSpawn();

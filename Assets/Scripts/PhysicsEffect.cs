@@ -12,18 +12,16 @@ public class PhysicsEffect : MonoBehaviour {
 
     [Header("Mesh Settings")]
     [SerializeField] private bool meshVisible;
-    [SerializeField] private bool flipOnCollision;
-
-    [Header("Physics Settings")]
-    [SerializeField] private bool physicsEnabled;
+    [SerializeField] private bool flipMeshOnCollision;
+    [SerializeField] private bool flipPhysicsOnCollision;
 
     private void Start() {
 
         meshRenderer = GetComponent<MeshRenderer>();
         rb = GetComponent<Rigidbody>();
 
-        meshRenderer.enabled = meshVisible;
         rb.isKinematic = true;
+        meshRenderer.enabled = meshVisible;
 
     }
 
@@ -31,15 +29,11 @@ public class PhysicsEffect : MonoBehaviour {
 
         if (!triggered && collision.transform.CompareTag("Player")) {
 
-            if (flipOnCollision)
+            if (flipMeshOnCollision)
                 meshRenderer.enabled = !meshVisible;
 
-            if (physicsEnabled) {
-
+            if (flipPhysicsOnCollision)
                 rb.isKinematic = false;
-                physicsEnabled = true;
-
-            }
 
             triggered = true;
 

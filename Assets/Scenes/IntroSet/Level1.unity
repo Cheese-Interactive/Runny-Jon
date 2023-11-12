@@ -1740,7 +1740,7 @@ MonoBehaviour:
   crouchBobSpeed: 10
   crouchBobAmount: 0.15
   ziplineBobSpeed: 12
-  ziplineBobAmount: 0.1
+  ziplineBobAmount: 0.03
   interactDistance: 4
   feet: {fileID: 2102338201}
   groundCheckRadius: 0.25
@@ -15055,7 +15055,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fff0960ef4ea6e04eac66b4a7fd2189d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_RigLayers: []
+  m_RigLayers:
+  - m_Rig: {fileID: 0}
+    m_Active: 1
   m_Effectors: []
 --- !u!114 &1384782517
 MonoBehaviour:
@@ -19761,7 +19763,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh233792
+  m_Name: pb_Mesh413034
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2

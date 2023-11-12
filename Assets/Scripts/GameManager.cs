@@ -1,5 +1,8 @@
+using System;
 using System.Collections;
 using System.Diagnostics;
+using Unity.Services.CloudSave.Models;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -35,6 +38,13 @@ public abstract class GameManager : MonoBehaviour {
         Time.timeScale = 1f;
         gamePaused = false;
 
+    }
+
+    protected void LoadCosmetics() {
+
+        foreach (ShopItem item in playerData.GetInventory()) {
+
+        }
     }
 
     public abstract void StartTimer();
