@@ -8,6 +8,7 @@ public class PhysicsEffect : MonoBehaviour {
 
     [Header("References")]
     private MeshRenderer meshRenderer;
+    private GameAudioManager audioManager;
     private new Collider collider;
     private Rigidbody rb;
     private bool triggered;
@@ -20,6 +21,7 @@ public class PhysicsEffect : MonoBehaviour {
     private void Start() {
 
         meshRenderer = GetComponent<MeshRenderer>();
+        audioManager = FindObjectOfType<GameAudioManager>();
         collider = GetComponent<Collider>();
         rb = GetComponent<Rigidbody>();
 
@@ -34,6 +36,8 @@ public class PhysicsEffect : MonoBehaviour {
     private void OnCollisionEnter(Collision collision) {
 
         if (!triggered && collision.transform.CompareTag("Player")) {
+
+            audioManager.PlaySound(GameAudioManager.GameSoundEffectType.Temp);
 
             if (flipMeshOnCollision) {
 
@@ -59,6 +63,8 @@ public class PhysicsEffect : MonoBehaviour {
 
         if (triggered)
             return;
+
+        audioManager.PlaySound(GameAudioManager.GameSoundEffectType.Temp);
 
         if (flipMeshOnCollision) {
 
