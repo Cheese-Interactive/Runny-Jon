@@ -413,7 +413,7 @@ public class PlayerController : MonoBehaviour {
 
             if (ziplineEnabled && zipline.CanZipline()) {
 
-                if (Input.GetKeyDown(interactKey) || Input.GetKeyDown(interactKeyAlt)) {
+                if (Input.GetKeyDown(interactKey)) {
 
                     currZipline = zipline;
                     movementState = MovementState.Ziplining;
@@ -457,7 +457,7 @@ public class PlayerController : MonoBehaviour {
                 Interactable interactable = hitInfo.collider.GetComponent<Interactable>();
                 UIController.EnableInteractCrosshair(interactable.interactText);
 
-                if (Input.GetKeyDown(interactKey))
+                if (Input.GetKeyDown(interactKey) || Input.GetKeyDown(interactKeyAlt))
                     interactable.BaseInteract();
 
             }
