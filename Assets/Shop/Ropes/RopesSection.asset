@@ -16,6 +16,7 @@ MonoBehaviour:
   selectedIcon: {fileID: 0}
   deselectedIcon: {fileID: 0}
   shopItems:
+  - {fileID: 11400000, guid: 999cf48f748346943be1cd71661e227a, type: 2}
   - {fileID: 11400000, guid: 1ff82698d45423b408f4ef9a46ac13f0, type: 2}
   - {fileID: 11400000, guid: 66c2e2da891b0b44d9c5046727518a41, type: 2}
   - {fileID: 11400000, guid: 434883d28d42398458fdbef7296febe6, type: 2}

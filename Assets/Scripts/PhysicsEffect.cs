@@ -20,7 +20,8 @@ public class PhysicsEffect : MonoBehaviour {
         meshRenderer = GetComponent<MeshRenderer>();
         rb = GetComponent<Rigidbody>();
 
-        rb.isKinematic = true;
+        rb.constraints = RigidbodyConstraints.FreezeAll;
+        rb.freezeRotation = true;
         rb.useGravity = false;
         meshRenderer.enabled = meshVisible;
 
@@ -35,7 +36,8 @@ public class PhysicsEffect : MonoBehaviour {
 
             if (flipPhysicsOnCollision) {
 
-                rb.isKinematic = false;
+                rb.constraints = RigidbodyConstraints.None;
+                rb.freezeRotation = false;
                 rb.useGravity = true;
 
             }

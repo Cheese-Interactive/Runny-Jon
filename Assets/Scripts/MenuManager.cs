@@ -128,6 +128,7 @@ public class MenuManager : MonoBehaviour {
         ShopItemButton shopItemButton;
         List<ShopItem> inventory = playerData.GetInventory();
         ShopItem defaultItem = null;
+        selectedItems = new ShopItem[shopSections.Count];
 
         for (int i = 0; i < shopSections.Count; i++) {
 
@@ -180,7 +181,8 @@ public class MenuManager : MonoBehaviour {
                     shopItemButton.SetNameText(shopItem.GetItemName());
                     shopItemButton.SetPriceText(shopItem.GetPrice() + "");
 
-                    shopItemButton.SetSelected(shopItem == selectedItems[i]);
+                    if (shopItem == selectedItems[i])
+                        shopItemButton.SetSelected(true);
 
                     for (int g = 0; g < inventory.Count; g++) {
 

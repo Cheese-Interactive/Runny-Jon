@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 34a6d06872fedb04d88a24c01a02a3e6, type: 3}
   m_Name: DefaultRope
   m_EditorClassIdentifier: 
-  defaultItem: 0
-  itemName: 
+  defaultItem: 1
+  itemName: Default
   icon: {fileID: 0}
   price: 0
   selected: 0

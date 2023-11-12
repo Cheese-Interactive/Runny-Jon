@@ -38,6 +38,9 @@ public class ShopItemButton : MonoBehaviour {
         button = GetComponent<Button>();
         button.onClick.AddListener(PurchaseItem);
 
+        selectButton.gameObject.SetActive(false);
+        selectedOverlay.gameObject.SetActive(false);
+
         startColor = background.color;
 
     }
