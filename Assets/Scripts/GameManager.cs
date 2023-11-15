@@ -42,9 +42,6 @@ public abstract class GameManager : MonoBehaviour {
 
     protected void LoadCosmetics() {
 
-        foreach (ShopItem item in playerData.GetInventory()) {
-
-        }
     }
 
     public abstract void StartTimer();

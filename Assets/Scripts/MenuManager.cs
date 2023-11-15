@@ -23,7 +23,7 @@ public class MenuManager : MonoBehaviour {
     [SerializeField] private int levelRowSize;
     [SerializeField] private Transform levelRowPrefab;
     [SerializeField] private LevelButton levelButton;
-    private LevelLayout currActiveLevelLayout;
+    private LevelLayout currLevelLayout;
     private bool levelSectionOpen;
 
     [Header("Shop")]
@@ -36,8 +36,10 @@ public class MenuManager : MonoBehaviour {
     [SerializeField] private int shopRowSize;
     [SerializeField] private Transform shopRowPrefab;
     [SerializeField] private ShopItemButton shopItemButton;
-    private ShopLayout currActiveShopLayout;
-    private Dictionary<ShopLayout, ShopItemButton> shopItemButtons;
+    private Dictionary<ShopItem, ShopItemButton> shopItemButtons;
+    private ShopItem[] selectedItems;
+    private ShopLayout[] shopLayouts;
+    private ShopLayout currShopLayout;
 
     private void Start() {
 
@@ -119,45 +121,47 @@ public class MenuManager : MonoBehaviour {
         }
 
         int currItemIndex;
-        ShopLayout[] shopLayouts = new ShopLayout[shopSections.Count];
+        shopLayouts = new ShopLayout[shopSections.Count];
         ShopLayout shopLayout;
         ShopSection shopSection;
         ShopSectionButton shopSectionButton = null;
         List<ShopItem> shopItems;
         ShopItem shopItem;
         ShopItemButton shopItemButton;
-        List<ShopItem> inventory = playerData.GetInventory();
-        ShopItem defaultItem = null;
-        ShopItem[] selectedItems = new ShopItem[shopSections.Count];
-        shopItemButtons = new Dictionary<ShopLayout, ShopItemButton>();
+        List<ShopItem> inventory = new List<ShopItem>();
+        shopItemButtons = new Dictionary<ShopItem, ShopItemButton>();
+        selectedItems = new ShopItem[shopSections.Count];
+        bool[] noneSelected = new bool[shopSections.Count];
 
         for (int i = 0; i < shopSections.Count; i++) {
 
             shopSection = shopSections[i];
             shopItems = shopSection.GetShopItems();
+            bool selected = false;
 
             for (int j = 0; j < shopItems.Count; j++) {
 
-                if (shopItems[j].IsSelected()) {
+                if (shopItems[j].IsSelected() && !selected) {
 
                     selectedItems[i] = shopItems[j];
-                    break;
+                    selected = true;
 
                 }
 
-                if (shopItems[j].IsDefaultItem())
-                    defaultItem = shopItems[j];
+                if (shopItems[j].IsPurchased())
+                    inventory.Add(shopItems[j]);
 
             }
 
-            if (selectedItems[i] == null)
-                selectedItems[i] = defaultItem;
+            if (!selected) {
 
+                selectedItems[i] = shopItems[0];
+                noneSelected[i] = true;
+
+            }
         }
 
-        playerData.PurchaseItem(defaultItem);
-
-        for (int i = 0; i < shopSections.Count; i++) {
+        for (int i = 0; i < shopLayouts.Length; i++) {
 
             currItemIndex = 0;
             shopLayout = Instantiate(this.shopLayout, shopLayoutParent);
@@ -176,34 +180,24 @@ public class MenuManager : MonoBehaviour {
 
                     shopItem = shopItems[currItemIndex];
 
+                    // create button
                     shopItemButton = Instantiate(this.shopItemButton, row);
-                    shopItemButton.Initialize(this, i);
+                    shopItemButton.Initialize(this);
                     shopItemButton.name = shopItem.name + "Button";
                     shopItemButton.SetShopItem(shopItem);
                     shopItemButton.SetIcon(shopItem.GetIcon());
                     shopItemButton.SetNameText(shopItem.GetItemName());
                     shopItemButton.SetPriceText(shopItem.GetPrice() + "");
 
-                    if (shopItem == selectedItems[i]) {
+                    shopItemButton.SetSelected(shopItem.IsSelected());
+                    shopItemButton.SetPurchased(shopItem.IsPurchased());
+                    shopItemButtons.Add(shopItem, shopItemButton);
 
-                        shopItemButtons.Add(shopLayout, shopItemButton);
+                    if (currItemIndex == 0 && noneSelected[i]) {
+
+                        shopItemButton.SetPurchased(true);
                         shopItemButton.SetSelected(true);
 
-                    } else {
-
-                        shopItemButton.SetSelectButtonActive(false);
-
-                    }
-
-                    for (int g = 0; g < inventory.Count; g++) {
-
-                        if (inventory[g].Equals(shopItem)) {
-
-                            // owns item
-                            shopItemButton.SetSelectButtonActive(true);
-                            shopItemButton.GetButton().interactable = false;
-
-                        }
                     }
 
                     currItemIndex++;
@@ -237,7 +231,7 @@ public class MenuManager : MonoBehaviour {
             }
 
             if (i == 0)
-                currActiveShopLayout = shopSectionButton.GetShopLayout();
+                currShopLayout = shopSectionButton.GetShopLayout();
             else
                 shopLayouts[i].gameObject.SetActive(false);
 
@@ -269,12 +263,12 @@ public class MenuManager : MonoBehaviour {
 
     public void OpenLevelLayout(LevelLayout layout) {
 
-        if (currActiveLevelLayout != null)
-            CloseLevelLayout(currActiveLevelLayout);
+        if (currLevelLayout != null)
+            CloseLevelLayout(currLevelLayout);
 
         levelSectionParent.gameObject.SetActive(false);
         layout.gameObject.SetActive(true);
-        currActiveLevelLayout = layout;
+        currLevelLayout = layout;
         levelSectionOpen = true;
 
     }
@@ -283,38 +277,34 @@ public class MenuManager : MonoBehaviour {
 
         levelSectionParent.gameObject.SetActive(true);
         layout.gameObject.SetActive(false);
-        currActiveLevelLayout = null;
+        currLevelLayout = null;
         levelSectionOpen = false;
-
-    }
-
-    public List<ShopSection> GetShopSectionLayouts() {
-
-        return shopSections;
 
     }
 
     public void OpenShopLayout(ShopLayout layout) {
 
-        CloseShopLayout(currActiveShopLayout);
+        CloseShopLayout(currShopLayout);
         layout.gameObject.SetActive(true);
-        currActiveShopLayout = layout;
+        currShopLayout = layout;
 
     }
 
     public void CloseShopLayout(ShopLayout layout) {
 
         layout.gameObject.SetActive(false);
-        currActiveShopLayout = null;
+        currShopLayout = null;
 
     }
 
-    public bool PurchaseItem(ShopItem shopItem, ShopItemButton button) {
+    public bool PurchaseItem(ShopItemButton button) {
+
+        ShopItem shopItem = button.GetShopItem();
 
         if (playerData.PurchaseItem(shopItem)) {
 
-            shopItemButtons[currActiveShopLayout].SetSelected(false);
-            shopItemButtons.Add(currActiveShopLayout, button);
+            button.SetPurchased(true);
+            ChangeSelectedItem(button);
             UIController.UpdateQuesoCount();
             return true;
 
@@ -326,9 +316,31 @@ public class MenuManager : MonoBehaviour {
         }
     }
 
-    public LevelLayout GetCurrentActiveLevelLayout() {
+    public void ChangeSelectedItem(ShopItemButton button) {
 
-        return currActiveLevelLayout;
+        int index = GetShopLayoutIndex(currShopLayout);
+        shopItemButtons[selectedItems[index]].SetSelected(false);
+        selectedItems[index] = button.GetShopItem();
+        button.SetSelected(true);
+
+    }
+
+    public int GetShopLayoutIndex(ShopLayout shopLayout) {
+
+        for (int i = 0; i < shopLayouts.Length; i++) {
+
+            if (shopLayouts[i] == shopLayout)
+                return i;
+
+        }
+
+        return -1;
+
+    }
+
+    public LevelLayout GetCurrentLevelLayout() {
+
+        return currLevelLayout;
 
     }
 
