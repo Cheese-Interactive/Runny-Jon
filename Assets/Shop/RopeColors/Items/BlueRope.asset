@@ -10,10 +10,12 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 34a6d06872fedb04d88a24c01a02a3e6, type: 3}
-  m_Name: DefaultRope
+  m_Name: BlueRope
   m_EditorClassIdentifier: 
-  itemName: Default
+  cosmeticPrefab: {fileID: 7327969224467571339, guid: 7c9f2957d773a5b4c8087f1f30b06da1,
+    type: 3}
+  itemName: Blue Rope
   icon: {fileID: 0}
-  price: 0
+  price: 10
   selected: 0
   purchased: 0

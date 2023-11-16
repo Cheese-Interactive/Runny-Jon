@@ -10,10 +10,12 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 34a6d06872fedb04d88a24c01a02a3e6, type: 3}
-  m_Name: Default
+  m_Name: Green
   m_EditorClassIdentifier: 
-  itemName: Default
+  cosmeticPrefab: {fileID: 4551910714516571115, guid: ef2dec5c9c0983a40b742088017032aa,
+    type: 3}
+  itemName: Green
   icon: {fileID: 0}
-  price: 0
+  price: 5
   selected: 0
   purchased: 0

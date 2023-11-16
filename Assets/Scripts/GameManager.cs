@@ -1,7 +1,8 @@
+using Newtonsoft.Json;
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Diagnostics;
-using Unity.Services.CloudSave.Models;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -15,6 +16,7 @@ public abstract class GameManager : MonoBehaviour {
     protected GameAudioManager audioManager;
     protected PlayerData playerData;
     protected bool playerKilled;
+    protected List<ShopItem> selectedItems;
 
     [Header("Level")]
     [SerializeField] protected Level currentLevel;
@@ -42,6 +44,16 @@ public abstract class GameManager : MonoBehaviour {
 
     protected void LoadCosmetics() {
 
+        selectedItems = JsonUtility.FromJson<SelectedShopItems>(PlayerPrefs.GetString("SelectedShopItems")).GetSelectedItems();
+
+        foreach (ShopItem shopItem in selectedItems) {
+
+            print(shopItem.name);
+            Cosmetic cosmetic = (Cosmetic) playerController.gameObject.AddComponent(shopItem.GetCosmeticScript().GetType());
+            print(cosmetic);
+            shopItem.GetCosmeticScript().CopyTo(cosmetic);
+
+        }
     }
 
     public abstract void StartTimer();

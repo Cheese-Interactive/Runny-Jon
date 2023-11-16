@@ -1,3 +1,5 @@
+using Newtonsoft.Json;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -37,7 +39,7 @@ public class MenuManager : MonoBehaviour {
     [SerializeField] private Transform shopRowPrefab;
     [SerializeField] private ShopItemButton shopItemButton;
     private Dictionary<ShopItem, ShopItemButton> shopItemButtons;
-    private ShopItem[] selectedItems;
+    private SelectedShopItems selectedShopItems;
     private ShopLayout[] shopLayouts;
     private ShopLayout currShopLayout;
 
@@ -130,7 +132,7 @@ public class MenuManager : MonoBehaviour {
         ShopItemButton shopItemButton;
         List<ShopItem> inventory = new List<ShopItem>();
         shopItemButtons = new Dictionary<ShopItem, ShopItemButton>();
-        selectedItems = new ShopItem[shopSections.Count];
+        selectedShopItems = new SelectedShopItems(shopSections.Count);
         bool[] noneSelected = new bool[shopSections.Count];
 
         for (int i = 0; i < shopSections.Count; i++) {
@@ -143,7 +145,7 @@ public class MenuManager : MonoBehaviour {
 
                 if (shopItems[j].IsSelected() && !selected) {
 
-                    selectedItems[i] = shopItems[j];
+                    selectedShopItems.GetSelectedItems()[i] = shopItems[j];
                     selected = true;
 
                 }
@@ -155,7 +157,7 @@ public class MenuManager : MonoBehaviour {
 
             if (!selected) {
 
-                selectedItems[i] = shopItems[0];
+                selectedShopItems.GetSelectedItems()[i] = shopItems[0];
                 noneSelected[i] = true;
 
             }
@@ -241,7 +243,7 @@ public class MenuManager : MonoBehaviour {
 
     }
 
-    public IEnumerator LoadLevel(Object level) {
+    public IEnumerator LoadLevel(UnityEngine.Object level) {
 
         UIController.SetLoadingText("Loading Level...");
         yield return UIController.FadeInLoadingScreen();
@@ -257,6 +259,7 @@ public class MenuManager : MonoBehaviour {
         }
 
         yield return new WaitForSeconds(UIController.GetMinLoadingDuration() - currentTime);
+        PlayerPrefs.SetString("SelectedShopItems", JsonUtility.ToJson(selectedShopItems));
         operation.allowSceneActivation = true;
 
     }
@@ -319,8 +322,8 @@ public class MenuManager : MonoBehaviour {
     public void ChangeSelectedItem(ShopItemButton button) {
 
         int index = GetShopLayoutIndex(currShopLayout);
-        shopItemButtons[selectedItems[index]].SetSelected(false);
-        selectedItems[index] = button.GetShopItem();
+        shopItemButtons[selectedShopItems.GetSelectedItems()[index]].SetSelected(false);
+        selectedShopItems.GetSelectedItems()[index] = button.GetShopItem();
         button.SetSelected(true);
 
     }
@@ -347,6 +350,24 @@ public class MenuManager : MonoBehaviour {
     public bool IsLevelSectionOpen() {
 
         return levelSectionOpen;
+
+    }
+}
+
+[Serializable]
+public class SelectedShopItems {
+
+    public List<ShopItem> selectedItems;
+
+    public SelectedShopItems(int size) {
+
+        selectedItems = new List<ShopItem>(new ShopItem[size]);
+
+    }
+
+    public List<ShopItem> GetSelectedItems() {
+
+        return selectedItems;
 
     }
 }

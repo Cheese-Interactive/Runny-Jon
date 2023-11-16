@@ -10,10 +10,12 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 34a6d06872fedb04d88a24c01a02a3e6, type: 3}
-  m_Name: Green
+  m_Name: YellowRope
   m_EditorClassIdentifier: 
-  itemName: Green
+  cosmeticPrefab: {fileID: 2981520200581341667, guid: 3fd7058fbce224d4ca3262000ae27b6a,
+    type: 3}
+  itemName: Yellow Rope
   icon: {fileID: 0}
-  price: 5
+  price: 50
   selected: 0
   purchased: 0

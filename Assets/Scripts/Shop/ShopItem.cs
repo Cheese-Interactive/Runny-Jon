@@ -6,7 +6,7 @@ using UnityEngine.UI;
 public class ShopItem : ScriptableObject {
 
     [Header("References")]
-    public Type objectScript;
+    public GameObject cosmeticPrefab;
 
     [Header("Settings")]
     public string itemName;
@@ -15,9 +15,9 @@ public class ShopItem : ScriptableObject {
     public bool selected;
     public bool purchased;
 
-    public Type GetObjectScript() {
+    public Cosmetic GetCosmeticScript() {
 
-        return objectScript;
+        return cosmeticPrefab.GetComponent<Cosmetic>();
 
     }
 

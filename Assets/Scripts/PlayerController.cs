@@ -227,7 +227,7 @@ public class PlayerController : MonoBehaviour {
 
     public enum MovementState {
 
-        None, Walking, Sprinting, Crouching, Sliding, WallRunning, Swinging, Ziplining, Air
+        None, Walking, Sprinting, Crouching, Sliding, WallRunning, Swinging, Ziplining, Air, Killed
 
     }
 
@@ -529,6 +529,7 @@ public class PlayerController : MonoBehaviour {
 
         if (collider.CompareTag("DeathZone")) {
 
+            movementState = MovementState.Killed;
             gameManager.KillPlayer();
 
         }
