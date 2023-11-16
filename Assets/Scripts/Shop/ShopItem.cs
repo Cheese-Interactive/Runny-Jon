@@ -9,11 +9,11 @@ public class ShopItem : ScriptableObject {
     public Type objectScript;
 
     [Header("Settings")]
-    public bool defaultItem;
     public string itemName;
     public Image icon;
     public int price;
-    [HideInInspector] public bool selected;
+    public bool selected;
+    public bool purchased;
 
     public Type GetObjectScript() {
 
@@ -21,15 +21,27 @@ public class ShopItem : ScriptableObject {
 
     }
 
-    public bool IsDefaultItem() {
+    public void SetSelected(bool selected) {
 
-        return defaultItem;
+        this.selected = selected;
 
     }
 
     public bool IsSelected() {
 
         return selected;
+
+    }
+
+    public void SetPurchased(bool purchased) {
+
+        this.purchased = purchased;
+
+    }
+
+    public bool IsPurchased() {
+
+        return purchased;
 
     }
 

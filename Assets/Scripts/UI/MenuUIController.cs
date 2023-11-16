@@ -102,7 +102,7 @@ public class MenuUIController : MonoBehaviour {
 
         if (menuManager.IsLevelSectionOpen()) {
 
-            menuManager.CloseLevelLayout(menuManager.GetCurrentActiveLevelLayout());
+            menuManager.CloseLevelLayout(menuManager.GetCurrentLevelLayout());
             return;
 
         }

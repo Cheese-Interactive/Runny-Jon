@@ -6,7 +6,6 @@ using UnityEngine.UI;
 public class ShopItemButton : MonoBehaviour {
 
     [Header("References")]
-    [SerializeField] private Image icon;
     private Image background;
     private MenuManager menuManager;
     private MenuAudioManager audioManager;
@@ -14,6 +13,7 @@ public class ShopItemButton : MonoBehaviour {
     private Color startColor;
 
     [Header("UI References")]
+    [SerializeField] private Image icon;
     [SerializeField] private TMP_Text nameText;
     [SerializeField] private TMP_Text priceText;
     [SerializeField] private Button selectButton;
@@ -22,7 +22,6 @@ public class ShopItemButton : MonoBehaviour {
 
     [Header("Selection")]
     [SerializeField] private Image selectedOverlay;
-    private bool selected;
 
     [Header("Animations")]
     [SerializeField] private Color errorColor;
@@ -31,7 +30,7 @@ public class ShopItemButton : MonoBehaviour {
     private Coroutine errorCoroutine;
 
     // Start Function
-    public void Initialize(MenuManager menuManager, int shopLayout) {
+    public void Initialize(MenuManager menuManager) {
 
         this.menuManager = menuManager;
 
@@ -39,6 +38,7 @@ public class ShopItemButton : MonoBehaviour {
         background = GetComponent<Image>();
         button = GetComponent<Button>();
         button.onClick.AddListener(PurchaseItem);
+        selectButton.onClick.AddListener(SelectItem);
 
         selectButton.gameObject.SetActive(false);
         selectedOverlay.gameObject.SetActive(false);
@@ -49,9 +49,8 @@ public class ShopItemButton : MonoBehaviour {
 
     private void PurchaseItem() {
 
-        if (menuManager.PurchaseItem(shopItem, this)) {
+        if (menuManager.PurchaseItem(this)) {
 
-            button.interactable = false;
             audioManager.PlaySound(MenuAudioManager.UISoundEffectType.Success);
 
         } else {
@@ -63,6 +62,12 @@ public class ShopItemButton : MonoBehaviour {
             audioManager.PlaySound(MenuAudioManager.UISoundEffectType.Error);
 
         }
+    }
+
+    private void SelectItem() {
+
+        menuManager.ChangeSelectedItem(this);
+
     }
 
     public Button GetButton() {
@@ -86,6 +91,12 @@ public class ShopItemButton : MonoBehaviour {
     public void SetPriceText(string priceText) {
 
         this.priceText.text = priceText;
+
+    }
+
+    public ShopItem GetShopItem() {
+
+        return shopItem;
 
     }
 
@@ -113,36 +124,37 @@ public class ShopItemButton : MonoBehaviour {
 
     }
 
-    public bool GetSelected() {
-
-        return selected;
-
-    }
-
     public void SetSelected(bool selected) {
 
         if (selected) {
 
-            selectButton.gameObject.SetActive(true);
+            shopItem.SetSelected(true);
             selectButton.interactable = false;
             selectButtonText.text = "Selected";
-            selectedOverlay.gameObject.SetActive(true);
 
         } else {
 
+            shopItem.SetSelected(false);
             selectButton.interactable = true;
             selectButtonText.text = "Select";
-            selectedOverlay.gameObject.SetActive(false);
 
         }
-
-        this.selected = selected;
-
     }
 
-    public void SetSelectButtonActive(bool active) {
+    public void SetPurchased(bool purchased) {
 
-        selectButton.gameObject.SetActive(active);
+        if (purchased) {
 
+            shopItem.SetPurchased(true);
+            button.interactable = false;
+            selectButton.gameObject.SetActive(true);
+
+        } else {
+
+            shopItem.SetPurchased(false);
+            button.interactable = true;
+            selectButton.gameObject.SetActive(false);
+
+        }
     }
 }
