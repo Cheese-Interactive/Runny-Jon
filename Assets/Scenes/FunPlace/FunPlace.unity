@@ -1064,6 +1064,7 @@ MonoBehaviour:
   sprintFootstepSound: {fileID: 8300000, guid: 62fd69e184e8728429f5c2662e8dcabd, type: 3}
   landSound: {fileID: 8300000, guid: 2e26855b9c1d0874c980a3317efcc539, type: 3}
   grappleSound: {fileID: 8300000, guid: ac01e24ac52856c4489609e80b1751fd, type: 3}
+  tempSound: {fileID: 0}
   checkpointSound: {fileID: 8300000, guid: ec0e5a54050f14741a9ce2cb3ace8b2b, type: 3}
   deathSound: {fileID: 8300000, guid: 533f6bb18c47e114c96534ab65245966, type: 3}
   victorySound: {fileID: 8300000, guid: d322416b6bb0bad4bbfdc34cb7f46caf, type: 3}
@@ -1340,7 +1341,7 @@ GameObject:
   m_Component:
   - component: {fileID: 60397882}
   m_Layer: 0
-  m_Name: SwingPoint
+  m_Name: SwingIKTarget
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -13028,6 +13029,37 @@ Transform:
   m_Father: {fileID: 856605959}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: -0.002, y: -12.505, z: -0.002}
+--- !u!1 &751664210
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 751664211}
+  m_Layer: 0
+  m_Name: SwingPoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &751664211
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 751664210}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1675805896}
+  m_RootOrder: 6
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &769402559
 GameObject:
   m_ObjectHideFlags: 0
@@ -22972,6 +23004,7 @@ MonoBehaviour:
   sprintSpeed: 12
   speedIncreaseMultiplier: 5
   slopeIncreaseMultiplier: 2.5
+  landGroundFriction: 1.3
   jumpForce: 15
   jumpCooldown: 0.25
   airMultiplier: 0.6
@@ -22992,7 +23025,7 @@ MonoBehaviour:
     m_Bits: 128
   lookRotationLerpDuration: 0.25
   wallJumpUpForce: 9
-  wallJumpSideForce: 32
+  wallJumpSideForce: 50
   wallClimbSpeed: 8
   useWallRunGravity: 1
   initialGravityCounterForce: 30
@@ -23014,9 +23047,10 @@ MonoBehaviour:
   jointDamper: 7
   jointMassScale: 4.5
   swingIKTarget: {fileID: 60397882}
+  swingPoint: {fileID: 751664211}
   swingableMask:
     serializedVersion: 2
-    m_Bits: 272
+    m_Bits: 256
   quality: 500
   damper: 14
   strength: 800
@@ -23054,6 +23088,9 @@ MonoBehaviour:
   ziplineMask:
     serializedVersion: 2
     m_Bits: 1024
+  grabEnabled: 0
+  grabDistance: 0
+  grabPoint: {fileID: 0}
   walkBobSpeed: 10
   walkBobAmount: 0.15
   sprintBobSpeed: 18
@@ -23081,6 +23118,7 @@ MonoBehaviour:
   interactKeyAlt: 323
   resetKey: 9
   pauseKey: 27
+  grabKey: 0
 --- !u!54 &1675805894
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -23129,6 +23167,7 @@ Transform:
   - {fileID: 1067309033}
   - {fileID: 769402560}
   - {fileID: 1280817376}
+  - {fileID: 751664211}
   m_Father: {fileID: 0}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -27499,6 +27538,7 @@ MonoBehaviour:
   sprintSpeed: 12
   speedIncreaseMultiplier: 5
   slopeIncreaseMultiplier: 2.5
+  landGroundFriction: 0
   jumpForce: 15
   jumpCooldown: 0.25
   airMultiplier: 0.6
@@ -27541,6 +27581,7 @@ MonoBehaviour:
   jointDamper: 7
   jointMassScale: 4.5
   swingIKTarget: {fileID: 0}
+  swingPoint: {fileID: 0}
   swingableMask:
     serializedVersion: 2
     m_Bits: 272
@@ -27581,6 +27622,9 @@ MonoBehaviour:
   ziplineMask:
     serializedVersion: 2
     m_Bits: 1024
+  grabEnabled: 0
+  grabDistance: 0
+  grabPoint: {fileID: 0}
   walkBobSpeed: 10
   walkBobAmount: 0.05
   sprintBobSpeed: 18
@@ -27608,6 +27652,7 @@ MonoBehaviour:
   interactKeyAlt: 0
   resetKey: 9
   pauseKey: 27
+  grabKey: 0
 --- !u!95 &2116302922
 Animator:
   serializedVersion: 4

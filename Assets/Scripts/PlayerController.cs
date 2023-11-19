@@ -1,5 +1,6 @@
 using System.Collections;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Animations.Rigging;
 
@@ -46,6 +47,7 @@ public class PlayerController : MonoBehaviour {
     [SerializeField] private float sprintSpeed;
     [SerializeField] private float speedIncreaseMultiplier;
     [SerializeField] private float slopeIncreaseMultiplier;
+    [SerializeField] private float landGroundFriction;
     private bool levelWalkEnabled;
     private bool levelSprintEnabled;
     private bool levelJumpEnabled;
@@ -157,8 +159,8 @@ public class PlayerController : MonoBehaviour {
     [SerializeField] private float jointDamper;
     [SerializeField] private float jointMassScale;
     [SerializeField] private Transform swingIKTarget;
+    [SerializeField] private Transform swingPoint;
     [SerializeField] private LayerMask swingableMask;
-    private Vector3 swingPoint;
     private Vector3 currentSwingPosition;
     private SpringJoint joint;
 
@@ -181,6 +183,17 @@ public class PlayerController : MonoBehaviour {
     [SerializeField] private float ziplineExitForce;
     [SerializeField] private LayerMask ziplineMask;
     private Zipline currZipline;
+
+    [Header("Elevator")]
+    private bool inElevator;
+    private bool elevatorMoving;
+
+    [Header("Grabbing")]
+    [SerializeField] private bool grabEnabled;
+    [SerializeField] private float grabDistance;
+    [SerializeField] private Transform grabPoint;
+    private Rigidbody currGrabbedObj;
+    private string currObjTag;
 
     [Header("Headbob")]
     [SerializeField] private float walkBobSpeed;
@@ -224,6 +237,7 @@ public class PlayerController : MonoBehaviour {
     [SerializeField] private KeyCode interactKeyAlt;
     [SerializeField] private KeyCode resetKey;
     [SerializeField] private KeyCode pauseKey;
+    [SerializeField] private KeyCode grabKey;
 
     public enum MovementState {
 
@@ -323,8 +337,16 @@ public class PlayerController : MonoBehaviour {
 
         if (isGrounded && !lastIsGrounded) { // Just landed
 
-            if (movementDirection == Vector3.zero)
-                desiredMoveSpeed = 0f;
+            if (movementDirection == Vector3.zero) {
+
+                ResetVelocity();
+
+            } else {
+
+                moveSpeed /= landGroundFriction;
+                desiredMoveSpeed /= landGroundFriction;
+
+            }
 
             audioManager.PlaySound(GameAudioManager.GameSoundEffectType.Land);
 
@@ -404,7 +426,28 @@ public class PlayerController : MonoBehaviour {
 
         CheckSwingPoints();
 
-        // Zipline Check
+        if (isGrounded)
+            rb.drag = groundDrag;
+        else
+            rb.drag = 0f;
+
+        if (Input.GetKeyDown(resetKey))
+            gameManager.KillPlayer();
+
+        if (Input.GetKeyDown(pauseKey)) {
+
+            if (gameManager.GetGamePaused())
+                UIController.ResumeGame();
+            else
+                UIController.PauseGame();
+
+        }
+
+        // Crosshair Interactable Checks
+        RaycastHit interactableHitInfo;
+        RaycastHit grabbableHitInfo;
+        Ray ray = new Ray(camera.transform.position, camera.transform.forward);
+
         Collider[] colliders = Physics.OverlapSphere(transform.position, ziplineCheckRadius, ziplineMask);
 
         if (colliders.Length > 0 && movementState != MovementState.Ziplining) {
@@ -424,41 +467,46 @@ public class PlayerController : MonoBehaviour {
                 UIController.EnableInteractCrosshair("Zipline");
 
             }
-        } else {
+        } else if (Physics.Raycast(ray, out interactableHitInfo, interactDistance) && interactableHitInfo.transform.CompareTag("Interactable")) {
 
-            UIController.DisableInteractCrosshair();
+            if (interactableHitInfo.collider.GetComponent<Interactable>() != null) {
 
-        }
-
-        if (isGrounded)
-            rb.drag = groundDrag;
-        else
-            rb.drag = 0f;
-
-        if (Input.GetKeyDown(resetKey))
-            gameManager.KillPlayer();
-
-        if (Input.GetKeyDown(pauseKey)) {
-
-            if (gameManager.GetGamePaused())
-                UIController.ResumeGame();
-            else
-                UIController.PauseGame();
-
-        }
-
-        Ray ray = new Ray(camera.transform.position, camera.transform.forward);
-        RaycastHit hitInfo;
-
-        if (Physics.Raycast(ray, out hitInfo, interactDistance) && hitInfo.transform.CompareTag("Interactable")) {
-
-            if (hitInfo.collider.GetComponent<Interactable>() != null) {
-
-                Interactable interactable = hitInfo.collider.GetComponent<Interactable>();
+                Interactable interactable = interactableHitInfo.collider.GetComponent<Interactable>();
                 UIController.EnableInteractCrosshair(interactable.interactText);
 
                 if (Input.GetKeyDown(interactKey) || Input.GetKeyDown(interactKeyAlt))
                     interactable.BaseInteract();
+
+            }
+        } else if (Physics.Raycast(ray, out grabbableHitInfo, grabDistance) && grabbableHitInfo.transform.CompareTag("Grabbable") && !currGrabbedObj && grabbableHitInfo.collider.GetComponent<Rigidbody>() != null) {
+
+            if (Input.GetKey(grabKey)) {
+
+                // Grabs object
+                currGrabbedObj = grabbableHitInfo.rigidbody;
+                currGrabbedObj.useGravity = false;
+                currObjTag = currGrabbedObj.tag;
+                currGrabbedObj.tag = "Player";
+
+            } else {
+
+                // Looking at object but isn't grabbing
+                UIController.EnableInteractCrosshair("Grab");
+
+            }
+        } else if (currGrabbedObj) {
+
+            if (Input.GetKey(grabKey)) {
+
+                // Still holding onto grabbed object
+                UIController.EnableInteractCrosshair("");
+
+            } else {
+
+                // Lets go of grabbed object
+                currGrabbedObj.useGravity = true;
+                currGrabbedObj.tag = currObjTag;
+                currGrabbedObj = null;
 
             }
         } else {
@@ -473,8 +521,19 @@ public class PlayerController : MonoBehaviour {
 
     private void FixedUpdate() {
 
+        // Grabbing
+        if (currGrabbedObj) {
+
+            Vector3 directionToPoint = grabPoint.position - currGrabbedObj.position;
+            currGrabbedObj.velocity = directionToPoint * 12f * (directionToPoint.magnitude);
+
+        }
+
         if (movementState == MovementState.Ziplining)
             return;
+
+        if (elevatorMoving)
+            rb.AddForce(Vector3.down * 2000f, ForceMode.VelocityChange);
 
         movementDirection = transform.forward * verticalInput + transform.right * horizontalInput;
 
@@ -497,9 +556,6 @@ public class PlayerController : MonoBehaviour {
 
             rb.AddForce(GetSlopeMoveDirection() * moveSpeed * 30f, ForceMode.Force);
 
-            if (rb.velocity.y > 0f)
-                rb.AddForce(Vector3.down * 80f, ForceMode.Force);
-
         } else if (CheckSlope() == SlopeType.Invalid) {
 
             rb.AddForce(Vector3.Cross(slopeHit.normal, Vector3.Cross(slopeHit.normal, Vector3.up)) * 500f, ForceMode.Acceleration);
@@ -514,6 +570,7 @@ public class PlayerController : MonoBehaviour {
 
         }
 
+        // no gravity on slopes
         if (movementState != MovementState.WallRunning)
             rb.useGravity = CheckSlope() == SlopeType.None || CheckSlope() == SlopeType.Invalid;
 
@@ -591,25 +648,28 @@ public class PlayerController : MonoBehaviour {
 
         if (movementState == MovementState.Ziplining && ziplineEnabled) {
 
+            // Ziplining
             ResetAnimations();
             animator.SetBool("isZiplining", true);
             movementState = MovementState.Ziplining;
 
         } else if (movementState == MovementState.Swinging && swingEnabled) {
 
+            // Swinging
             ResetAnimations();
             animator.SetBool("isSwinging", true);
-            swingIKTarget.position = swingPoint;
             movementState = MovementState.Swinging;
             desiredMoveSpeed = maxSwingSpeed;
 
         } else if (movementState == MovementState.WallRunning && wallRunEnabled) {
 
+            // Wall Running
             movementState = MovementState.WallRunning;
             desiredMoveSpeed = wallRunSpeed;
 
         } else if (movementState == MovementState.Sliding && slideEnabled) {
 
+            // Sliding
             movementState = MovementState.Sliding;
 
             if (CheckSlope() == SlopeType.None || CheckSlope() == SlopeType.ValidUp && isGrounded)
@@ -627,17 +687,20 @@ public class PlayerController : MonoBehaviour {
 
         } else if (movementState == MovementState.Crouching && crouchEnabled) {
 
+            // Crouching
             movementState = MovementState.Crouching;
             desiredMoveSpeed = crouchSpeed;
 
         } else if (isGrounded && movementDirection == Vector3.zero) {
 
+            // Idle
             ResetAnimations();
             movementState = MovementState.None;
             desiredMoveSpeed = walkSpeed;
 
-        } else if (isGrounded && Input.GetKey(sprintKey) && sprintEnabled) {
+        } else if (isGrounded && Input.GetKey(sprintKey)) {
 
+            // Sprinting
             ResetAnimations();
             animator.SetBool("isSprinting", true);
             audioManager.PlaySound(GameAudioManager.GameSoundEffectType.SprintFootstep);
@@ -646,6 +709,7 @@ public class PlayerController : MonoBehaviour {
 
         } else if (isGrounded && walkEnabled) {
 
+            // Walking
             ResetAnimations();
             animator.SetBool("isWalking", true);
             audioManager.PlaySound(GameAudioManager.GameSoundEffectType.WalkFootstep);
@@ -654,11 +718,13 @@ public class PlayerController : MonoBehaviour {
 
         } else if (!isGrounded && rb.velocity.magnitude > 0.01f) {
 
+            // Air
             ResetAnimations();
             movementState = MovementState.Air;
 
         } else {
 
+            // Default Case
             ResetAnimations();
             movementState = MovementState.None;
 
@@ -691,15 +757,11 @@ public class PlayerController : MonoBehaviour {
 
             moveSpeed = Mathf.Lerp(startValue, desiredMoveSpeed, timer / difference);
 
-            if (CheckSlope() == SlopeType.ValidDown) {
-
+            if (CheckSlope() == SlopeType.ValidDown)
                 timer += Time.deltaTime * speedIncreaseMultiplier * slopeIncreaseMultiplier * (1f + (Vector3.Angle(Vector3.up, slopeHit.normal) / 90f));
-
-            } else {
-
+            else
                 timer += Time.deltaTime * speedIncreaseMultiplier;
 
-            }
 
             yield return null;
 
@@ -744,21 +806,28 @@ public class PlayerController : MonoBehaviour {
 
     private void Jump() {
 
+        if (inElevator)
+            return;
+
         if (movementState == MovementState.Ziplining) {
 
             currZipline.ResetZipline(false);
             jumpReady = false;
-            exitingSlope = true;
-            rb.velocity = new Vector3(rb.velocity.x, 0f, rb.velocity.z);
-            rb.AddForce(transform.up * jumpForce, ForceMode.Impulse);
+
+            if (CheckSlope() == SlopeType.ValidUp || CheckSlope() == SlopeType.ValidDown)
+                exitingSlope = true;
+
+            rb.velocity = new Vector3(rb.velocity.x, jumpForce, rb.velocity.z);
             return;
 
         }
 
         jumpReady = false;
-        exitingSlope = true;
-        // rb.velocity = new Vector3(rb.velocity.x, 0f, rb.velocity.z);
-        rb.AddForce(transform.up * jumpForce, ForceMode.Impulse);
+
+        if (CheckSlope() == SlopeType.ValidUp || CheckSlope() == SlopeType.ValidDown)
+            exitingSlope = true;
+
+        rb.velocity = new Vector3(rb.velocity.x, jumpForce, rb.velocity.z);
 
     }
 
@@ -953,7 +1022,6 @@ public class PlayerController : MonoBehaviour {
             rb.useGravity = true;
             rb.AddForce(transform.up * gravityCounterForce, ForceMode.Force);
             yield return new WaitForSeconds(gravityDecrementRate);
-            rb.useGravity = false;
             gravityCounterForce -= gravityDecrementAmount;
 
         }
@@ -1043,7 +1111,7 @@ public class PlayerController : MonoBehaviour {
 
     public Vector3 GetSwingPoint() {
 
-        return swingPoint;
+        return swingPoint.position;
 
     }
 
@@ -1109,12 +1177,14 @@ public class PlayerController : MonoBehaviour {
         predictionObj.gameObject.SetActive(false);
         UIController.EnableCrosshair();
 
-        swingPoint = predictionHit.point;
+        swingPoint.position = predictionHit.point;
+        swingIKTarget.position = swingPoint.position;
+        swingPoint.parent = predictionHit.transform;
         joint = gameObject.AddComponent<SpringJoint>();
         joint.autoConfigureConnectedAnchor = false;
-        joint.connectedAnchor = swingPoint;
+        joint.connectedAnchor = swingPoint.position;
 
-        float distanceFromPoint = Vector3.Distance(transform.position, swingPoint);
+        float distanceFromPoint = Vector3.Distance(transform.position, swingPoint.position);
 
         joint.maxDistance = distanceFromPoint * 0.8f;
         joint.minDistance = distanceFromPoint * 0.25f;
@@ -1152,10 +1222,10 @@ public class PlayerController : MonoBehaviour {
         spring.SetStrength(strength);
         spring.Update(Time.deltaTime);
 
-        Vector3 up = Quaternion.LookRotation(swingPoint - muzzle.position).normalized * Vector3.up;
+        Vector3 up = Quaternion.LookRotation(swingPoint.position - muzzle.position).normalized * Vector3.up;
 
         // TODO: Make 12f a variable?
-        currentSwingPosition = Vector3.Lerp(currentSwingPosition, swingPoint, Time.deltaTime * 12f);
+        currentSwingPosition = Vector3.Lerp(currentSwingPosition, swingPoint.position, Time.deltaTime * 12f);
 
         for (int i = 0; i < quality + 1; i++) {
 
@@ -1169,6 +1239,9 @@ public class PlayerController : MonoBehaviour {
 
     private void HandleSwingMovement() {
 
+        swingIKTarget.position = swingPoint.position;
+        joint.connectedAnchor = swingPoint.position;
+
         if (horizontalInput != 0f)
             rb.AddForce((horizontalInput > 0f ? transform.right : -transform.right) * horizontalThrustForce * Time.deltaTime);
 
@@ -1177,10 +1250,10 @@ public class PlayerController : MonoBehaviour {
 
         if (Input.GetKey(jumpKey) && jumpEnabled) {
 
-            Vector3 directionToPoint = swingPoint - transform.position;
+            Vector3 directionToPoint = swingPoint.position - transform.position;
             rb.AddForce(directionToPoint.normalized * forwardThrustForce * Time.deltaTime);
 
-            float distanceFromPoint = Vector3.Distance(transform.position, swingPoint);
+            float distanceFromPoint = Vector3.Distance(transform.position, swingPoint.position);
 
             joint.maxDistance = distanceFromPoint * 0.8f;
             joint.minDistance = distanceFromPoint * 0.25f;
@@ -1189,7 +1262,7 @@ public class PlayerController : MonoBehaviour {
 
         if (Input.GetKey(cableExtendKey)) {
 
-            float extendedDistanceFromPoint = Vector3.Distance(transform.position, swingPoint) + cableExtendSpeed;
+            float extendedDistanceFromPoint = Vector3.Distance(transform.position, swingPoint.position) + cableExtendSpeed;
 
             joint.maxDistance = extendedDistanceFromPoint * 0.8f;
             joint.minDistance = extendedDistanceFromPoint * 0.25f;
@@ -1203,7 +1276,6 @@ public class PlayerController : MonoBehaviour {
         rigBuilder.layers[leftHandIKRigIndex].active = true;
         rigBuilder.layers[rightHandIKRigIndex].active = true;
         rigBuilder.layers[rightHandFollowRigIndex].active = false;
-        swingIKTarget.localPosition = Vector3.zero;
         UIController.EnableCrosshair();
         Destroy(joint);
 
@@ -1305,6 +1377,8 @@ public class PlayerController : MonoBehaviour {
 
     public void ResetVelocity() {
 
+        moveSpeed = 0f;
+        lastDesiredMoveSpeed = 0f;
         desiredMoveSpeed = 0f;
         rb.velocity = Vector3.zero;
 
@@ -1483,6 +1557,18 @@ public class PlayerController : MonoBehaviour {
     public void DisableZipline() {
 
         ziplineEnabled = false;
+
+    }
+
+    public void SetInElevator(bool inElevator) {
+
+        this.inElevator = inElevator;
+
+    }
+
+    public void SetElevatorMoving(bool elevatorMoving) {
+
+        this.elevatorMoving = elevatorMoving;
 
     }
 }

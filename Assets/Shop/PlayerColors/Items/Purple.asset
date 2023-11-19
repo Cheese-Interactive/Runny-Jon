@@ -12,6 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 34a6d06872fedb04d88a24c01a02a3e6, type: 3}
   m_Name: Purple
   m_EditorClassIdentifier: 
+  cosmeticPrefab: {fileID: 5890534854813260601, guid: aeb59d37c38db394ebc1a3232e0834c6,
+    type: 3}
   itemName: Purple
   icon: {fileID: 0}
   price: 5

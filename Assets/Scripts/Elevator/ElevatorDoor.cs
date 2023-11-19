@@ -5,6 +5,7 @@ using UnityEngine;
 public class ElevatorDoor : MonoBehaviour {
 
     [Header("References")]
+    [SerializeField] private InnerElevator innerElevator;
     private Vector3 startPosition;
 
     [Header("Settings")]
@@ -13,7 +14,7 @@ public class ElevatorDoor : MonoBehaviour {
     [SerializeField] private float movementDuration;
     [SerializeField] private float doorCloseDelay;
     private Coroutine doorCoroutine;
-    private Coroutine doorCloseCoroutine;
+    private Coroutine doorTimeoutCoroutine;
     private bool doorOpen;
 
     private void Start() {
@@ -34,11 +35,11 @@ public class ElevatorDoor : MonoBehaviour {
 
         }
 
-        if (doorCloseCoroutine != null)
-            StopCoroutine(doorCloseCoroutine);
+        if (doorTimeoutCoroutine != null)
+            StopCoroutine(doorTimeoutCoroutine);
 
         doorCoroutine = StartCoroutine(MoveDoor(startPosition + movement, true, true));
-        doorCloseCoroutine = StartCoroutine(HandleDoorClose());
+        doorTimeoutCoroutine = StartCoroutine(HandleDoorClose());
 
     }
 
@@ -49,13 +50,13 @@ public class ElevatorDoor : MonoBehaviour {
 
         if (doorCoroutine != null) {
 
-            StopCoroutine(doorCoroutine);
-            doorCoroutine = StartCoroutine(MoveDoor(startPosition, false, false));
+            //StopCoroutine(doorCoroutine);
+            doorCoroutine = StartCoroutine(MoveDoor(startPosition, false, true));
 
         }
 
-        if (doorCloseCoroutine != null)
-            StopCoroutine(doorCloseCoroutine);
+        if (doorTimeoutCoroutine != null)
+            StopCoroutine(doorTimeoutCoroutine);
 
         doorCoroutine = StartCoroutine(MoveDoor(startPosition, false, true));
 
@@ -86,7 +87,11 @@ public class ElevatorDoor : MonoBehaviour {
 
     private IEnumerator HandleDoorClose() {
 
+        while (innerElevator.IsPlayerInside())
+            yield return null;
+
         yield return new WaitForSeconds(doorCloseDelay);
+
         Close();
 
     }

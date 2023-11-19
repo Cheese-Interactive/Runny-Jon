@@ -6,14 +6,14 @@ using UnityEngine.UI;
 public class ShopItem : ScriptableObject {
 
     [Header("References")]
-    public GameObject cosmeticPrefab;
+    [SerializeField] private GameObject cosmeticPrefab;
 
     [Header("Settings")]
-    public string itemName;
-    public Image icon;
-    public int price;
-    public bool selected;
-    public bool purchased;
+    [SerializeField] private string itemName;
+    [SerializeField] private Image icon;
+    [SerializeField] private int price;
+    [SerializeField] private bool selected;
+    [SerializeField] private bool purchased;
 
     public Cosmetic GetCosmeticScript() {
 

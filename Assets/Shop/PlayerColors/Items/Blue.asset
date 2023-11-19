@@ -17,5 +17,5 @@ MonoBehaviour:
   itemName: Blue
   icon: {fileID: 0}
   price: 5
-  selected: 0
-  purchased: 0
+  selected: 1
+  purchased: 1

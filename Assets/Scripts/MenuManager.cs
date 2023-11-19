@@ -2,6 +2,7 @@ using Newtonsoft.Json;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -181,6 +182,7 @@ public class MenuManager : MonoBehaviour {
                 for (int k = 0; k < shopRowSize && currItemIndex < shopItems.Count; k++) {
 
                     shopItem = shopItems[currItemIndex];
+                    EditorUtility.SetDirty(shopItem);
 
                     // create button
                     shopItemButton = Instantiate(this.shopItemButton, row);
@@ -191,14 +193,19 @@ public class MenuManager : MonoBehaviour {
                     shopItemButton.SetNameText(shopItem.GetItemName());
                     shopItemButton.SetPriceText(shopItem.GetPrice() + "");
 
-                    shopItemButton.SetSelected(shopItem.IsSelected());
                     shopItemButton.SetPurchased(shopItem.IsPurchased());
+
+                    if (shopItem.IsSelected())
+                        shopItemButton.SetSelected(true);
+
                     shopItemButtons.Add(shopItem, shopItemButton);
 
-                    if (currItemIndex == 0 && noneSelected[i]) {
+                    if (currItemIndex == 0) {
 
                         shopItemButton.SetPurchased(true);
-                        shopItemButton.SetSelected(true);
+
+                        if (noneSelected[i])
+                            shopItemButton.SetSelected(true);
 
                     }
 

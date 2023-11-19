@@ -12,6 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 34a6d06872fedb04d88a24c01a02a3e6, type: 3}
   m_Name: Yellow
   m_EditorClassIdentifier: 
+  cosmeticPrefab: {fileID: 1564211792903080469, guid: 7f60078a000f2954cb0d4de0044f8a20,
+    type: 3}
   itemName: Yellow
   icon: {fileID: 0}
   price: 5

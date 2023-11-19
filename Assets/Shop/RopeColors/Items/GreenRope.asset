@@ -12,6 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 34a6d06872fedb04d88a24c01a02a3e6, type: 3}
   m_Name: GreenRope
   m_EditorClassIdentifier: 
+  cosmeticPrefab: {fileID: 2656543648340685422, guid: 7223dcf7bac3e0d4db5984c9f1d12d59,
+    type: 3}
   itemName: Green Rope
   icon: {fileID: 0}
   price: 25

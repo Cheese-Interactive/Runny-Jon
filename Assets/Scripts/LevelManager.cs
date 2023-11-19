@@ -11,6 +11,8 @@ public class LevelManager : GameManager {
         audioManager = FindObjectOfType<GameAudioManager>();
         playerData = FindObjectOfType<PlayerData>();
 
+        LoadCosmetics();
+
         Transform spawn = checkpoints[currCheckpoint].GetPlayerSpawn();
         playerController.transform.position = spawn.position;
         playerController.SetLookRotations(0f, spawn.rotation.eulerAngles.y);

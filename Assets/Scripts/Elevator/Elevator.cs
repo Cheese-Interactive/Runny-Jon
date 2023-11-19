@@ -5,8 +5,10 @@ using UnityEngine;
 public class Elevator : MonoBehaviour {
 
     [Header("References")]
+    [SerializeField] private InnerElevator innerElevator;
     [SerializeField] private Transform topFloorTarget;
     [SerializeField] private Transform bottomFloorTarget;
+    private PlayerController playerController;
     private Rigidbody rb;
     private Vector3 topFloor;
     private Vector3 bottomFloor;
@@ -15,6 +17,7 @@ public class Elevator : MonoBehaviour {
     [Header("Movement")]
     [SerializeField] private float movementDelay;
     [SerializeField] private float movementDuration;
+    [SerializeField] private float postCollisionLength;
     private Coroutine moveCoroutine;
     private bool atBottomFloor;
     private bool elevatorCalling;
@@ -27,6 +30,7 @@ public class Elevator : MonoBehaviour {
 
     private void Start() {
 
+        playerController = FindObjectOfType<PlayerController>();
         rb = GetComponent<Rigidbody>();
         topFloor = topFloorTarget.position;
         bottomFloor = bottomFloorTarget.position;
@@ -77,21 +81,17 @@ public class Elevator : MonoBehaviour {
         if (called)
             elevatorCalling = true;
 
-        CloseDoors();
-
         if (transform.position != targetPosition) {
 
-            float duration = movementDuration;
+            float duration = (Vector3.Distance(atBottomFloor ? topFloor : bottomFloor, transform.position) / floorDistance) * movementDuration;
 
-            if (!called) {
-
+            if (!called)
                 yield return new WaitForSeconds(movementDelay);
 
-            } else {
+            if (innerElevator.IsPlayerInside())
+                playerController.SetElevatorMoving(true);
 
-                duration = (Vector3.Distance(atBottomFloor ? bottomFloor : topFloor, transform.position) / floorDistance) * movementDuration;
-
-            }
+            CloseDoors();
 
             float currentTime = 0f;
             Vector3 startPosition = transform.position;
@@ -105,6 +105,10 @@ public class Elevator : MonoBehaviour {
             }
 
             transform.position = targetPosition;
+            yield return new WaitForSeconds(postCollisionLength);
+
+            if (innerElevator.IsPlayerInside())
+                playerController.SetElevatorMoving(false);
 
         }
 

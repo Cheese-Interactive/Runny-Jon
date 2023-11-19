@@ -104,11 +104,12 @@ public class GameUIController : MonoBehaviour {
 
     public void EnableInteractCrosshair(string text) {
 
+        SetInteractText(text);
+
         if (!defaultCrosshairEnabled)
             return;
 
         interactText.gameObject.SetActive(true);
-        SetInteractText(text);
 
         crosshair.sprite = interactCrosshair;
         defaultCrosshairEnabled = false;

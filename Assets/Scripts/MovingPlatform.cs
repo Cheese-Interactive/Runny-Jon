@@ -7,6 +7,7 @@ public class MovingPlatform : MonoBehaviour {
     [SerializeField] private Vector3 movement;
     [SerializeField] private float movementDelay;
     [SerializeField] private float movementDuration;
+    private Transform prevParent;
     private Coroutine fallCoroutine;
 
     private void OnCollisionEnter(Collision collision) {
@@ -14,9 +15,13 @@ public class MovingPlatform : MonoBehaviour {
         if (fallCoroutine != null)
             return;
 
-        if (collision.gameObject.CompareTag("Player"))
+        if (collision.gameObject.CompareTag("Player")) {
+
+            prevParent = collision.transform.parent;
+            collision.transform.parent = transform;
             fallCoroutine = StartCoroutine(HandleMovement());
 
+        }
     }
 
     private void OnTriggerEnter(Collider collider) {
@@ -24,8 +29,26 @@ public class MovingPlatform : MonoBehaviour {
         if (fallCoroutine != null)
             return;
 
-        if (collider.gameObject.CompareTag("Player"))
+        if (collider.gameObject.CompareTag("Player")) {
+
+            prevParent = collider.transform.parent;
+            collider.transform.parent = transform;
             fallCoroutine = StartCoroutine(HandleMovement());
+
+        }
+    }
+
+    private void OnCollisionExit(Collision collision) {
+
+        if (collision.gameObject.CompareTag("Player"))
+            collision.transform.parent = prevParent;
+
+    }
+
+    private void OnTriggerExit(Collider collider) {
+
+        if (collider.gameObject.CompareTag("Player"))
+            collider.transform.parent = prevParent;
 
     }
 

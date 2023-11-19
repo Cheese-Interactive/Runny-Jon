@@ -12,6 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 34a6d06872fedb04d88a24c01a02a3e6, type: 3}
   m_Name: RedRope
   m_EditorClassIdentifier: 
+  cosmeticPrefab: {fileID: 9036146270268153463, guid: b97259cc00e9d944eb771c02bb06c0e1,
+    type: 3}
   itemName: Red Rope
   icon: {fileID: 0}
   price: 5

@@ -12,6 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 34a6d06872fedb04d88a24c01a02a3e6, type: 3}
   m_Name: Orange
   m_EditorClassIdentifier: 
+  cosmeticPrefab: {fileID: 8889073213095318182, guid: 71026e91e3f7fb04eb1692ffa2e44259,
+    type: 3}
   itemName: Orange
   icon: {fileID: 0}
   price: 5

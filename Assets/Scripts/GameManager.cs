@@ -48,9 +48,10 @@ public abstract class GameManager : MonoBehaviour {
 
         foreach (ShopItem shopItem in selectedItems) {
 
-            print(shopItem.name);
+            if (shopItem == null)
+                break;
+
             Cosmetic cosmetic = (Cosmetic) playerController.gameObject.AddComponent(shopItem.GetCosmeticScript().GetType());
-            print(cosmetic);
             shopItem.GetCosmeticScript().CopyTo(cosmetic);
 
         }
