@@ -56,6 +56,9 @@ public class Elevator : MonoBehaviour {
 
         }
 
+        if (transform.position != bottomFloorTarget.position && transform.position != topFloorTarget.position)
+            atBottomFloor = !atBottomFloor;
+
         moveCoroutine = StartCoroutine(MoveElevator(targetPosition, true));
 
     }
@@ -83,7 +86,7 @@ public class Elevator : MonoBehaviour {
 
         if (transform.position != targetPosition) {
 
-            float duration = (Vector3.Distance(atBottomFloor ? topFloor : bottomFloor, transform.position) / floorDistance) * movementDuration;
+            float duration = (Vector3.Distance(transform.position, atBottomFloor ? topFloor : bottomFloor) / floorDistance) * movementDuration;
 
             if (!called)
                 yield return new WaitForSeconds(movementDelay);

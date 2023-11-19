@@ -3,37 +3,38 @@ using UnityEngine;
 
 public class MovingPlatform : MonoBehaviour {
 
-    [Header("Falling")]
+    [Header("Movement")]
     [SerializeField] private Vector3 movement;
-    [SerializeField] private float movementDelay;
     [SerializeField] private float movementDuration;
     private Transform prevParent;
-    private Coroutine fallCoroutine;
+
+    [Header("Resetting")]
+    [SerializeField] private float resetWaitDuration;
+    [SerializeField] private bool rotateEnabled;
+    [SerializeField] private float rotateDuration;
+
+    private void Start() {
+
+        StartCoroutine(HandleMovement(transform.position, transform.position + movement));
+
+    }
 
     private void OnCollisionEnter(Collision collision) {
-
-        if (fallCoroutine != null)
-            return;
 
         if (collision.gameObject.CompareTag("Player")) {
 
             prevParent = collision.transform.parent;
             collision.transform.parent = transform;
-            fallCoroutine = StartCoroutine(HandleMovement());
 
         }
     }
 
     private void OnTriggerEnter(Collider collider) {
 
-        if (fallCoroutine != null)
-            return;
-
         if (collider.gameObject.CompareTag("Player")) {
 
             prevParent = collider.transform.parent;
             collider.transform.parent = transform;
-            fallCoroutine = StartCoroutine(HandleMovement());
 
         }
     }
@@ -52,24 +53,48 @@ public class MovingPlatform : MonoBehaviour {
 
     }
 
-    private IEnumerator HandleMovement() {
+    private IEnumerator HandleMovement(Vector3 startPosition, Vector3 targetPosition) {
 
-        yield return new WaitForSeconds(movementDelay);
+        float currentTime;
 
-        float currentTime = 0f;
-        Vector3 startPosition = transform.position;
-        Vector3 targetPosition = startPosition + movement;
+        while (true) {
 
-        while (currentTime < movementDuration) {
+            currentTime = 0f;
 
-            currentTime += Time.deltaTime;
-            transform.position = Vector3.Lerp(startPosition, targetPosition, currentTime / movementDuration);
-            yield return null;
+            while (currentTime < movementDuration) {
+
+                currentTime += Time.deltaTime;
+                transform.position = Vector3.Lerp(startPosition, targetPosition, currentTime / movementDuration);
+                yield return null;
+
+            }
+
+            transform.position = targetPosition;
+
+            if (rotateEnabled) {
+
+                Vector3 startRotation = transform.rotation.eulerAngles;
+                Vector3 targetRotation = new Vector3(startRotation.x, startRotation.y + 180f, startRotation.z);
+                currentTime = 0f;
+
+                while (currentTime < rotateDuration) {
+
+                    currentTime += Time.deltaTime;
+                    transform.rotation = Quaternion.Euler(Vector3.Lerp(startRotation, targetRotation, currentTime / rotateDuration));
+                    yield return null;
+
+                }
+
+                transform.rotation = Quaternion.Euler(targetRotation);
+
+            }
+
+            Vector3 temp = startPosition;
+            startPosition = targetPosition;
+            targetPosition = temp;
+
+            yield return new WaitForSeconds(resetWaitDuration);
 
         }
-
-        transform.position = targetPosition;
-        fallCoroutine = null;
-
     }
 }

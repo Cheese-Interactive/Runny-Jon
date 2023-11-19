@@ -5,7 +5,7 @@ public class CameraFollow : MonoBehaviour {
     [Header("Follow")]
     [SerializeField] private Transform target;
 
-    private void Update() {
+    private void LateUpdate() {
 
         transform.position = target.position;
         transform.rotation = target.rotation;

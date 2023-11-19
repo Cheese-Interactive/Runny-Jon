@@ -13,14 +13,14 @@ public class GameAudioManager : MonoBehaviour {
     [SerializeField] private AudioClip sprintFootstepSound;
     [SerializeField] private AudioClip landSound;
     [SerializeField] private AudioClip grappleSound;
-    [SerializeField] private AudioClip tempSound;
+    [SerializeField] private AudioClip shatterSound;
     [SerializeField] private AudioClip checkpointSound;
     [SerializeField] private AudioClip deathSound;
     [SerializeField] private AudioClip victorySound;
 
     public enum GameSoundEffectType {
 
-        WalkFootstep, SprintFootstep, Land, Grapple, Temp, Checkpoint, Death, Victory
+        WalkFootstep, SprintFootstep, Land, Grapple, Shatter, Checkpoint, Death, Victory
 
     }
 
@@ -64,9 +64,9 @@ public class GameAudioManager : MonoBehaviour {
             soundEffectSource.PlayOneShot(grappleSound);
             break;
 
-            case GameSoundEffectType.Temp:
+            case GameSoundEffectType.Shatter:
 
-            soundEffectSource.PlayOneShot(tempSound);
+            soundEffectSource.PlayOneShot(shatterSound);
             break;
 
             case GameSoundEffectType.Checkpoint:

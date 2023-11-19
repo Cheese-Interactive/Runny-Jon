@@ -17,5 +17,5 @@ MonoBehaviour:
   itemName: Default
   icon: {fileID: 0}
   price: 0
-  selected: 0
+  selected: 1
   purchased: 1

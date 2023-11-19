@@ -1,4 +1,3 @@
-using Newtonsoft.Json;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -182,7 +181,10 @@ public class MenuManager : MonoBehaviour {
                 for (int k = 0; k < shopRowSize && currItemIndex < shopItems.Count; k++) {
 
                     shopItem = shopItems[currItemIndex];
+
+#if UNITY_EDITOR
                     EditorUtility.SetDirty(shopItem);
+#endif
 
                     // create button
                     shopItemButton = Instantiate(this.shopItemButton, row);

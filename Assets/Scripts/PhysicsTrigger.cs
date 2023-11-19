@@ -4,7 +4,7 @@ using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody))]
 [RequireComponent(typeof(Collider))]
-public class PhysicsEffect : MonoBehaviour {
+public class PhysicsTrigger : MonoBehaviour {
 
     [Header("References")]
     private MeshRenderer meshRenderer;
@@ -37,7 +37,7 @@ public class PhysicsEffect : MonoBehaviour {
 
         if (!triggered && collision.transform.CompareTag("Player")) {
 
-            audioManager.PlaySound(GameAudioManager.GameSoundEffectType.Temp);
+            audioManager.PlaySound(GameAudioManager.GameSoundEffectType.Shatter);
 
             if (flipMeshOnCollision) {
 
@@ -64,7 +64,7 @@ public class PhysicsEffect : MonoBehaviour {
         if (triggered)
             return;
 
-        audioManager.PlaySound(GameAudioManager.GameSoundEffectType.Temp);
+        audioManager.PlaySound(GameAudioManager.GameSoundEffectType.Shatter);
 
         if (flipMeshOnCollision) {
 

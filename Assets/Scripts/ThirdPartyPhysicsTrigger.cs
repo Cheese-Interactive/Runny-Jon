@@ -5,13 +5,13 @@ using UnityEngine;
 public class ThirdPartyPhysicsTrigger : MonoBehaviour {
 
     [Header("References")]
-    [SerializeField] private PhysicsEffect[] physicsEffects;
+    [SerializeField] private PhysicsTrigger[] physicsEffects;
 
     private void OnCollisionEnter(Collision collision) {
 
         if (collision.transform.CompareTag("Player")) {
 
-            foreach (PhysicsEffect physicsEffect in physicsEffects) {
+            foreach (PhysicsTrigger physicsEffect in physicsEffects) {
 
                 physicsEffect.OnThirdPartyCollision();
 

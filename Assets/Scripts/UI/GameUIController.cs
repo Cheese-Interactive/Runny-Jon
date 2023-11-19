@@ -90,6 +90,13 @@ public class GameUIController : MonoBehaviour {
 
     }
 
+    private void Update() {
+
+        if (!Application.isEditor && !Application.isFocused)
+            PauseGame();
+
+    }
+
     public void EnableCrosshair() {
 
         crosshair.gameObject.SetActive(true);

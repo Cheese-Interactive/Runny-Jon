@@ -48,6 +48,7 @@ public class PlayerController : MonoBehaviour {
     [SerializeField] private float speedIncreaseMultiplier;
     [SerializeField] private float slopeIncreaseMultiplier;
     [SerializeField] private float landGroundFriction;
+    [SerializeField] private float minMovementVelocity;
     private bool levelWalkEnabled;
     private bool levelSprintEnabled;
     private bool levelJumpEnabled;
@@ -160,7 +161,7 @@ public class PlayerController : MonoBehaviour {
     [SerializeField] private float jointMassScale;
     [SerializeField] private Transform swingIKTarget;
     [SerializeField] private Transform swingPoint;
-    [SerializeField] private LayerMask swingableMask;
+    [SerializeField] private LayerMask swingMask;
     private Vector3 currentSwingPosition;
     private SpringJoint joint;
 
@@ -332,10 +333,14 @@ public class PlayerController : MonoBehaviour {
 
         }
 
-        isGrounded = Physics.CheckSphere(feet.position, groundCheckRadius, environmentMask);
+        if (movementState == MovementState.Crouching || movementState == MovementState.Sliding) // keep player grounded during whole slide or crouch
+            isGrounded = true;
+        else
+            isGrounded = Physics.CheckSphere(feet.position, groundCheckRadius, environmentMask);
+
         animator.SetBool("isGrounded", isGrounded);
 
-        if (isGrounded && !lastIsGrounded) { // Just landed
+        if (isGrounded && !lastIsGrounded) { // just landed
 
             if (movementDirection == Vector3.zero) {
 
@@ -401,7 +406,9 @@ public class PlayerController : MonoBehaviour {
 
         if (Input.GetKeyDown(slideKey) && movementState != MovementState.Crouching && movementState != MovementState.Swinging && movementState != MovementState.WallRunning) {
 
-            if ((movementState == MovementState.Sprinting || movementState == MovementState.Air) && slideEnabled)
+            Vector3 flatVel = new Vector3(rb.velocity.x, 0f, rb.velocity.z);
+
+            if ((movementState == MovementState.Sprinting || movementState == MovementState.Air) && slideEnabled && flatVel.magnitude >= minMovementVelocity)
                 StartSlide();
             else if (crouchEnabled)
                 Crouch();
@@ -431,8 +438,12 @@ public class PlayerController : MonoBehaviour {
         else
             rb.drag = 0f;
 
-        if (Input.GetKeyDown(resetKey))
+        if (Input.GetKeyDown(resetKey)) {
+
+            transform.parent = null;
             gameManager.KillPlayer();
+
+        }
 
         if (Input.GetKeyDown(pauseKey)) {
 
@@ -443,7 +454,7 @@ public class PlayerController : MonoBehaviour {
 
         }
 
-        // Crosshair Interactable Checks
+        // crosshair interactable checks
         RaycastHit interactableHitInfo;
         RaycastHit grabbableHitInfo;
         Ray ray = new Ray(camera.transform.position, camera.transform.forward);
@@ -482,15 +493,13 @@ public class PlayerController : MonoBehaviour {
 
             if (Input.GetKey(grabKey)) {
 
-                // Grabs object
+                // grabs object
                 currGrabbedObj = grabbableHitInfo.rigidbody;
                 currGrabbedObj.useGravity = false;
-                currObjTag = currGrabbedObj.tag;
-                currGrabbedObj.tag = "Player";
 
             } else {
 
-                // Looking at object but isn't grabbing
+                // looking at object but isn't grabbing
                 UIController.EnableInteractCrosshair("Grab");
 
             }
@@ -498,14 +507,13 @@ public class PlayerController : MonoBehaviour {
 
             if (Input.GetKey(grabKey)) {
 
-                // Still holding onto grabbed object
+                // still holding onto grabbed object
                 UIController.EnableInteractCrosshair("");
 
             } else {
 
-                // Lets go of grabbed object
+                // lets go of grabbed object
                 currGrabbedObj.useGravity = true;
-                currGrabbedObj.tag = currObjTag;
                 currGrabbedObj = null;
 
             }
@@ -521,7 +529,7 @@ public class PlayerController : MonoBehaviour {
 
     private void FixedUpdate() {
 
-        // Grabbing
+        // grabbing
         if (currGrabbedObj) {
 
             Vector3 directionToPoint = grabPoint.position - currGrabbedObj.position;
@@ -646,30 +654,40 @@ public class PlayerController : MonoBehaviour {
 
     private void HandleMovementState() {
 
+        Vector3 flatVel = new Vector3(rb.velocity.x, 0f, rb.velocity.z);
+
         if (movementState == MovementState.Ziplining && ziplineEnabled) {
 
-            // Ziplining
+            // ziplining
+            movementState = MovementState.Ziplining;
             ResetAnimations();
             animator.SetBool("isZiplining", true);
-            movementState = MovementState.Ziplining;
 
         } else if (movementState == MovementState.Swinging && swingEnabled) {
 
-            // Swinging
-            ResetAnimations();
-            animator.SetBool("isSwinging", true);
+            // swinging
             movementState = MovementState.Swinging;
             desiredMoveSpeed = maxSwingSpeed;
 
+            if (flatVel.magnitude >= minMovementVelocity) {
+
+                ResetAnimations();
+                animator.SetBool("isSwinging", true);
+
+            } else {
+
+                ResetAnimations();
+
+            }
         } else if (movementState == MovementState.WallRunning && wallRunEnabled) {
 
-            // Wall Running
+            // wall running
             movementState = MovementState.WallRunning;
             desiredMoveSpeed = wallRunSpeed;
 
         } else if (movementState == MovementState.Sliding && slideEnabled) {
 
-            // Sliding
+            // sliding
             movementState = MovementState.Sliding;
 
             if (CheckSlope() == SlopeType.None || CheckSlope() == SlopeType.ValidUp && isGrounded)
@@ -685,48 +703,92 @@ public class PlayerController : MonoBehaviour {
             if (slideTimer <= 0f)
                 StopSlide();
 
+            if (flatVel.magnitude >= minMovementVelocity) {
+
+                ResetAnimations();
+                animator.SetBool("isSliding", true);
+
+            } else {
+
+                ResetAnimations();
+
+            }
         } else if (movementState == MovementState.Crouching && crouchEnabled) {
 
-            // Crouching
+            // crouching
             movementState = MovementState.Crouching;
             desiredMoveSpeed = crouchSpeed;
 
+            if (flatVel.magnitude >= minMovementVelocity || rb.velocity.magnitude > 0.01f) {
+
+                ResetAnimations();
+                animator.SetBool("isCrouching", true);
+
+            } else {
+
+                ResetAnimations();
+
+            }
         } else if (isGrounded && movementDirection == Vector3.zero) {
 
-            // Idle
-            ResetAnimations();
+            // idle
             movementState = MovementState.None;
             desiredMoveSpeed = walkSpeed;
 
+            if (flatVel.magnitude >= minMovementVelocity) {
+
+                ResetAnimations();
+
+            } else {
+
+                ResetAnimations();
+
+            }
         } else if (isGrounded && Input.GetKey(sprintKey)) {
 
-            // Sprinting
-            ResetAnimations();
-            animator.SetBool("isSprinting", true);
-            audioManager.PlaySound(GameAudioManager.GameSoundEffectType.SprintFootstep);
+            // sprinting
             movementState = MovementState.Sprinting;
+            audioManager.PlaySound(GameAudioManager.GameSoundEffectType.SprintFootstep);
             desiredMoveSpeed = sprintSpeed;
 
+            if (flatVel.magnitude >= minMovementVelocity) {
+
+                ResetAnimations();
+                animator.SetBool("isSprinting", true);
+
+            } else {
+
+                ResetAnimations();
+
+            }
         } else if (isGrounded && walkEnabled) {
 
-            // Walking
-            ResetAnimations();
-            animator.SetBool("isWalking", true);
-            audioManager.PlaySound(GameAudioManager.GameSoundEffectType.WalkFootstep);
+            // walking
             movementState = MovementState.Walking;
+            audioManager.PlaySound(GameAudioManager.GameSoundEffectType.WalkFootstep);
             desiredMoveSpeed = walkSpeed;
 
-        } else if (!isGrounded && rb.velocity.magnitude > 0.01f) {
+            if (flatVel.magnitude >= minMovementVelocity) {
 
-            // Air
-            ResetAnimations();
+                ResetAnimations();
+                animator.SetBool("isWalking", true);
+
+            } else {
+
+                ResetAnimations();
+
+            }
+        } else if (!isGrounded && (flatVel.magnitude >= minMovementVelocity || rb.velocity.magnitude > 0.01f) && movementState != MovementState.Crouching && movementState != MovementState.Sliding) {
+
+            // air
             movementState = MovementState.Air;
+            ResetAnimations();
 
         } else {
 
-            // Default Case
-            ResetAnimations();
+            // default case
             movementState = MovementState.None;
+            ResetAnimations();
 
         }
 
@@ -840,23 +902,21 @@ public class PlayerController : MonoBehaviour {
 
     private void Crouch() {
 
-        if (uncrouchQueued)
+        if (uncrouchQueued || inElevator)
             return;
 
         movementState = MovementState.Crouching;
         UIController.EnableCrosshair();
-        animator.SetBool("isCrouching", true);
-        animator.SetBool("isWalking", false);
-        animator.SetBool("isSprinting", false);
-        animator.SetBool("isSliding", false);
         ForceCrouch();
 
     }
 
     private void ForceCrouch() {
 
+        transform.position += new Vector3(0f, startHeight / 2f, 0f);
         transform.localScale = new Vector3(transform.localScale.x, crouchScale, transform.localScale.z);
         cameraPos.localScale = new Vector3(cameraPos.localScale.x, Mathf.Pow(crouchScale, -1f), cameraPos.localScale.z);
+        rb.AddForce(-transform.up * 500f, ForceMode.Force);
 
     }
 
@@ -873,7 +933,6 @@ public class PlayerController : MonoBehaviour {
         }
 
         movementState = MovementState.None;
-        animator.SetBool("isCrouching", false);
         uncrouchQueued = false;
         transform.localScale = new Vector3(transform.localScale.x, startScale, transform.localScale.z);
         cameraPos.localScale = Vector3.one;
@@ -882,9 +941,11 @@ public class PlayerController : MonoBehaviour {
 
     private void StartSlide() {
 
+        if (inElevator)
+            return;
+
         movementState = MovementState.Sliding;
         UIController.EnableCrosshair();
-        animator.SetBool("isSliding", true);
         ForceCrouch();
         slideTimer = maxSlideTime;
 
@@ -893,7 +954,6 @@ public class PlayerController : MonoBehaviour {
     private void StopSlide() {
 
         movementState = MovementState.None;
-        animator.SetBool("isSliding", false);
         Uncrouch();
 
     }
@@ -1121,28 +1181,28 @@ public class PlayerController : MonoBehaviour {
             return;
 
         RaycastHit raycastHit;
-        Physics.Raycast(cameraPos.position, cameraPos.forward, out raycastHit, maxSwingDistance, swingableMask);
+        Physics.Raycast(cameraPos.position, cameraPos.forward, out raycastHit, maxSwingDistance);
 
-        if (raycastHit.point != Vector3.zero) {
+        if (raycastHit.point != Vector3.zero && raycastHit.transform.gameObject.layer.Equals(swingMask)) {
 
-            // Direct Hit
+            // direct hit
             predictionHit = raycastHit;
             UIController.DisableCrosshair();
 
-        } else {
+        } else if (raycastHit.point == Vector3.zero) {
 
             RaycastHit sphereCastHit;
-            Physics.SphereCast(cameraPos.position, predictionRadius, cameraPos.forward, out sphereCastHit, maxSwingDistance, swingableMask);
+            Physics.SphereCast(cameraPos.position, predictionRadius, cameraPos.forward, out sphereCastHit, maxSwingDistance, swingMask);
 
             if (sphereCastHit.point != Vector3.zero) {
 
-                // Indirect / Predicted Hit
+                // indirect / predicted hit
                 predictionHit = sphereCastHit;
                 UIController.EnableCrosshair();
 
             } else {
 
-                // Miss
+                // miss
                 predictionHit.point = Vector3.zero;
                 UIController.EnableCrosshair();
 
@@ -1224,7 +1284,6 @@ public class PlayerController : MonoBehaviour {
 
         Vector3 up = Quaternion.LookRotation(swingPoint.position - muzzle.position).normalized * Vector3.up;
 
-        // TODO: Make 12f a variable?
         currentSwingPosition = Vector3.Lerp(currentSwingPosition, swingPoint.position, Time.deltaTime * 12f);
 
         for (int i = 0; i < quality + 1; i++) {
@@ -1307,7 +1366,9 @@ public class PlayerController : MonoBehaviour {
 
         if (isGrounded) {
 
-            if (Mathf.Abs(rb.velocity.x) > 0.1f || Mathf.Abs(rb.velocity.z) > 0.1f) {
+            Vector3 flatVel = new Vector3(rb.velocity.x, 0f, rb.velocity.z);
+
+            if (flatVel.magnitude >= minMovementVelocity) {
 
                 switch (movementState) {
 
@@ -1561,6 +1622,15 @@ public class PlayerController : MonoBehaviour {
     }
 
     public void SetInElevator(bool inElevator) {
+
+        if (inElevator) {
+
+            StopSlide();
+            Uncrouch();
+            StopSwing();
+            StopWallRun();
+
+        }
 
         this.inElevator = inElevator;
 

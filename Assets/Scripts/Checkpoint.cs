@@ -6,12 +6,9 @@ public class Checkpoint : MonoBehaviour {
 
     [Header("References")]
     private GameManager gameManager;
-    private TutorialManager tutorialManager;
     private Material material;
-    private bool isTutorial;
 
     [Header("Checkpoint")]
-    [SerializeField] private int orderNum;
     [SerializeField] private CheckpointType checkpointType;
     [SerializeField] private string subtitleText;
     [SerializeField] private Transform playerSpawn;
@@ -30,24 +27,13 @@ public class Checkpoint : MonoBehaviour {
 
         gameManager = FindObjectOfType<GameManager>();
         material = GetComponent<MeshRenderer>().material;
-        isTutorial = gameManager.GetCurrentLevel().GetIsTutorial();
 
-        if (isTutorial) {
-
-            tutorialManager = (TutorialManager) gameManager;
-
-        }
     }
 
     private void OnTriggerEnter(Collider collider) {
 
-        gameManager.CheckpointReached(checkpointType);
-
-    }
-
-    public int GetOrderNumber() {
-
-        return orderNum;
+        if (collider.CompareTag("Player"))
+            gameManager.CheckpointReached(checkpointType);
 
     }
 
