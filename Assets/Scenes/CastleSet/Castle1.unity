@@ -4398,7 +4398,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: efe5e49f77add914dbf5d6000e4570b2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  orderNum: 3
   checkpointType: 1
   subtitleText: 
   playerSpawn: {fileID: 1726973597}
@@ -44790,6 +44789,7 @@ Transform:
   - {fileID: 185597442}
   - {fileID: 1313088953}
   - {fileID: 89952002}
+  - {fileID: 1680028773}
   m_Father: {fileID: 1456561229}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -54932,7 +54932,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: efe5e49f77add914dbf5d6000e4570b2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  orderNum: 1
   checkpointType: 1
   subtitleText: 
   playerSpawn: {fileID: 2095808530}
@@ -59265,7 +59264,7 @@ MonoBehaviour:
   sprintFootstepSound: {fileID: 8300000, guid: 62fd69e184e8728429f5c2662e8dcabd, type: 3}
   landSound: {fileID: 8300000, guid: 2e26855b9c1d0874c980a3317efcc539, type: 3}
   grappleSound: {fileID: 8300000, guid: ac01e24ac52856c4489609e80b1751fd, type: 3}
-  tempSound: {fileID: 0}
+  shatterSound: {fileID: 0}
   checkpointSound: {fileID: 8300000, guid: ec0e5a54050f14741a9ce2cb3ace8b2b, type: 3}
   deathSound: {fileID: 8300000, guid: 533f6bb18c47e114c96534ab65245966, type: 3}
   victorySound: {fileID: 8300000, guid: d322416b6bb0bad4bbfdc34cb7f46caf, type: 3}
@@ -61523,7 +61522,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: efe5e49f77add914dbf5d6000e4570b2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  orderNum: 0
   checkpointType: 0
   subtitleText: 
   playerSpawn: {fileID: 1007578142}
@@ -62395,19 +62393,21 @@ MonoBehaviour:
   bottomCameraClamp: 75
   wallSideCameraClamp: 15
   wallOutsideCameraClamp: 75
-  lookEnabled: 1
   walkSpeed: 8
   sprintSpeed: 12
   speedIncreaseMultiplier: 5
   slopeIncreaseMultiplier: 1.2
   landGroundFriction: 0
+  minMovementVelocity: 0
   jumpForce: 15
   jumpCooldown: 0.25
   airMultiplier: 0.6
   crouchSpeed: 5
+  crouchDownwardsForce: 0
   crouchScale: 0.5
   uncrouchMinClearing: 0.4
   maxSlideSpeed: 60
+  slideDownwardsForce: 0
   maxSlideTime: 0.75
   upwardsSlideFactor: 0.5
   wallRunSpeed: 10
@@ -62444,9 +62444,9 @@ MonoBehaviour:
   jointMassScale: 4.5
   swingIKTarget: {fileID: 0}
   swingPoint: {fileID: 0}
-  swingableMask:
+  swingMask:
     serializedVersion: 2
-    m_Bits: 272
+    m_Bits: 0
   quality: 500
   damper: 14
   strength: 800
@@ -62480,11 +62480,11 @@ MonoBehaviour:
   predictionObj: {fileID: 1610090246}
   predictionRadius: 1.5
   ziplineCheckRadius: 0
-  ziplineExitForce: 0
+  ziplineExitUpwardsFactor: 0
+  ziplineExitForwardFactor: 0
   ziplineMask:
     serializedVersion: 2
     m_Bits: 1024
-  grabEnabled: 0
   grabDistance: 0
   grabPoint: {fileID: 0}
   walkBobSpeed: 10
@@ -62507,6 +62507,7 @@ MonoBehaviour:
   sprintKey: 304
   jumpKey: 32
   slideKey: 99
+  swingKey: 0
   upwardsWallRunKey: 0
   downwardsWallRunKey: 0
   cableExtendKey: 0
@@ -65941,20 +65942,22 @@ MonoBehaviour:
   bottomCameraClamp: 75
   wallSideCameraClamp: 15
   wallOutsideCameraClamp: 75
-  lookEnabled: 1
   walkSpeed: 8
   sprintSpeed: 12
   speedIncreaseMultiplier: 5
   slopeIncreaseMultiplier: 2.5
   landGroundFriction: 1.3
+  minMovementVelocity: 1
   jumpForce: 15
   jumpCooldown: 0.25
   airMultiplier: 0.4
   crouchSpeed: 5
+  crouchDownwardsForce: 500
   crouchScale: 0.5
   uncrouchMinClearing: 0.4
   maxSlideSpeed: 60
-  maxSlideTime: 0.75
+  slideDownwardsForce: 200
+  maxSlideTime: 1
   upwardsSlideFactor: 0.5
   wallRunSpeed: 10
   wallRunForce: 200
@@ -65990,7 +65993,7 @@ MonoBehaviour:
   jointMassScale: 4.5
   swingIKTarget: {fileID: 877949050}
   swingPoint: {fileID: 70011287}
-  swingableMask:
+  swingMask:
     serializedVersion: 2
     m_Bits: 256
   quality: 500
@@ -66026,13 +66029,13 @@ MonoBehaviour:
   predictionObj: {fileID: 1610090246}
   predictionRadius: 3
   ziplineCheckRadius: 2
-  ziplineExitForce: 10
+  ziplineExitUpwardsFactor: 15
+  ziplineExitForwardFactor: 20
   ziplineMask:
     serializedVersion: 2
     m_Bits: 1024
-  grabEnabled: 0
-  grabDistance: 0
-  grabPoint: {fileID: 0}
+  grabDistance: 5
+  grabPoint: {fileID: 1680028773}
   walkBobSpeed: 10
   walkBobAmount: 0.15
   sprintBobSpeed: 18
@@ -66046,13 +66049,14 @@ MonoBehaviour:
   groundCheckRadius: 0.25
   environmentMask:
     serializedVersion: 2
-    m_Bits: 448
+    m_Bits: 2496
   maxSlopeAngle: 45
   slopeCheckDistance: 0.3
   groundDrag: 5
   sprintKey: 304
   jumpKey: 32
   slideKey: 99
+  swingKey: 324
   upwardsWallRunKey: 0
   downwardsWallRunKey: 0
   cableExtendKey: 0
@@ -66060,7 +66064,7 @@ MonoBehaviour:
   interactKeyAlt: 323
   resetKey: 9
   pauseKey: 27
-  grabKey: 0
+  grabKey: 323
 --- !u!54 &1456561227
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -74601,6 +74605,37 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 1677384649}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1680028772
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1680028773}
+  m_Layer: 0
+  m_Name: GrabPoint
+  m_TagString: Untagged
+  m_Icon: {fileID: -5442936267250999957, guid: 0000000000000000d000000000000000, type: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1680028773
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1680028772}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 3}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 897645099}
+  m_RootOrder: 9
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1683814961
 GameObject:
   m_ObjectHideFlags: 0
@@ -94444,7 +94479,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: efe5e49f77add914dbf5d6000e4570b2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  orderNum: 2
   checkpointType: 1
   subtitleText: 
   playerSpawn: {fileID: 876294670}

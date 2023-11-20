@@ -15,8 +15,10 @@ public class PhysicsTrigger : MonoBehaviour {
 
     [Header("Mesh Settings")]
     [SerializeField] private bool meshVisible;
-    [SerializeField] private bool flipMeshOnCollision;
-    [SerializeField] private bool flipPhysicsOnCollision;
+    [SerializeField] private bool flipMesh;
+    [SerializeField] private bool enablePhysics;
+    [SerializeField] private bool disableCollider;
+    [SerializeField] private float colliderDisableDelay;
 
     private void Start() {
 
@@ -29,7 +31,7 @@ public class PhysicsTrigger : MonoBehaviour {
         rb.freezeRotation = true;
         rb.useGravity = false;
         meshRenderer.enabled = meshVisible;
-        collider.enabled = meshVisible;
+        collider.enabled = disableCollider;
 
     }
 
@@ -39,20 +41,19 @@ public class PhysicsTrigger : MonoBehaviour {
 
             audioManager.PlaySound(GameAudioManager.GameSoundEffectType.Shatter);
 
-            if (flipMeshOnCollision) {
-
+            if (flipMesh)
                 meshRenderer.enabled = !meshVisible;
-                collider.enabled = !meshVisible;
 
-            }
-
-            if (flipPhysicsOnCollision) {
+            if (enablePhysics) {
 
                 rb.constraints = RigidbodyConstraints.None;
                 rb.freezeRotation = false;
                 rb.useGravity = true;
 
             }
+
+            if (disableCollider)
+                StartCoroutine(HandleColliderDisable(colliderDisableDelay));
 
             triggered = true;
 
@@ -66,14 +67,10 @@ public class PhysicsTrigger : MonoBehaviour {
 
         audioManager.PlaySound(GameAudioManager.GameSoundEffectType.Shatter);
 
-        if (flipMeshOnCollision) {
-
+        if (flipMesh)
             meshRenderer.enabled = !meshVisible;
-            collider.enabled = !meshVisible;
 
-        }
-
-        if (flipPhysicsOnCollision) {
+        if (enablePhysics) {
 
             rb.constraints = RigidbodyConstraints.None;
             rb.freezeRotation = false;
@@ -81,6 +78,16 @@ public class PhysicsTrigger : MonoBehaviour {
 
         }
 
+        if (disableCollider)
+            StartCoroutine(HandleColliderDisable(colliderDisableDelay));
+
         triggered = true;
+    }
+
+    private IEnumerator HandleColliderDisable(float duration) {
+
+        yield return new WaitForSeconds(duration);
+        collider.enabled = false;
+
     }
 }

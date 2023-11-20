@@ -15,6 +15,7 @@ public class Level : ScriptableObject {
     [SerializeField] private Color defaultRopeEndColor;
 
     [Header("Movement")]
+    [SerializeField] private bool lookEnabled;
     [SerializeField] private bool walkEnabled;
     [SerializeField] private bool sprintEnabled;
     [SerializeField] private bool jumpEnabled;
@@ -23,6 +24,7 @@ public class Level : ScriptableObject {
     [SerializeField] private bool wallRunEnabled;
     [SerializeField] private bool swingEnabled;
     [SerializeField] private bool ziplineEnabled;
+    [SerializeField] private bool grabEnabled;
 
     public string GetLevelName() {
 
@@ -66,9 +68,27 @@ public class Level : ScriptableObject {
 
     }
 
+    public bool GetLookEnabled() {
+
+        return lookEnabled;
+
+    }
+
+    public void SetLookEnabled(bool lookEnabled) {
+
+        this.lookEnabled = lookEnabled;
+
+    }
+
     public bool GetWalkEnabled() {
 
         return walkEnabled;
+
+    }
+
+    public void SetWalkEnabled(bool walkEnabled) {
+
+        this.walkEnabled = walkEnabled;
 
     }
 
@@ -78,9 +98,21 @@ public class Level : ScriptableObject {
 
     }
 
+    public void SetSprintEnabled(bool sprintEnabled) {
+
+        this.sprintEnabled = sprintEnabled;
+
+    }
+
     public bool GetJumpEnabled() {
 
         return jumpEnabled;
+
+    }
+
+    public void SetJumpEnabled(bool jumpEnabled) {
+
+        this.jumpEnabled = jumpEnabled;
 
     }
 
@@ -90,9 +122,21 @@ public class Level : ScriptableObject {
 
     }
 
+    public void SetCrouchEnabled(bool crouchEnabled) {
+
+        this.crouchEnabled = crouchEnabled;
+
+    }
+
     public bool GetSlideEnabled() {
 
         return slideEnabled;
+
+    }
+
+    public void SetSlideEnabled(bool slideEnabled) {
+
+        this.slideEnabled = slideEnabled;
 
     }
 
@@ -102,15 +146,45 @@ public class Level : ScriptableObject {
 
     }
 
+    public void SetWallRunEnabled(bool wallRunEnabled) {
+
+        this.wallRunEnabled = wallRunEnabled;
+
+    }
+
     public bool GetSwingEnabled() {
 
         return swingEnabled;
 
     }
 
+    public void SetSwingEnabled(bool swingEnabled) {
+
+        this.swingEnabled = swingEnabled;
+
+    }
+
     public bool GetZiplineEnabled() {
 
         return ziplineEnabled;
+
+    }
+
+    public void SetZiplineEnabled(bool ziplineEnabled) {
+
+        this.ziplineEnabled = ziplineEnabled;
+
+    }
+
+    public bool GetGrabEnabled() {
+
+        return grabEnabled;
+
+    }
+
+    public void SetGrabEnabled(bool grabEnabled) {
+
+        this.grabEnabled = grabEnabled;
 
     }
 }

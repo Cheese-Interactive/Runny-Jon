@@ -68,6 +68,12 @@ AnimatorStateTransition:
     m_ConditionEvent: isGrounded
     m_EventTreshold: 0
   - m_ConditionMode: 2
+    m_ConditionEvent: isCrouching
+    m_EventTreshold: 0
+  - m_ConditionMode: 2
+    m_ConditionEvent: isSliding
+    m_EventTreshold: 0
+  - m_ConditionMode: 2
     m_ConditionEvent: isSwinging
     m_EventTreshold: 0
   m_DstStateMachine: {fileID: 0}
@@ -198,6 +204,9 @@ AnimatorStateTransition:
     m_ConditionEvent: isGrounded
     m_EventTreshold: 0
   - m_ConditionMode: 2
+    m_ConditionEvent: isSliding
+    m_EventTreshold: 0
+  - m_ConditionMode: 2
     m_ConditionEvent: isSwinging
     m_EventTreshold: 0
   m_DstStateMachine: {fileID: 0}
@@ -227,6 +236,12 @@ AnimatorStateTransition:
     m_EventTreshold: 0
   - m_ConditionMode: 2
     m_ConditionEvent: isGrounded
+    m_EventTreshold: 0
+  - m_ConditionMode: 2
+    m_ConditionEvent: isCrouching
+    m_EventTreshold: 0
+  - m_ConditionMode: 2
+    m_ConditionEvent: isSliding
     m_EventTreshold: 0
   - m_ConditionMode: 2
     m_ConditionEvent: isSwinging
@@ -873,6 +888,12 @@ AnimatorStateTransition:
     m_ConditionEvent: isGrounded
     m_EventTreshold: 0
   - m_ConditionMode: 2
+    m_ConditionEvent: isCrouching
+    m_EventTreshold: 0
+  - m_ConditionMode: 2
+    m_ConditionEvent: isSliding
+    m_EventTreshold: 0
+  - m_ConditionMode: 2
     m_ConditionEvent: isSwinging
     m_EventTreshold: 0
   m_DstStateMachine: {fileID: 0}
@@ -1305,6 +1326,12 @@ AnimatorStateTransition:
     m_ConditionEvent: isGrounded
     m_EventTreshold: 0
   - m_ConditionMode: 2
+    m_ConditionEvent: isCrouching
+    m_EventTreshold: 0
+  - m_ConditionMode: 2
+    m_ConditionEvent: isSliding
+    m_EventTreshold: 0
+  - m_ConditionMode: 2
     m_ConditionEvent: isSwinging
     m_EventTreshold: 0
   m_DstStateMachine: {fileID: 0}
@@ -1594,6 +1621,12 @@ AnimatorStateTransition:
     m_ConditionEvent: isGrounded
     m_EventTreshold: 0
   - m_ConditionMode: 2
+    m_ConditionEvent: isCrouching
+    m_EventTreshold: 0
+  - m_ConditionMode: 2
+    m_ConditionEvent: isSliding
+    m_EventTreshold: 0
+  - m_ConditionMode: 2
     m_ConditionEvent: isSwinging
     m_EventTreshold: 0
   m_DstStateMachine: {fileID: 0}
@@ -1669,9 +1702,6 @@ AnimatorStateTransition:
   m_Name: 
   m_Conditions:
   - m_ConditionMode: 1
-    m_ConditionEvent: isGrounded
-    m_EventTreshold: 0
-  - m_ConditionMode: 1
     m_ConditionEvent: isSliding
     m_EventTreshold: 0
   m_DstStateMachine: {fileID: 0}
@@ -1723,6 +1753,12 @@ AnimatorStateTransition:
   m_Conditions:
   - m_ConditionMode: 2
     m_ConditionEvent: isGrounded
+    m_EventTreshold: 0
+  - m_ConditionMode: 2
+    m_ConditionEvent: isCrouching
+    m_EventTreshold: 0
+  - m_ConditionMode: 2
+    m_ConditionEvent: isSliding
     m_EventTreshold: 0
   - m_ConditionMode: 2
     m_ConditionEvent: isSwinging
@@ -2079,13 +2115,13 @@ AnimatorStateMachine:
     m_Position: {x: 550, y: 210, z: 0}
   - serializedVersion: 1
     m_State: {fileID: -1322051768451453715}
-    m_Position: {x: 850, y: 320, z: 0}
+    m_Position: {x: 870, y: 310, z: 0}
   - serializedVersion: 1
     m_State: {fileID: 1270353127410700439}
     m_Position: {x: 280, y: 410, z: 0}
   - serializedVersion: 1
     m_State: {fileID: 1961710983335352060}
-    m_Position: {x: 550, y: 310, z: 0}
+    m_Position: {x: 560, y: 310, z: 0}
   - serializedVersion: 1
     m_State: {fileID: -688677943388718730}
     m_Position: {x: 550, y: 410, z: 0}
@@ -2314,6 +2350,12 @@ AnimatorStateTransition:
   m_Conditions:
   - m_ConditionMode: 2
     m_ConditionEvent: isGrounded
+    m_EventTreshold: 0
+  - m_ConditionMode: 2
+    m_ConditionEvent: isCrouching
+    m_EventTreshold: 0
+  - m_ConditionMode: 2
+    m_ConditionEvent: isSliding
     m_EventTreshold: 0
   - m_ConditionMode: 2
     m_ConditionEvent: isSwinging

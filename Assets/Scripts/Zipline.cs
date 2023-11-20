@@ -10,7 +10,9 @@ public class Zipline : MonoBehaviour {
     private PlayerController playerController;
     private LineRenderer lineRenderer;
     private GameObject currZipline;
-    private Rigidbody ziplineRb;
+    private Rigidbody currZiplineRb;
+    private Collider currZiplineCollider;
+    private Rigidbody playerRb;
     private Vector3 offset;
     private Coroutine lerpToZiplineCoroutine;
 
@@ -44,11 +46,12 @@ public class Zipline : MonoBehaviour {
         if (!isZiplining || currZipline == null)
             return;
 
-        currZipline.GetComponent<Rigidbody>().AddForce((targetZipline.ziplineConnector.position - ziplineConnector.position).normalized * ziplineSpeed * Time.deltaTime, ForceMode.Acceleration);
-        playerController.transform.position = currZipline.transform.position - offset;
+        currZiplineRb.AddForce((targetZipline.ziplineConnector.position - ziplineConnector.position).normalized * ziplineSpeed * Time.deltaTime, ForceMode.Acceleration);
+        playerRb.velocity = currZiplineRb.velocity;
+        playerRb.MovePosition(currZipline.transform.position - offset);
 
         if (Vector3.Distance(currZipline.transform.position, targetZipline.ziplineConnector.position) <= arrivalThreshold)
-            ResetZipline(true);
+            ResetZipline();
 
     }
 
@@ -69,6 +72,7 @@ public class Zipline : MonoBehaviour {
         currZipline = GameObject.CreatePrimitive(PrimitiveType.Sphere);
         currZipline.transform.position = ziplineConnector.position;
         currZipline.transform.localScale = new Vector3(ziplineScale, ziplineScale, ziplineScale);
+        currZiplineRb = currZipline.GetComponent<Rigidbody>();
 
         lerpToZiplineCoroutine = StartCoroutine(LerpPlayerToZipline(playerController.transform, currZipline.transform.position - offset, lerpToZiplineDuration));
 
@@ -78,6 +82,8 @@ public class Zipline : MonoBehaviour {
 
         float currentTime = 0f;
         Vector3 startPosition = playerController.transform.position;
+        playerRb = playerController.GetComponent<Rigidbody>();
+        currZiplineCollider = currZipline.GetComponent<Collider>();
 
         while (currentTime < duration) {
 
@@ -90,15 +96,15 @@ public class Zipline : MonoBehaviour {
         player.position = targetPosition;
         lerpToZiplineCoroutine = null;
 
-        ziplineRb = currZipline.gameObject.AddComponent<Rigidbody>();
-        ziplineRb.useGravity = false;
-        ziplineRb.velocity = (targetZipline.ziplineConnector.position - ziplineConnector.position).normalized * playerController.GetComponent<Rigidbody>().velocity.magnitude;
-        currZipline.GetComponent<Collider>().isTrigger = true;
+        currZiplineRb = currZipline.gameObject.AddComponent<Rigidbody>();
+        currZiplineRb.useGravity = false;
+        currZiplineRb.velocity = (targetZipline.ziplineConnector.position - ziplineConnector.position).normalized * playerRb.velocity.magnitude;
+        currZiplineCollider.isTrigger = true;
         isZiplining = true;
 
     }
 
-    public void ResetZipline(bool jump) {
+    public void ResetZipline() {
 
         if (!isZiplining)
             return;
@@ -106,7 +112,7 @@ public class Zipline : MonoBehaviour {
         Destroy(currZipline);
         currZipline = null;
         isZiplining = false;
-        playerController.ResetZipline(jump);
+        playerController.ResetZipline();
 
     }
 }

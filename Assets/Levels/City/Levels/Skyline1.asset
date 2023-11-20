@@ -19,6 +19,9 @@ MonoBehaviour:
   timeLimit: 0
   isTutorial: 0
   backgroundMusic: {fileID: 8300000, guid: 1708e7fe8f5625e46920dbfe6015847e, type: 3}
+  defaultRopeStartColor: {r: 0, g: 0, b: 0, a: 0}
+  defaultRopeEndColor: {r: 0, g: 0, b: 0, a: 0}
+  lookEnabled: 1
   walkEnabled: 1
   sprintEnabled: 1
   jumpEnabled: 1
@@ -27,3 +30,4 @@ MonoBehaviour:
   wallRunEnabled: 1
   swingEnabled: 1
   ziplineEnabled: 1
+  grabEnabled: 1
