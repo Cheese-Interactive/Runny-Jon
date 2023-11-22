@@ -1,6 +1,6 @@
 using System.Collections;
 using TMPro;
-using Unity.VisualScripting;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.Animations.Rigging;
 
@@ -9,6 +9,7 @@ using UnityEngine.Animations.Rigging;
 [RequireComponent(typeof(RigBuilder))]
 public class PlayerController : MonoBehaviour {
 
+    #region VARIABLES
     [Header("References")]
     [SerializeField] private new Camera camera;
     [SerializeField] private TMP_Text speedText;
@@ -22,6 +23,8 @@ public class PlayerController : MonoBehaviour {
     private Rigidbody rb;
     private LineRenderer lineRenderer;
     private Spring spring;
+    private float startScale;
+    private float startHeight;
 
     [Header("Toggles")]
     private bool levelLookEnabled;
@@ -91,8 +94,6 @@ public class PlayerController : MonoBehaviour {
     [SerializeField] private float crouchDownwardsForce;
     [SerializeField] private float crouchScale;
     [SerializeField] private float uncrouchMinClearing;
-    private float startScale;
-    private float startHeight;
     private bool uncrouchQueued;
 
     [Header("Sliding")]
@@ -106,56 +107,55 @@ public class PlayerController : MonoBehaviour {
     [Header("Wall Running")]
     [SerializeField] private float wallRunSpeed;
     [SerializeField] private float wallRunForce;
-    [SerializeField] private float wallNormalForce;
-    [SerializeField] private float exitWallTime;
-    [SerializeField] private bool useWallRunTimer;
-    [SerializeField] private float maxWallRunTime;
+    [SerializeField] private float wallRunNormalForce;
     [SerializeField] private LayerMask wallMask;
-    [SerializeField] private float lookRotationLerpDuration;
-    private bool canWallRun;
-    private Transform lastWall;
-    private Vector3 wallForward;
-    private Vector3 wallNormal;
-    private Coroutine lookRotationLerpCoroutine;
-    private float wallRunTimer;
+    [SerializeField] private float exitWallTime;
     private float exitWallTimer;
+    private Transform lastWall;
     private bool exitingWall;
+    private Vector3 wallForward;
+
+    [Header("Wall Run Timer")]
+    [SerializeField] private bool wallRunTimerEnabled;
+    [SerializeField] private float maxWallRunDuration;
+    private float wallRunTimer;
+
+    [Header("Wall Run Scaling")]
+    [SerializeField] private bool wallRunScalingEnabled;
+    [SerializeField] private float wallScaleSpeed;
+    private bool runningDownWall;
+    private bool runningUpWall;
 
     [Header("Wall Jumping")]
     [SerializeField] private float wallJumpUpForce;
     [SerializeField] private float wallJumpSideForce;
 
-    [Header("Wall Climbing")]
-    [SerializeField] private float wallClimbSpeed;
-    private bool wallRunningUpwards;
-    private bool wallRunningDownwards;
-
-    [Header("Wall Run Gravity")]
-    [SerializeField] private bool useWallRunGravity;
-    [SerializeField] private float initialGravityCounterForce;
-    [SerializeField] private float gravityDelay;
-    [SerializeField] private float gravityDecrementRate;
-    [SerializeField] private float gravityDecrementAmount;
-    private float gravityCounterForce;
-    private Coroutine gravityDelayCoroutine;
-
-    [Header("Wall Run Animations")]
-    [SerializeField] private float wallRunCameraFOV;
-    [SerializeField] private float camFOVLerpDuration;
-    [SerializeField] private float wallRunCamTilt;
-    [SerializeField] private float camTiltLerpDuration;
-    private float startCameraFOV;
-    private float startCameraZTilt;
-    private Coroutine lerpCamFOVCoroutine;
-    private Coroutine lerpCamTiltCoroutine;
-
     [Header("Wall Detection")]
+    [SerializeField] private float wallCheckRadius;
     [SerializeField] private float wallCheckDistance;
     [SerializeField] private float minJumpHeight;
     private RaycastHit leftWallHit;
     private RaycastHit rightWallHit;
     private bool wallLeft;
     private bool wallRight;
+
+    [Header("Wall Run Camera Effects")]
+    [SerializeField] private float wallRunFOV;
+    [SerializeField] private float wallRunFOVLerpDuration;
+    [SerializeField] private float wallRunTilt;
+    [SerializeField] private float wallRunTiltLerpDuration;
+    [SerializeField] private float lookRotationLerpDuration;
+    private float startFOV;
+    private Vector3 startTilt;
+    private Coroutine wallRunFOVCoroutine;
+    private Coroutine wallRunTiltCoroutine;
+    private Coroutine lookRotationLerpCoroutine;
+
+    [Header("Wall Run Gravity")]
+    [SerializeField] private bool useWallRunGravity;
+    [SerializeField] private float gravityDelay;
+    [SerializeField] private float gravityIncrementRate;
+    private Coroutine gravityDelayCoroutine;
 
     [Header("Swinging")]
     [SerializeField] private float maxSwingSpeed;
@@ -247,7 +247,9 @@ public class PlayerController : MonoBehaviour {
     [SerializeField] private KeyCode resetKey;
     [SerializeField] private KeyCode pauseKey;
     [SerializeField] private KeyCode grabKey;
+    #endregion
 
+    #region ENUMS
     public enum MovementState {
 
         None, Walking, Sprinting, Crouching, Sliding, WallRunningLeft, WallRunningRight, Swinging, Ziplining, Air, Killed
@@ -259,7 +261,9 @@ public class PlayerController : MonoBehaviour {
         None, ValidUp, ValidDown, Invalid
 
     }
+    #endregion
 
+    #region CORE
     private void Awake() {
 
         gameManager = FindObjectOfType<GameManager>();
@@ -282,18 +286,12 @@ public class PlayerController : MonoBehaviour {
         movementState = MovementState.None;
 
         jumpReady = true;
-        canWallRun = true;
-
-        startCameraFOV = camera.fieldOfView;
-        startCameraZTilt = camera.transform.localRotation.z;
 
         startScale = transform.localScale.y;
         startHeight = GetComponent<CapsuleCollider>().height;
         startCameraPos = cameraPos.localPosition;
 
         predictionObj.gameObject.SetActive(false);
-
-        gravityCounterForce = initialGravityCounterForce;
 
         Level level = gameManager.GetCurrentLevel();
         lookEnabled = levelLookEnabled = level.GetLookEnabled();
@@ -307,10 +305,14 @@ public class PlayerController : MonoBehaviour {
         ziplineEnabled = levelZiplineEnabled = level.GetZiplineEnabled();
         grabEnabled = levelGrabEnabled = level.GetGrabEnabled();
 
+        startFOV = camera.fieldOfView;
+        startTilt = camera.transform.localRotation.eulerAngles;
+
     }
 
     private void Update() {
 
+        // looking
         if (lookEnabled) {
 
             float mouseX = Input.GetAxisRaw("Mouse X") * xSensitivity * 10f * Time.fixedDeltaTime;
@@ -324,14 +326,25 @@ public class PlayerController : MonoBehaviour {
 
             } else {
 
-                Vector3 rotation = Quaternion.LookRotation(wallForward, Vector3.up).eulerAngles;
-
                 if (lookRotationLerpCoroutine == null) {
 
+                    Vector3 rotation = Quaternion.LookRotation(wallForward).eulerAngles;
+
+                    // cancel wall run if player looks out of outer clamp range (away from wall)
+                    if ((wallLeft && yRotation > rotation.y + wallOutsideCameraClamp) || (wallRight && yRotation < rotation.y - wallOutsideCameraClamp))
+                        StopWallRun();
+
+                    // lock camera during wall run & follow wall
+                    // stop exiting look rotation lerp coroutine if it exists
+                    //if (lookRotationLerpCoroutine != null)
+                    //    StopCoroutine(lookRotationLerpCoroutine);
+                    //
+                    // lookRotationLerpCoroutine = StartCoroutine(LerpLookRotation(Quaternion.Euler(rotation)));
+
                     if (wallLeft)
-                        yRotation = Mathf.Clamp(yRotation, rotation.y - wallSideCameraClamp, rotation.y + wallOutsideCameraClamp);
+                        yRotation = Mathf.Clamp(yRotation, rotation.y - wallSideCameraClamp, float.MaxValue);
                     else
-                        yRotation = Mathf.Clamp(yRotation, rotation.y - wallOutsideCameraClamp, rotation.y + wallSideCameraClamp);
+                        yRotation = Mathf.Clamp(yRotation, float.MinValue, rotation.y + wallSideCameraClamp);
 
                 }
             }
@@ -343,9 +356,15 @@ public class PlayerController : MonoBehaviour {
 
         }
 
+        // ground check
         isGrounded = Physics.CheckSphere(feet.position, groundCheckRadius, environmentMask);
         animator.SetBool("isGrounded", isGrounded);
 
+        // reset last wall
+        if (isGrounded && lastWall)
+            lastWall = null;
+
+        // handling velocity when landing
         if (isGrounded && !lastIsGrounded) { // just landed
 
             if (movementDirection == Vector3.zero) {
@@ -360,18 +379,23 @@ public class PlayerController : MonoBehaviour {
             }
 
             audioManager.PlaySound(GameAudioManager.GameSoundEffectType.Land);
+            exitingSlope = false;
 
         }
 
+        /*
         if (isGrounded && lastWall != null)
             lastWall = null;
+        */
 
         horizontalInput = Input.GetAxisRaw("Horizontal");
         verticalInput = Input.GetAxisRaw("Vertical");
 
+        // speed control
         ControlSpeed();
         speedText.text = "Speed: " + (Mathf.Round(rb.velocity.magnitude * 100f) / 100f);
 
+        // slide queueing
         if (slideQueued && jumpReady && Input.GetKey(slideKey) && isGrounded && movementState == MovementState.Air) {
 
             StartSlide();
@@ -379,6 +403,7 @@ public class PlayerController : MonoBehaviour {
 
         }
 
+        // jumping
         if (Input.GetKeyDown(jumpKey) && jumpReady && jumpEnabled && (isGrounded || movementState == MovementState.Ziplining)) {
 
             if (movementState == MovementState.Sliding) {
@@ -395,6 +420,7 @@ public class PlayerController : MonoBehaviour {
         HandleMovementState();
         HandleHeadbob();
 
+        // uncrouching
         if (uncrouchQueued) {
 
             foreach (Transform checker in obstacleCheckers) {
@@ -408,6 +434,7 @@ public class PlayerController : MonoBehaviour {
             }
         }
 
+        // sliding
         if (Input.GetKeyDown(slideKey) && movementState != MovementState.Crouching && movementState != MovementState.Swinging && movementState != MovementState.WallRunningLeft && movementState != MovementState.WallRunningRight && movementState != MovementState.Ziplining) {
 
             Vector3 flatVel = new Vector3(rb.velocity.x, 0f, rb.velocity.z);
@@ -426,9 +453,9 @@ public class PlayerController : MonoBehaviour {
 
         }
 
-        CheckWall();
         HandleWallRunState();
 
+        // swinging
         if (swingEnabled && movementState != MovementState.WallRunningLeft && movementState != MovementState.WallRunningRight && movementState != MovementState.Ziplining)
             if (Input.GetKeyDown(swingKey))
                 StartSwing();
@@ -443,6 +470,7 @@ public class PlayerController : MonoBehaviour {
         else
             rb.drag = 0f;
 
+        // level resetting
         if (Input.GetKeyDown(resetKey)) {
 
             transform.parent = null;
@@ -450,6 +478,7 @@ public class PlayerController : MonoBehaviour {
 
         }
 
+        // pausing
         if (Input.GetKeyDown(pauseKey)) {
 
             if (gameManager.GetGamePaused())
@@ -501,6 +530,7 @@ public class PlayerController : MonoBehaviour {
 
                 // grabs object
                 currGrabbedObj = grabbableHitInfo.rigidbody;
+                currGrabbedObj.freezeRotation = true;
                 currGrabbedObj.useGravity = false;
 
             } else {
@@ -520,6 +550,7 @@ public class PlayerController : MonoBehaviour {
 
                 // lets go of grabbed object
                 currGrabbedObj.useGravity = true;
+                currGrabbedObj.freezeRotation = false;
                 currGrabbedObj = null;
 
             }
@@ -540,6 +571,11 @@ public class PlayerController : MonoBehaviour {
 
             Vector3 directionToPoint = grabPoint.position - currGrabbedObj.position;
             currGrabbedObj.velocity = directionToPoint * 12f * (directionToPoint.magnitude);
+            float newSpeed = moveSpeed;
+            newSpeed /= (currGrabbedObj.mass);
+
+            if (newSpeed < moveSpeed)
+                moveSpeed = newSpeed;
 
         }
 
@@ -558,27 +594,38 @@ public class PlayerController : MonoBehaviour {
 
         }
 
+        // swinging
         if (movementState == MovementState.Swinging && joint != null) {
 
             HandleSwingMovement();
 
-        } else if (movementState == MovementState.WallRunningLeft || movementState == MovementState.WallRunningRight) {
+        }
+        // wall running
+        else if (movementState == MovementState.WallRunningLeft || movementState == MovementState.WallRunningRight) {
 
             HandleWallRunMovement();
 
-        } else if (CheckSlope() == SlopeType.ValidUp || CheckSlope() == SlopeType.ValidDown && !exitingSlope) {
+        }
+        // on valid slope
+        else if (CheckSlope() == SlopeType.ValidUp || CheckSlope() == SlopeType.ValidDown && !exitingSlope) {
 
             rb.AddForce(GetSlopeMoveDirection() * moveSpeed * 30f, ForceMode.Force);
 
-        } else if (CheckSlope() == SlopeType.Invalid) {
+        }
+        // on invalid slope
+        else if (CheckSlope() == SlopeType.Invalid) {
 
             rb.AddForce(Vector3.Cross(slopeHit.normal, Vector3.Cross(slopeHit.normal, Vector3.up)) * 500f, ForceMode.Acceleration);
 
-        } else if (isGrounded && movementState != MovementState.None) {
+        }
+        // on ground (walking, sprinting, crouching, sliding)
+        else if (isGrounded && movementState != MovementState.None) {
 
             rb.AddForce(movementDirection.normalized * moveSpeed * 10f, ForceMode.Force);
 
-        } else if (movementState != MovementState.None) {
+        }
+        // in air
+        else if (movementState != MovementState.None) {
 
             rb.AddForce(movementDirection.normalized * moveSpeed * airMultiplier * 10f, ForceMode.Force);
 
@@ -587,6 +634,7 @@ public class PlayerController : MonoBehaviour {
         // no gravity on slopes
         if (movementState != MovementState.WallRunningLeft && movementState != MovementState.WallRunningRight && movementState != MovementState.Ziplining) {
 
+            // use gravity if player is on invalid slope or no slope (no gravity if player is on slope)
             rb.useGravity = CheckSlope() == SlopeType.None || CheckSlope() == SlopeType.Invalid;
 
         }
@@ -607,59 +655,18 @@ public class PlayerController : MonoBehaviour {
 
         }
     }
+    #endregion
 
-    private void StartLerpCameraFOV(float targetFOV) {
+    #region LOOKING
+    public void SetLookRotations(float xRotation, float yRotation) {
 
-        if (lerpCamFOVCoroutine != null)
-            StopCoroutine(lerpCamFOVCoroutine);
-
-        lerpCamFOVCoroutine = StartCoroutine(LerpCameraFOV(camera.fieldOfView, targetFOV));
-
-    }
-
-    private IEnumerator LerpCameraFOV(float startFOV, float targetFOV) {
-
-        float currentTime = 0f;
-
-        while (currentTime < camFOVLerpDuration) {
-
-            currentTime += Time.deltaTime;
-            camera.fieldOfView = Mathf.Lerp(startFOV, targetFOV, currentTime / camFOVLerpDuration);
-            yield return null;
-
-        }
-
-        camera.fieldOfView = targetFOV;
-        lerpCamFOVCoroutine = null;
+        this.xRotation = xRotation;
+        this.yRotation = yRotation;
 
     }
+    #endregion
 
-    private void StartLerpCameraTilt(float targetZTilt) {
-
-        if (lerpCamTiltCoroutine != null)
-            StopCoroutine(lerpCamTiltCoroutine);
-
-        lerpCamTiltCoroutine = StartCoroutine(LerpCameraTilt(camera.transform.localRotation.z, targetZTilt));
-
-    }
-
-    private IEnumerator LerpCameraTilt(float startZTilt, float targetZTilt) {
-
-        float currentTime = 0f;
-
-        while (currentTime < camTiltLerpDuration) {
-
-            currentTime += Time.deltaTime;
-            camera.transform.localRotation = Quaternion.Euler(camera.transform.localRotation.x, camera.transform.localRotation.y, Mathf.Lerp(startZTilt, targetZTilt, currentTime / camTiltLerpDuration));
-            yield return null;
-
-        }
-
-        camera.transform.localRotation = Quaternion.Euler(camera.transform.localRotation.x, camera.transform.localRotation.y, targetZTilt);
-        lerpCamTiltCoroutine = null;
-
-    }
-
+    #region MOVEMENT
     private void HandleMovementState() {
 
         Vector3 flatVel = new Vector3(rb.velocity.x, 0f, rb.velocity.z);
@@ -693,7 +700,7 @@ public class PlayerController : MonoBehaviour {
             movementState = MovementState.WallRunningLeft;
             desiredMoveSpeed = wallRunSpeed;
 
-            if (flatVel.magnitude >= minMovementVelocity) {
+            /*if (flatVel.magnitude >= minMovementVelocity) {
 
                 ResetAnimations();
                 animator.SetBool("isWallRunningLeft", true);
@@ -702,14 +709,14 @@ public class PlayerController : MonoBehaviour {
 
                 ResetAnimations();
 
-            }
+            }*/
         } else if (movementState == MovementState.WallRunningRight && wallRunEnabled) {
 
             // wall running right
             movementState = MovementState.WallRunningRight;
             desiredMoveSpeed = wallRunSpeed;
 
-            if (flatVel.magnitude >= minMovementVelocity) {
+            /*if (flatVel.magnitude >= minMovementVelocity) {
 
                 ResetAnimations();
                 animator.SetBool("isWallRunningRight", true);
@@ -718,7 +725,7 @@ public class PlayerController : MonoBehaviour {
 
                 ResetAnimations();
 
-            }
+            }*/
         } else if (movementState == MovementState.Sliding && slideEnabled) {
 
             // sliding
@@ -778,7 +785,7 @@ public class PlayerController : MonoBehaviour {
                 ResetAnimations();
 
             }
-        } else if (isGrounded && Input.GetKey(sprintKey)) {
+        } else if (isGrounded && Input.GetKey(sprintKey) && sprintEnabled) {
 
             // sprinting
             movementState = MovementState.Sprinting;
@@ -887,6 +894,17 @@ public class PlayerController : MonoBehaviour {
         }
     }
 
+    public void ResetVelocity() {
+
+        moveSpeed = 0f;
+        lastDesiredMoveSpeed = 0f;
+        desiredMoveSpeed = 0f;
+        rb.velocity = Vector3.zero;
+
+    }
+    #endregion
+
+    #region ANIMATIONS
     private void ResetAnimations() {
 
         animator.SetBool("isWalking", false);
@@ -899,7 +917,9 @@ public class PlayerController : MonoBehaviour {
         animator.SetBool("isZiplining", false);
 
     }
+    #endregion
 
+    #region JUMPING
     private void Jump() {
 
         if (inElevator)
@@ -915,8 +935,13 @@ public class PlayerController : MonoBehaviour {
         jumpReady = false;
         Invoke(nameof(ResetJump), jumpCooldown);
 
-        if (CheckSlope() == SlopeType.ValidUp || CheckSlope() == SlopeType.ValidDown)
+        if (CheckSlope() == SlopeType.ValidUp || CheckSlope() == SlopeType.ValidDown) {
+
+            rb.velocity = new Vector3(rb.velocity.x, jumpForce, rb.velocity.z);
             exitingSlope = true;
+            return;
+
+        }
 
         rb.velocity = new Vector3(rb.velocity.x, jumpForce, rb.velocity.z);
 
@@ -945,10 +970,11 @@ public class PlayerController : MonoBehaviour {
     private void ResetJump() {
 
         jumpReady = true;
-        exitingSlope = false;
 
     }
+    #endregion
 
+    #region CROUCH
     private void Crouch() {
 
         if (uncrouchQueued || inElevator)
@@ -987,7 +1013,9 @@ public class PlayerController : MonoBehaviour {
         cameraPos.localScale = Vector3.one;
 
     }
+    #endregion
 
+    #region SLIDING
     private void StartSlide() {
 
         if (inElevator)
@@ -1006,133 +1034,160 @@ public class PlayerController : MonoBehaviour {
         Uncrouch();
 
     }
+    #endregion
 
-    private void CheckWall() {
+    #region WALL RUNNING
+    private void CheckForWall() {
 
-        wallRight = Physics.Raycast(transform.position, transform.right, out rightWallHit, wallCheckDistance, wallMask);
-        wallLeft = Physics.Raycast(transform.position, -transform.right, out leftWallHit, wallCheckDistance, wallMask);
+        // check for wall to the left
+        wallLeft = Physics.SphereCast(transform.position, wallCheckRadius, -transform.right, out leftWallHit, wallCheckDistance, wallMask);
+
+        // check for wall to the right
+        wallRight = Physics.SphereCast(transform.position, wallCheckRadius, transform.right, out rightWallHit, wallCheckDistance, wallMask);
 
     }
 
     private bool CanWallRun() {
 
-        return !Physics.Raycast(transform.position, Vector3.down, minJumpHeight, environmentMask);
+        // get current wall run wall
+        Transform wall = wallRight ? rightWallHit.transform : leftWallHit.transform;
+
+        // check all the flags for wall running
+        return (!Physics.Raycast(feet.position, Vector3.down, minJumpHeight, environmentMask)) && (movementState != MovementState.WallRunningLeft && movementState != MovementState.WallRunningRight) && lastWall != wall;
 
     }
 
     private void HandleWallRunState() {
 
-        wallRunningUpwards = Input.GetKey(upwardsWallRunKey);
-        wallRunningDownwards = Input.GetKey(downwardsWallRunKey);
+        // update wall check
+        CheckForWall();
 
-        if ((wallLeft || wallRight) && verticalInput > 0 && CanWallRun() && !exitingWall && !isGrounded) {
+        // wall scaling
+        if (wallRunScalingEnabled) {
 
+            runningUpWall = Input.GetKey(upwardsWallRunKey);
+            runningDownWall = Input.GetKey(downwardsWallRunKey);
+
+        }
+
+        // state 1: wall running
+        if ((wallLeft || wallRight) && verticalInput > 0 && !isGrounded && !exitingWall) {
+
+            // start wall run
             if (movementState != MovementState.WallRunningLeft && movementState != MovementState.WallRunningRight)
                 StartWallRun();
 
-            if (useWallRunTimer) {
+            // wall run timer (if enabled)
+            if (wallRunTimerEnabled) {
 
                 if (wallRunTimer > 0f)
                     wallRunTimer -= Time.deltaTime;
 
-                if (wallRunTimer <= 0f && (movementState == MovementState.WallRunningLeft || movementState == MovementState.WallRunningRight))
-                    WallJump();
+                // timer runs out
+                if (wallRunTimer <= 0f && (movementState == MovementState.WallRunningLeft || movementState == MovementState.WallRunningRight)) {
 
+                    WallJump();
+                    // exitingWall = true;
+                    exitWallTimer = exitWallTime;
+
+                }
             }
 
-            if (Input.GetKeyDown(jumpKey) && jumpEnabled)
+            // wall jumping
+            if (Input.GetKeyDown(jumpKey))
                 WallJump();
 
-        } else if (exitingWall) {
+        }
+        // state 2: exiting wall
+        else if (exitingWall) {
 
+            // if player is walling running, stop it
             if (movementState == MovementState.WallRunningLeft || movementState == MovementState.WallRunningRight)
                 StopWallRun();
 
+            // decrement exit wall timer
             if (exitWallTimer > 0f)
                 exitWallTimer -= Time.deltaTime;
 
+            // check if exit wall timer is over and reset boolean
             if (exitWallTimer <= 0f)
                 exitingWall = false;
 
-        } else if (movementState == MovementState.WallRunningLeft || movementState == MovementState.WallRunningRight) {
+        }
+        // state 3: none
+        else {
 
-            StopWallRun();
+            // if player is wall running, stop it
+            if (movementState == MovementState.WallRunningLeft || movementState == MovementState.WallRunningRight)
+                StopWallRun();
 
         }
     }
 
     private void StartWallRun() {
 
-        if (!canWallRun || (wallLeft && lastWall == leftWallHit.transform) || (wallRight && lastWall == rightWallHit.transform))
+        // make sure player can wall run
+        if (!CanWallRun())
             return;
 
-        if (movementState == MovementState.Crouching)
-            Uncrouch();
+        // disable gravity
+        rb.useGravity = false;
 
-        if (movementState == MovementState.Sliding)
-            StopSlide();
+        // get wall normal
+        RaycastHit wallHit = wallRight ? rightWallHit : leftWallHit;
 
-        if (movementState == MovementState.Swinging)
-            StopSwing();
+        // reset last wall
+        lastWall = wallHit.transform;
 
+        // set movement state based on which side the wall is on
+        movementState = wallRight ? MovementState.WallRunningRight : MovementState.WallRunningLeft;
 
-        if (wallLeft) {
+        // initialize timer if timer is enabled
+        if (wallRunTimerEnabled)
+            wallRunTimer = maxWallRunDuration;
 
-            movementState = MovementState.WallRunningLeft;
-            wallNormal = leftWallHit.normal;
-            lastWall = leftWallHit.transform;
+        // reset y velocity
+        rb.velocity = new Vector3(rb.velocity.x, 0f, rb.velocity.z);
 
-        } else if (wallRight) {
+        // apply camera effects
+        LerpFOV(wallRunFOV, wallRunFOVLerpDuration);
 
-            movementState = MovementState.WallRunningRight;
-            wallNormal = rightWallHit.normal;
-            lastWall = rightWallHit.transform;
+        // constrain camera
+        if (lookRotationLerpCoroutine != null)
+            StopCoroutine(lookRotationLerpCoroutine);
+
+        // make tilt negative when wall running on the left side
+        if (wallLeft)
+            LerpTilt(new Vector3(0f, 0f, -wallRunTilt), wallRunTiltLerpDuration);
+        if (wallRight)
+            LerpTilt(new Vector3(0f, 0f, wallRunTilt), wallRunTiltLerpDuration);
+
+        // limit player rotation
+        wallForward = Vector3.Cross(wallHit.normal, Vector3.up);
+        Quaternion rotation = Quaternion.LookRotation(wallForward, Vector3.up);
+
+        // check if player is wall running in opposite direction
+        if ((transform.forward - wallForward).magnitude > (transform.forward + wallForward).magnitude) {
+
+            // flip rotation vector & wall forward
+            wallForward *= -1;
+            rotation = Quaternion.LookRotation(wallForward, Vector3.up);
 
         }
 
-        wallForward = lastWall.forward;
+        // stop exiting look rotation lerp coroutine if it exists
+        if (lookRotationLerpCoroutine != null)
+            StopCoroutine(lookRotationLerpCoroutine);
 
-        if ((transform.forward - wallForward).magnitude > (transform.forward - -wallForward).magnitude)
-            wallForward = -wallForward;
-
-        Quaternion rotation = Quaternion.LookRotation(wallForward, Vector3.up);
-
+        // check if player is out of wall run look clamps
         if (yRotation < rotation.eulerAngles.y - wallSideCameraClamp || yRotation > rotation.eulerAngles.y + wallOutsideCameraClamp)
+            // adjust look clamps
             lookRotationLerpCoroutine = StartCoroutine(LerpLookRotation(rotation));
 
-        rb.useGravity = false;
-        UIController.EnableCrosshair();
-
-        if (useWallRunTimer)
-            wallRunTimer = maxWallRunTime;
-
-        rb.velocity = new Vector3(rb.velocity.x, 0f, rb.velocity.z);
-
+        // weaken gravity effect
         if (useWallRunGravity)
             gravityDelayCoroutine = StartCoroutine(HandleWallRunGravity());
 
-        StartLerpCameraFOV(wallRunCameraFOV);
-
-        if (wallLeft)
-            StartLerpCameraTilt(-wallRunCamTilt);
-
-        if (wallRight)
-            StartLerpCameraTilt(wallRunCamTilt);
-
-    }
-
-    private IEnumerator HandleWallRunGravity() {
-
-        yield return new WaitForSeconds(gravityDelay);
-
-        while (movementState == MovementState.WallRunningLeft || movementState == MovementState.WallRunningRight) {
-
-            rb.useGravity = true;
-            rb.AddForce(transform.up * gravityCounterForce, ForceMode.Force);
-            yield return new WaitForSeconds(gravityDecrementRate);
-            gravityCounterForce -= gravityDecrementAmount;
-
-        }
     }
 
     private void HandleWallRunMovement() {
@@ -1144,73 +1199,94 @@ public class PlayerController : MonoBehaviour {
 
         }
 
-        Vector3 direction = wallForward * wallRunForce;
-        direction.y /= (200f / 60f);
-        rb.AddForce(direction, ForceMode.Force);
+        // calculate wall forward using Vector3.Cross and wall normal
+        Vector3 wallNormal = wallRight ? rightWallHit.normal : leftWallHit.normal;
+        wallForward = Vector3.Cross(wallNormal, Vector3.up);
 
-        if (wallRunningUpwards)
-            rb.velocity = new Vector3(rb.velocity.x, wallClimbSpeed, rb.velocity.z);
+        // check if player is wall running in opposite direction
+        if ((transform.forward - wallForward).magnitude > (transform.forward + wallForward).magnitude)
+            // flip wall forward
+            wallForward *= -1;
 
-        if (wallRunningDownwards)
-            rb.velocity = new Vector3(rb.velocity.x, -wallClimbSpeed, rb.velocity.z);
+        // forward force
+        rb.AddForce(wallForward * wallRunForce, ForceMode.Force);
 
+        // upwards/downwards force
+        if (runningUpWall)
+            rb.velocity = new Vector3(rb.velocity.x, wallScaleSpeed, rb.velocity.z);
+        if (runningDownWall)
+            rb.velocity = new Vector3(rb.velocity.x, -wallScaleSpeed, rb.velocity.z);
+
+        // check if player isn't moving away from the wall
         if (!(wallLeft && horizontalInput > 0f) && !(wallRight && horizontalInput < 0f))
-            rb.AddForce(-wallNormal * wallNormalForce, ForceMode.Force);
+            // push player into wall
+            rb.AddForce(-wallNormal * wallRunNormalForce, ForceMode.Force);
 
     }
 
-    private IEnumerator LerpLookRotation(Quaternion targetRotation) {
+    private IEnumerator HandleWallRunGravity() {
 
-        float currentTime = 0f;
-        Quaternion startRotation = Quaternion.Euler(0f, yRotation, 0f);
+        // counter force initially fully counters gravity
+        float counterForce = -Physics.gravity.y;
 
-        while (currentTime < lookRotationLerpDuration) {
+        // wait for gravity delay
+        yield return new WaitForSeconds(gravityDelay);
 
-            currentTime += Time.deltaTime;
-            yRotation = Quaternion.Lerp(startRotation, targetRotation, currentTime / lookRotationLerpDuration).eulerAngles.y;
-            yield return null;
+        // enable gravity
+        rb.useGravity = true;
+
+        // while player is wall running
+        while (movementState == MovementState.WallRunningLeft || movementState == MovementState.WallRunningRight) {
+
+            // add counter force
+            rb.AddForce(transform.up * counterForce, ForceMode.Force);
+
+            // wait for duration using rate
+            yield return new WaitForSeconds(1f / gravityIncrementRate);
+
+            // decrement counter force
+            counterForce--;
 
         }
 
-        yRotation = targetRotation.eulerAngles.y;
-        lookRotationLerpCoroutine = null;
-
-    }
-
-    private void WallJump() {
-
-        if (movementState != MovementState.WallRunningLeft && movementState != MovementState.WallRunningRight)
-            return;
-
-        exitingWall = true;
-        exitWallTimer = exitWallTime;
-
-        Vector3 wallNormal = wallRight ? rightWallHit.normal : leftWallHit.normal;
-        Vector3 force = transform.up * wallJumpUpForce + wallNormal * wallJumpSideForce;
-
-        rb.velocity = new Vector3(rb.velocity.x, 0f, rb.velocity.z);
-        rb.AddForce(force, ForceMode.Impulse);
+        // reset coroutine
+        gravityDelayCoroutine = null;
 
     }
 
     public void StopWallRun() {
 
-        if (lookRotationLerpCoroutine != null)
-            StopCoroutine(lookRotationLerpCoroutine);
-
+        // reset movement state
         movementState = MovementState.None;
 
-        animator.SetBool("isWallRunningLeft", false);
-        animator.SetBool("isWallRunningRight", false);
-
-        StartLerpCameraFOV(startCameraFOV);
-        StartLerpCameraTilt(startCameraZTilt);
-
-        if (gravityDelayCoroutine != null)
-            StopCoroutine(gravityDelayCoroutine);
+        // reset camera effects
+        LerpFOV(startFOV, wallRunFOVLerpDuration);
+        LerpTilt(startTilt, wallRunTiltLerpDuration);
 
     }
 
+    private void WallJump() {
+
+        // enter exit state
+        exitingWall = true;
+        exitWallTimer = exitWallTime;
+
+        // calculate wall normal based on which side the wall is on
+        Vector3 wallNormal = wallRight ? rightWallHit.normal : leftWallHit.normal;
+
+        // calculate wall jump force
+        Vector3 force = (transform.up * wallJumpUpForce) + (wallNormal * wallJumpSideForce);
+
+        // reset y velocity
+        rb.velocity = new Vector3(rb.velocity.x, 0f, rb.velocity.y);
+
+        // add force to player
+        rb.AddForce(force, ForceMode.Impulse);
+
+    }
+    #endregion
+
+    #region SWINGING
     public Transform GetSwingMuzzle() {
 
         return muzzle;
@@ -1228,10 +1304,9 @@ public class PlayerController : MonoBehaviour {
         if (joint != null || (movementState == MovementState.WallRunningLeft || movementState == MovementState.WallRunningRight) || movementState == MovementState.Swinging)
             return;
 
-        RaycastHit raycastHit;
-        Physics.Raycast(cameraPos.position, cameraPos.forward, out raycastHit, maxSwingDistance);
+        Physics.Raycast(cameraPos.position, cameraPos.forward, out RaycastHit raycastHit, maxSwingDistance);
 
-        if (raycastHit.point != Vector3.zero && raycastHit.transform.gameObject.layer.Equals(swingMask)) {
+        if (raycastHit.point != Vector3.zero && (swingMask & (1 << raycastHit.transform.gameObject.layer)) != 0) {
 
             // direct hit
             predictionHit = raycastHit;
@@ -1239,8 +1314,7 @@ public class PlayerController : MonoBehaviour {
 
         } else if (raycastHit.point == Vector3.zero) {
 
-            RaycastHit sphereCastHit;
-            Physics.SphereCast(cameraPos.position, predictionRadius, cameraPos.forward, out sphereCastHit, maxSwingDistance, swingMask);
+            Physics.SphereCast(cameraPos.position, predictionRadius, cameraPos.forward, out RaycastHit sphereCastHit, maxSwingDistance, swingMask);
 
             if (sphereCastHit.point != Vector3.zero) {
 
@@ -1263,7 +1337,7 @@ public class PlayerController : MonoBehaviour {
 
             predictionObj.gameObject.SetActive(true);
             predictionObj.position = hitPoint + (predictionHit.normal * 0.002f);
-            predictionObj.rotation = Quaternion.LookRotation(-predictionHit.normal, transform.up);
+            predictionObj.rotation = Quaternion.LookRotation(-predictionHit.normal, Vector3.up);
 
         } else {
 
@@ -1387,13 +1461,17 @@ public class PlayerController : MonoBehaviour {
         Destroy(joint);
 
     }
+    #endregion
 
+    #region ZIPLINING
     public void ResetZipline() {
 
         ZiplineJump();
 
     }
+    #endregion
 
+    #region HEADBOB
     private void HandleHeadbob() {
 
         if (movementState == MovementState.Ziplining) {
@@ -1434,9 +1512,9 @@ public class PlayerController : MonoBehaviour {
             }
         }
     }
+    #endregion
 
     #region SLOPES
-
     private SlopeType CheckSlope() {
 
         if (Physics.Raycast(feet.position, Vector3.down, out slopeHit, slopeCheckDistance)) {
@@ -1471,33 +1549,81 @@ public class PlayerController : MonoBehaviour {
         return Vector3.ProjectOnPlane(movementDirection, slopeHit.normal).normalized;
 
     }
-
     #endregion
 
-    public float GetPlayerHeight() {
+    #region CAMERA EFFECTS
+    private void LerpFOV(float targetFOV, float duration) {
 
-        return startHeight;
+        if (wallRunFOVCoroutine != null)
+            StopCoroutine(wallRunFOVCoroutine);
 
-    }
-
-    public void ResetVelocity() {
-
-        moveSpeed = 0f;
-        lastDesiredMoveSpeed = 0f;
-        desiredMoveSpeed = 0f;
-        rb.velocity = Vector3.zero;
+        wallRunFOVCoroutine = StartCoroutine(StartFOVLerp(camera.fieldOfView, targetFOV, duration));
 
     }
 
-    public void SetLookRotations(float xRotation, float yRotation) {
+    private IEnumerator StartFOVLerp(float startFOV, float targetFOV, float duration) {
 
-        this.xRotation = xRotation;
-        this.yRotation = yRotation;
+        float currentTime = 0f;
+
+        while (currentTime < duration) {
+
+            currentTime += Time.unscaledDeltaTime;
+            camera.fieldOfView = Mathf.Lerp(startFOV, targetFOV, currentTime / duration);
+            yield return null;
+
+        }
+
+        camera.fieldOfView = targetFOV;
+        wallRunFOVCoroutine = null;
 
     }
+
+    private void LerpTilt(Vector3 targetTilt, float duration) {
+
+        if (wallRunTiltCoroutine != null)
+            StopCoroutine(wallRunTiltCoroutine);
+
+        wallRunTiltCoroutine = StartCoroutine(StartTiltLerp(camera.transform.localRotation, Quaternion.Euler(targetTilt), duration));
+
+    }
+
+    private IEnumerator StartTiltLerp(Quaternion startTilt, Quaternion targetTilt, float duration) {
+
+        float currentTime = 0f;
+
+        while (currentTime < duration) {
+
+            currentTime += Time.unscaledDeltaTime;
+            camera.transform.localRotation = Quaternion.Lerp(startTilt, targetTilt, currentTime / duration);
+            yield return null;
+
+        }
+
+        camera.transform.localRotation = targetTilt;
+        wallRunTiltCoroutine = null;
+
+    }
+
+    private IEnumerator LerpLookRotation(Quaternion targetRotation) {
+
+        float currentTime = 0f;
+        Quaternion startRotation = Quaternion.Euler(0f, yRotation, 0f);
+
+        while (currentTime < lookRotationLerpDuration) {
+
+            currentTime += Time.deltaTime;
+            yRotation = Quaternion.Lerp(startRotation, targetRotation, currentTime / lookRotationLerpDuration).eulerAngles.y;
+            yield return null;
+
+        }
+
+        yRotation = targetRotation.eulerAngles.y;
+        lookRotationLerpCoroutine = null;
+
+    }
+    #endregion
 
     #region MOVEMENT TOGGLES
-
     public void EnableAllMovement() {
 
         if (levelLookEnabled)
@@ -1587,132 +1713,114 @@ public class PlayerController : MonoBehaviour {
 
     public void EnableWalk() {
 
-        if (levelWalkEnabled)
-            walkEnabled = true;
+        walkEnabled = true;
 
     }
 
     public void DisableWalk() {
 
-        if (levelWalkEnabled)
-            walkEnabled = false;
+        walkEnabled = false;
 
     }
 
     public void EnableSprint() {
 
-        if (levelSprintEnabled)
-            sprintEnabled = true;
+        sprintEnabled = true;
 
     }
 
     public void DisableSprint() {
 
-        if (levelSprintEnabled)
-            sprintEnabled = false;
+        sprintEnabled = false;
 
     }
 
     public void EnableJump() {
 
-        if (levelJumpEnabled)
-            jumpEnabled = true;
+        jumpEnabled = true;
 
     }
 
     public void DisableJump() {
 
-        if (levelJumpEnabled)
-            jumpEnabled = false;
+        jumpEnabled = false;
 
     }
 
-    private void EnableCrouch() {
+    public void EnableCrouch() {
 
-        if (levelCrouchEnabled)
-            crouchEnabled = true;
+        crouchEnabled = true;
 
     }
 
-    private void DisableCrouch() {
+    public void DisableCrouch() {
 
-        if (levelCrouchEnabled)
-            crouchEnabled = false;
+        crouchEnabled = false;
 
     }
 
     public void EnableSlide() {
 
-        if (levelSlideEnabled)
-            slideEnabled = true;
+        slideEnabled = true;
 
     }
 
     public void DisableSlide() {
 
-        if (levelSlideEnabled)
-            slideEnabled = false;
+        slideEnabled = false;
 
     }
 
     public void EnableWallRun() {
 
-        if (levelWallRunEnabled)
-            wallRunEnabled = true;
+        wallRunEnabled = true;
 
     }
 
     public void DisableWallRun() {
 
-        if (levelWallRunEnabled)
-            wallRunEnabled = false;
+        wallRunEnabled = false;
 
     }
 
     public void EnableSwing() {
 
-        if (levelSwingEnabled)
-            swingEnabled = true;
+        swingEnabled = true;
 
     }
 
     public void DisableSwing() {
 
-        if (levelSwingEnabled)
-            swingEnabled = false;
+        swingEnabled = false;
 
     }
 
     public void EnableZipline() {
 
-        if (levelZiplineEnabled)
-            ziplineEnabled = true;
+        ziplineEnabled = true;
 
     }
 
     public void DisableZipline() {
 
-        if (levelZiplineEnabled)
-            ziplineEnabled = false;
+        ziplineEnabled = false;
 
     }
 
     public void EnableGrab() {
 
-        if (levelGrabEnabled)
-            grabEnabled = true;
+        grabEnabled = true;
 
     }
 
     public void DisableGrab() {
 
-        if (levelGrabEnabled)
-            grabEnabled = false;
+        grabEnabled = false;
 
     }
-
     #endregion
 
+    #region ELEVATOR
     public void SetInElevator(bool inElevator) {
 
         if (inElevator) {
@@ -1720,7 +1828,7 @@ public class PlayerController : MonoBehaviour {
             StopSlide();
             Uncrouch();
             StopSwing();
-            StopWallRun();
+            // StopWallRun();
 
         }
 
@@ -1733,4 +1841,13 @@ public class PlayerController : MonoBehaviour {
         this.elevatorMoving = elevatorMoving;
 
     }
+    #endregion
+
+    #region MISCELLANEOUS GETTERS & SETTERS
+    public float GetPlayerHeight() {
+
+        return startHeight;
+
+    }
+    #endregion
 }

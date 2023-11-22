@@ -4682,30 +4682,30 @@ MonoBehaviour:
   slideDownwardsForce: 200
   maxSlideTime: 1
   upwardsSlideFactor: 0.5
-  wallRunSpeed: 10
-  wallRunForce: 200
-  wallNormalForce: 100
-  exitWallTime: 0.2
-  useWallRunTimer: 0
-  maxWallRunTime: 5
+  wallRunSpeed: 15
+  wallRunForce: 150
+  wallRunNormalForce: 100
   wallMask:
     serializedVersion: 2
     m_Bits: 128
+  exitWallTime: 0.2
+  wallRunTimerEnabled: 0
+  maxWallRunDuration: 1
+  wallRunScalingEnabled: 0
+  wallScaleSpeed: 5
+  wallJumpUpForce: 8
+  wallJumpSideForce: 20
+  wallCheckRadius: 0.1
+  wallCheckDistance: 1
+  minJumpHeight: 0.25
+  wallRunFOV: 90
+  wallRunFOVLerpDuration: 0.25
+  wallRunTilt: 5
+  wallRunTiltLerpDuration: 0.25
   lookRotationLerpDuration: 0.25
-  wallJumpUpForce: 9
-  wallJumpSideForce: 50
-  wallClimbSpeed: 8
   useWallRunGravity: 1
-  initialGravityCounterForce: 30
   gravityDelay: 1
-  gravityDecrementRate: 0.2
-  gravityDecrementAmount: 1
-  wallRunCameraFOV: 80
-  camFOVLerpDuration: 0.25
-  wallRunCamTilt: 5
-  camTiltLerpDuration: 0.25
-  wallCheckDistance: 0.7
-  minJumpHeight: 0.1
+  gravityIncrementRate: 25
   maxSwingSpeed: 20
   maxSwingDistance: 20
   horizontalThrustForce: 2000
@@ -15754,28 +15754,28 @@ MonoBehaviour:
   upwardsSlideFactor: 0.4
   wallRunSpeed: 10
   wallRunForce: 200
-  wallNormalForce: 100
-  exitWallTime: 0.2
-  useWallRunTimer: 0
-  maxWallRunTime: 5
+  wallRunNormalForce: 0
   wallMask:
     serializedVersion: 2
     m_Bits: 128
-  lookRotationLerpDuration: 0.25
+  exitWallTime: 0.2
+  wallRunTimerEnabled: 0
+  maxWallRunDuration: 0
+  wallRunScalingEnabled: 0
+  wallScaleSpeed: 0
   wallJumpUpForce: 9
   wallJumpSideForce: 32
-  wallClimbSpeed: 8
-  useWallRunGravity: 1
-  initialGravityCounterForce: 30
-  gravityDelay: 1
-  gravityDecrementRate: 0.2
-  gravityDecrementAmount: 1
-  wallRunCameraFOV: 80
-  camFOVLerpDuration: 0.25
-  wallRunCamTilt: 5
-  camTiltLerpDuration: 0.25
+  wallCheckRadius: 0
   wallCheckDistance: 0.7
   minJumpHeight: 0.1
+  wallRunFOV: 0
+  wallRunFOVLerpDuration: 0
+  wallRunTilt: 0
+  wallRunTiltLerpDuration: 0
+  lookRotationLerpDuration: 0.25
+  useWallRunGravity: 1
+  gravityDelay: 1
+  gravityIncrementRate: 0
   maxSwingSpeed: 20
   maxSwingDistance: 20
   horizontalThrustForce: 2000

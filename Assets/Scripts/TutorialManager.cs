@@ -77,6 +77,7 @@ public class TutorialManager : GameManager {
 
             case Checkpoint.CheckpointType.Slide:
 
+            playerController.EnableCrouch();
             playerController.EnableSlide();
             break;
 

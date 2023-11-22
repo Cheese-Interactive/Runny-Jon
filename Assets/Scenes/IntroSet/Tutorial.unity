@@ -2459,7 +2459,6 @@ Transform:
   - {fileID: 681212363}
   - {fileID: 1644706525}
   - {fileID: 541919911}
-  - {fileID: 2053136103}
   m_Father: {fileID: 650703682}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -3796,7 +3795,7 @@ GameObject:
   - component: {fileID: 541919914}
   - component: {fileID: 541919913}
   - component: {fileID: 541919912}
-  m_Layer: 4
+  m_Layer: 8
   m_Name: Swingable3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -12538,7 +12537,7 @@ GameObject:
   - component: {fileID: 1644706528}
   - component: {fileID: 1644706527}
   - component: {fileID: 1644706526}
-  m_Layer: 4
+  m_Layer: 8
   m_Name: Swingable2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -12796,28 +12795,28 @@ MonoBehaviour:
   upwardsSlideFactor: 0.5
   wallRunSpeed: 10
   wallRunForce: 200
-  wallNormalForce: 100
-  exitWallTime: 0.2
-  useWallRunTimer: 0
-  maxWallRunTime: 5
+  wallRunNormalForce: 0
   wallMask:
     serializedVersion: 2
     m_Bits: 128
-  lookRotationLerpDuration: 0.25
+  exitWallTime: 0.2
+  wallRunTimerEnabled: 0
+  maxWallRunDuration: 0
+  wallRunScalingEnabled: 0
+  wallScaleSpeed: 0
   wallJumpUpForce: 9
   wallJumpSideForce: 32
-  wallClimbSpeed: 8
-  useWallRunGravity: 1
-  initialGravityCounterForce: 30
-  gravityDelay: 1
-  gravityDecrementRate: 0.2
-  gravityDecrementAmount: 1
-  wallRunCameraFOV: 80
-  camFOVLerpDuration: 0.25
-  wallRunCamTilt: 5
-  camTiltLerpDuration: 0.25
+  wallCheckRadius: 0
   wallCheckDistance: 0.7
   minJumpHeight: 0.1
+  wallRunFOV: 0
+  wallRunFOVLerpDuration: 0
+  wallRunTilt: 0
+  wallRunTiltLerpDuration: 0
+  lookRotationLerpDuration: 0.25
+  useWallRunGravity: 1
+  gravityDelay: 1
+  gravityIncrementRate: 0
   maxSwingSpeed: 20
   maxSwingDistance: 20
   horizontalThrustForce: 2000
@@ -15377,103 +15376,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Weight: 1
   m_Effectors: []
---- !u!1 &2053136102
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 2053136103}
-  - component: {fileID: 2053136106}
-  - component: {fileID: 2053136105}
-  - component: {fileID: 2053136104}
-  m_Layer: 8
-  m_Name: Swingable1 (1)
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &2053136103
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2053136102}
-  m_LocalRotation: {x: -0, y: 0.7071068, z: -0, w: 0.7071068}
-  m_LocalPosition: {x: 11.75, y: 18, z: 5.5}
-  m_LocalScale: {x: 3, y: 0.5, z: 3}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 366514549}
-  m_RootOrder: 3
-  m_LocalEulerAnglesHint: {x: 0, y: 90, z: 0}
---- !u!65 &2053136104
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2053136102}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
---- !u!23 &2053136105
-MeshRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2053136102}
-  m_Enabled: 1
-  m_CastShadows: 1
-  m_ReceiveShadows: 1
-  m_DynamicOccludee: 1
-  m_StaticShadowCaster: 0
-  m_MotionVectors: 1
-  m_LightProbeUsage: 1
-  m_ReflectionProbeUsage: 1
-  m_RayTracingMode: 2
-  m_RayTraceProcedural: 0
-  m_RenderingLayerMask: 1
-  m_RendererPriority: 0
-  m_Materials:
-  - {fileID: 2100000, guid: c9e7cb011b6a21846a23aec77a009e31, type: 2}
-  m_StaticBatchInfo:
-    firstSubMesh: 0
-    subMeshCount: 0
-  m_StaticBatchRoot: {fileID: 0}
-  m_ProbeAnchor: {fileID: 0}
-  m_LightProbeVolumeOverride: {fileID: 0}
-  m_ScaleInLightmap: 1
-  m_ReceiveGI: 1
-  m_PreserveUVs: 0
-  m_IgnoreNormalsForChartDetection: 0
-  m_ImportantGI: 0
-  m_StitchLightmapSeams: 1
-  m_SelectedEditorRenderState: 3
-  m_MinimumChartSize: 4
-  m_AutoUVMaxDistance: 0.5
-  m_AutoUVMaxAngle: 89
-  m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
-  m_SortingOrder: 0
-  m_AdditionalVertexStreams: {fileID: 0}
---- !u!33 &2053136106
-MeshFilter:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2053136102}
-  m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
 --- !u!1 &2058609492
 GameObject:
   m_ObjectHideFlags: 0
@@ -17104,30 +17006,30 @@ MonoBehaviour:
   slideDownwardsForce: 200
   maxSlideTime: 1
   upwardsSlideFactor: 0.5
-  wallRunSpeed: 10
-  wallRunForce: 200
-  wallNormalForce: 100
-  exitWallTime: 0.2
-  useWallRunTimer: 0
-  maxWallRunTime: 5
+  wallRunSpeed: 15
+  wallRunForce: 150
+  wallRunNormalForce: 100
   wallMask:
     serializedVersion: 2
     m_Bits: 128
+  exitWallTime: 0.2
+  wallRunTimerEnabled: 0
+  maxWallRunDuration: 1
+  wallRunScalingEnabled: 0
+  wallScaleSpeed: 5
+  wallJumpUpForce: 8
+  wallJumpSideForce: 20
+  wallCheckRadius: 0.1
+  wallCheckDistance: 1
+  minJumpHeight: 0.25
+  wallRunFOV: 90
+  wallRunFOVLerpDuration: 0.25
+  wallRunTilt: 5
+  wallRunTiltLerpDuration: 0.25
   lookRotationLerpDuration: 0.25
-  wallJumpUpForce: 9
-  wallJumpSideForce: 50
-  wallClimbSpeed: 8
   useWallRunGravity: 1
-  initialGravityCounterForce: 30
   gravityDelay: 1
-  gravityDecrementRate: 0.2
-  gravityDecrementAmount: 1
-  wallRunCameraFOV: 80
-  camFOVLerpDuration: 0.25
-  wallRunCamTilt: 5
-  camTiltLerpDuration: 0.25
-  wallCheckDistance: 0.7
-  minJumpHeight: 0.1
+  gravityIncrementRate: 25
   maxSwingSpeed: 20
   maxSwingDistance: 20
   horizontalThrustForce: 2000
