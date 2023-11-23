@@ -3,7 +3,13 @@ using UnityEngine;
 public class CameraFollow : MonoBehaviour {
 
     [Header("Follow")]
-    [SerializeField] private Transform target;
+    private Transform target;
+
+    private void Start() {
+
+        target = FindObjectOfType<CameraPosition>().transform;
+
+    }
 
     private void LateUpdate() {
 

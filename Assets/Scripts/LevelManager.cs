@@ -1,22 +1,22 @@
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.Runtime.InteropServices.WindowsRuntime;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public class LevelManager : GameManager {
 
-    private void Start() {
+    private void Awake() {
 
-        playerController = FindObjectOfType<PlayerController>();
+        SpawnPlayer();
+
         UIController = FindObjectOfType<GameUIController>();
         audioManager = FindObjectOfType<GameAudioManager>();
         playerData = FindObjectOfType<PlayerData>();
 
-        LoadCosmetics();
+        acquiredCollectibles = new List<Collectible>();
 
-        Transform spawn = checkpoints[currCheckpoint].GetPlayerSpawn();
-        playerController.transform.position = spawn.position;
-        playerController.SetLookRotations(0f, spawn.rotation.eulerAngles.y);
-        playerController.ResetVelocity();
+        LoadCosmetics();
 
         for (int i = 2; i < checkpoints.Length; i++)
             checkpoints[i].gameObject.SetActive(false);
@@ -70,9 +70,27 @@ public class LevelManager : GameManager {
 
     }
 
-    public override void CompleteLevel() {
+    public override bool CompleteLevel() {
 
-        StartCoroutine(DelayedMovementDisable());
+        // verify if lists are equal (make sure player collected all collectibles)
+        // TODO: add error or warning to tell player that all collectibles weren't collected
+        List<Collectible> tempCollectibles = new List<Collectible>(acquiredCollectibles);
+
+        for (int i = 0; i < requiredCollectibles.Count; i++) {
+
+            // check if player has required collectible
+            if (tempCollectibles.Contains(requiredCollectibles[i]))
+                // remove collectible from the list
+                tempCollectibles.Remove(requiredCollectibles[i]);
+            else
+                // return because they don't have required collectible
+                return false;
+
+        }
+
+        // remaining collectibles in tempCollectibles list will be the bonus optional collectibles
+
+        StartCoroutine(DelayedTimeFreeze());
         playerController.DisableAllMovement();
         playerController.DisableLook();
         stopwatch.Stop();
@@ -80,6 +98,7 @@ public class LevelManager : GameManager {
         UIController.ShowLevelCompleteScreen(playerData.OnLevelComplete(currentLevel, deaths, (float) stopwatch.Elapsed.TotalSeconds, 1), deaths);
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
+        return true;
 
     }
 

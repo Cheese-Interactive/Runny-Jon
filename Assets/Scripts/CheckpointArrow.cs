@@ -31,9 +31,6 @@ public class CheckpointArrow : MonoBehaviour {
 
     public void StartFadeOutArrow() {
 
-        if (fadeOutCoroutine != null)
-            fadeOutCoroutine = null;
-
         fadeOutCoroutine = StartCoroutine(FadeOutArrow(checkpoint.GetFadeOutDuration()));
 
     }
@@ -43,7 +40,6 @@ public class CheckpointArrow : MonoBehaviour {
         float currentTime = 0f;
         Color startColor = material.color;
         Color targetColor = new Color(material.color.r, material.color.g, material.color.b, 0f);
-        gameObject.SetActive(true);
 
         while (currentTime < duration) {
 

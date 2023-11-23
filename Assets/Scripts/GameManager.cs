@@ -7,6 +7,8 @@ using UnityEngine.SceneManagement;
 public abstract class GameManager : MonoBehaviour {
 
     [Header("References")]
+    [SerializeField] private GameObject playerPrefab;
+    [SerializeField] private GameObject cameraHolderPrefab;
     [SerializeField] protected Checkpoint[] checkpoints;
     protected PlayerController playerController;
     protected GameUIController UIController;
@@ -22,6 +24,10 @@ public abstract class GameManager : MonoBehaviour {
     protected Stopwatch stopwatch;
     protected int currCheckpoint;
     private bool gamePaused;
+
+    [Header("Collectibles")]
+    [SerializeField] protected List<Collectible> requiredCollectibles;
+    protected List<Collectible> acquiredCollectibles;
 
     public void PauseGame() {
 
@@ -54,6 +60,23 @@ public abstract class GameManager : MonoBehaviour {
         }
     }
 
+    protected void SpawnPlayer() {
+
+        // get player spawn
+        Transform spawn = checkpoints[currCheckpoint].GetPlayerSpawn();
+
+        // instantiate camera holder before
+        Instantiate(cameraHolderPrefab, spawn.position, Quaternion.identity);
+
+        // instantiate player prefab at spawn after
+        playerController = Instantiate(playerPrefab, spawn.position, Quaternion.identity).GetComponent<PlayerController>();
+
+        // set player rotation & reset velocity
+        playerController.SetLookRotations(0f, spawn.rotation.eulerAngles.y);
+        playerController.ResetVelocity();
+
+    }
+
     public abstract void StartTimer();
 
     public abstract void PauseTimer();
@@ -64,9 +87,9 @@ public abstract class GameManager : MonoBehaviour {
 
     public abstract void CheckpointReached(Checkpoint.CheckpointType checkpointType);
 
-    public abstract void CompleteLevel();
+    public abstract bool CompleteLevel();
 
-    protected IEnumerator DelayedMovementDisable() {
+    protected IEnumerator DelayedTimeFreeze() {
 
         yield return new WaitForSeconds(delayedMovementStopDuration);
         Time.timeScale = 0f;
@@ -111,21 +134,42 @@ public abstract class GameManager : MonoBehaviour {
 
     protected IEnumerator RespawnPlayer() {
 
+        // reset movement & looking
         playerController.StopWallRun();
         playerController.DisableAllMovement();
         playerController.DisableLook();
         playerController.Uncrouch();
+        playerController.StopSwing();
+        playerController.ResetVelocity();
+
+        // show death screen
         yield return StartCoroutine(UIController.ShowDeathScreen());
+
+        // spawn player
         Transform spawn = checkpoints[currCheckpoint].GetPlayerSpawn();
         playerController.transform.position = spawn.position;
         playerController.transform.rotation = spawn.rotation;
         playerController.SetLookRotations(0f, spawn.rotation.eulerAngles.y);
-        playerController.StopSwing();
-        playerController.ResetVelocity();
+
+        // enable movement & looking
         playerController.EnableAllMovement();
         playerController.EnableLook();
+
+        // remove death screen and reset bools
         yield return StartCoroutine(UIController.HideDeathScreen());
         playerKilled = false;
+
+    }
+
+    public void CollectCollectible(Collectible collectible) {
+
+        acquiredCollectibles.Add(collectible);
+
+    }
+
+    public void RemoveCollectible(Collectible collectible) {
+
+        acquiredCollectibles.Remove(collectible);
 
     }
 

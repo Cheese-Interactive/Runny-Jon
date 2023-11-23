@@ -24,14 +24,11 @@ public class GameAudioManager : MonoBehaviour {
 
     }
 
-    private void Awake() {
+    // start function
+    public void PlaySceneMusic() {
 
         gameManager = FindObjectOfType<GameManager>();
         musicSource.loop = true;
-
-    }
-
-    public void PlaySceneMusic() {
 
         musicSource.clip = gameManager.GetCurrentLevel().GetBackgroundMusic();
         musicSource.Play();

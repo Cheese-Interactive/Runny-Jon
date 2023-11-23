@@ -1,6 +1,4 @@
 using System.Collections;
-using TMPro;
-using UnityEditor;
 using UnityEngine;
 using UnityEngine.Animations.Rigging;
 
@@ -11,8 +9,6 @@ public class PlayerController : MonoBehaviour {
 
     #region VARIABLES
     [Header("References")]
-    [SerializeField] private new Camera camera;
-    [SerializeField] private TMP_Text speedText;
     [SerializeField] private Transform cameraPos;
     [SerializeField] private Transform muzzle;
     [SerializeField] private Transform[] obstacleCheckers;
@@ -20,6 +16,7 @@ public class PlayerController : MonoBehaviour {
     private GameManager gameManager;
     private GameAudioManager audioManager;
     private GameUIController UIController;
+    private Camera mainCamera;
     private Rigidbody rb;
     private LineRenderer lineRenderer;
     private Spring spring;
@@ -99,6 +96,7 @@ public class PlayerController : MonoBehaviour {
     [Header("Sliding")]
     [SerializeField] private float maxSlideSpeed;
     [SerializeField] private float slideDownwardsForce;
+    [SerializeField] private float slideForwardForce;
     [SerializeField] private float maxSlideTime;
     [SerializeField] private float upwardsSlideFactor;
     private float slideTimer;
@@ -182,8 +180,8 @@ public class PlayerController : MonoBehaviour {
     [SerializeField] private AnimationCurve effectCurve;
 
     [Header("Swing Prediction")]
-    [SerializeField] private Transform predictionObj;
     [SerializeField] private float predictionRadius;
+    private Transform predictionObj;
     private RaycastHit predictionHit;
 
     [Header("Ziplining")]
@@ -270,8 +268,10 @@ public class PlayerController : MonoBehaviour {
         audioManager = FindObjectOfType<GameAudioManager>();
         UIController = FindObjectOfType<GameUIController>();
         rb = GetComponent<Rigidbody>();
+        mainCamera = Camera.main;
         lineRenderer = GetComponent<LineRenderer>();
         rigBuilder = GetComponent<RigBuilder>();
+        predictionObj = FindObjectOfType<SwingPredictor>().transform;
         spring = new Spring();
 
         rigBuilder.layers[leftHandIKRigIndex].active = true;
@@ -305,8 +305,8 @@ public class PlayerController : MonoBehaviour {
         ziplineEnabled = levelZiplineEnabled = level.GetZiplineEnabled();
         grabEnabled = levelGrabEnabled = level.GetGrabEnabled();
 
-        startFOV = camera.fieldOfView;
-        startTilt = camera.transform.localRotation.eulerAngles;
+        startFOV = mainCamera.fieldOfView;
+        startTilt = mainCamera.transform.localRotation.eulerAngles;
 
     }
 
@@ -393,7 +393,6 @@ public class PlayerController : MonoBehaviour {
 
         // speed control
         ControlSpeed();
-        speedText.text = "Speed: " + (Mathf.Round(rb.velocity.magnitude * 100f) / 100f);
 
         // slide queueing
         if (slideQueued && jumpReady && Input.GetKey(slideKey) && isGrounded && movementState == MovementState.Air) {
@@ -491,7 +490,7 @@ public class PlayerController : MonoBehaviour {
         // crosshair interactable checks
         RaycastHit interactableHitInfo;
         RaycastHit grabbableHitInfo;
-        Ray ray = new Ray(camera.transform.position, camera.transform.forward);
+        Ray ray = new Ray(mainCamera.transform.position, mainCamera.transform.forward);
 
         Collider[] colliders = Physics.OverlapSphere(transform.position, ziplineCheckRadius, ziplineMask);
 
@@ -700,7 +699,7 @@ public class PlayerController : MonoBehaviour {
             movementState = MovementState.WallRunningLeft;
             desiredMoveSpeed = wallRunSpeed;
 
-            /*if (flatVel.magnitude >= minMovementVelocity) {
+            if (flatVel.magnitude >= minMovementVelocity) {
 
                 ResetAnimations();
                 animator.SetBool("isWallRunningLeft", true);
@@ -709,14 +708,14 @@ public class PlayerController : MonoBehaviour {
 
                 ResetAnimations();
 
-            }*/
+            }
         } else if (movementState == MovementState.WallRunningRight && wallRunEnabled) {
 
             // wall running right
             movementState = MovementState.WallRunningRight;
             desiredMoveSpeed = wallRunSpeed;
 
-            /*if (flatVel.magnitude >= minMovementVelocity) {
+            if (flatVel.magnitude >= minMovementVelocity) {
 
                 ResetAnimations();
                 animator.SetBool("isWallRunningRight", true);
@@ -725,21 +724,47 @@ public class PlayerController : MonoBehaviour {
 
                 ResetAnimations();
 
-            }*/
+            }
         } else if (movementState == MovementState.Sliding && slideEnabled) {
 
             // sliding
             movementState = MovementState.Sliding;
 
-            if (CheckSlope() == SlopeType.None || CheckSlope() == SlopeType.ValidUp && isGrounded)
+            // state 1: player is on a flat surface
+            if (CheckSlope() == SlopeType.None && isGrounded) {
+
+                desiredMoveSpeed = slideForwardForce;
+
+                // decrement slide timer
                 slideTimer -= Time.deltaTime;
-            else if (CheckSlope() == SlopeType.ValidDown)
+
+
+            }
+            // state 2: player is going up slope
+            else if (CheckSlope() == SlopeType.ValidUp) {
+
+                // desired move speed is the max slide speed x upwards slide factor
+                desiredMoveSpeed = maxSlideSpeed * upwardsSlideFactor;
+
+                // decrement slide timer
+                slideTimer -= Time.deltaTime;
+
+            }
+            // state 3: player is going down slope
+            else if (CheckSlope() == SlopeType.ValidDown) {
+
+                // desired move speed is the maximum slide speed
                 desiredMoveSpeed = maxSlideSpeed;
-            else
+
+
+            }
+            // state 4: none (in air, etc)
+            else {
+
+                // desired move speed is sprint speed
                 desiredMoveSpeed = sprintSpeed;
 
-            if (CheckSlope() == SlopeType.ValidUp)
-                desiredMoveSpeed = maxSlideSpeed * upwardsSlideFactor;
+            }
 
             if (slideTimer <= 0f)
                 StopSlide();
@@ -876,13 +901,16 @@ public class PlayerController : MonoBehaviour {
 
     private void ControlSpeed() {
 
+        // check if player is on any type of slope and isn't exiting it
         if (CheckSlope() == SlopeType.ValidUp || CheckSlope() == SlopeType.ValidDown || CheckSlope() == SlopeType.Invalid && !exitingSlope) {
 
+            // normalize & limit velocity
             if (rb.velocity.magnitude > moveSpeed)
                 rb.velocity = rb.velocity.normalized * moveSpeed;
 
         } else {
 
+            // reset y velocity
             Vector3 flatVel = new Vector3(rb.velocity.x, 0f, rb.velocity.z);
 
             if (flatVel.magnitude > moveSpeed) {
@@ -1049,11 +1077,8 @@ public class PlayerController : MonoBehaviour {
 
     private bool CanWallRun() {
 
-        // get current wall run wall
-        Transform wall = wallRight ? rightWallHit.transform : leftWallHit.transform;
-
         // check all the flags for wall running
-        return (!Physics.Raycast(feet.position, Vector3.down, minJumpHeight, environmentMask)) && (movementState != MovementState.WallRunningLeft && movementState != MovementState.WallRunningRight) && lastWall != wall;
+        return (!Physics.Raycast(feet.position, Vector3.down, minJumpHeight, environmentMask)) && (movementState != MovementState.WallRunningLeft && movementState != MovementState.WallRunningRight) && lastWall != (wallRight ? rightWallHit.transform : leftWallHit.transform);
 
     }
 
@@ -1164,25 +1189,25 @@ public class PlayerController : MonoBehaviour {
 
         // limit player rotation
         wallForward = Vector3.Cross(wallHit.normal, Vector3.up);
-        Quaternion rotation = Quaternion.LookRotation(wallForward, Vector3.up);
 
         // check if player is wall running in opposite direction
         if ((transform.forward - wallForward).magnitude > (transform.forward + wallForward).magnitude) {
 
             // flip rotation vector & wall forward
             wallForward *= -1;
-            rotation = Quaternion.LookRotation(wallForward, Vector3.up);
 
         }
+
+        Quaternion rotation = Quaternion.LookRotation(wallForward, Vector3.up);
 
         // stop exiting look rotation lerp coroutine if it exists
         if (lookRotationLerpCoroutine != null)
             StopCoroutine(lookRotationLerpCoroutine);
 
         // check if player is out of wall run look clamps
-        if (yRotation < rotation.eulerAngles.y - wallSideCameraClamp || yRotation > rotation.eulerAngles.y + wallOutsideCameraClamp)
-            // adjust look clamps
-            lookRotationLerpCoroutine = StartCoroutine(LerpLookRotation(rotation));
+        //if (yRotation < rotation.eulerAngles.y - wallSideCameraClamp || yRotation > rotation.eulerAngles.y + wallOutsideCameraClamp)
+        // adjust look clamps
+        lookRotationLerpCoroutine = StartCoroutine(LerpLookRotation(rotation));
 
         // weaken gravity effect
         if (useWallRunGravity)
@@ -1310,6 +1335,7 @@ public class PlayerController : MonoBehaviour {
 
             // direct hit
             predictionHit = raycastHit;
+            predictionObj.gameObject.SetActive(true);
             UIController.DisableCrosshair();
 
         } else if (raycastHit.point == Vector3.zero) {
@@ -1320,28 +1346,23 @@ public class PlayerController : MonoBehaviour {
 
                 // indirect / predicted hit
                 predictionHit = sphereCastHit;
+                predictionObj.gameObject.SetActive(true);
                 UIController.EnableCrosshair();
 
             } else {
 
                 // miss
                 predictionHit.point = Vector3.zero;
+                predictionObj.gameObject.SetActive(false);
                 UIController.EnableCrosshair();
 
             }
         }
 
-        Vector3 hitPoint = predictionHit.point;
+        if (predictionHit.point != Vector3.zero && swingEnabled) {
 
-        if (hitPoint != Vector3.zero && swingEnabled) {
-
-            predictionObj.gameObject.SetActive(true);
-            predictionObj.position = hitPoint + (predictionHit.normal * 0.002f);
+            predictionObj.position = predictionHit.point + (predictionHit.normal * 0.002f);
             predictionObj.rotation = Quaternion.LookRotation(-predictionHit.normal, Vector3.up);
-
-        } else {
-
-            predictionObj.gameObject.SetActive(false);
 
         }
     }
@@ -1557,7 +1578,7 @@ public class PlayerController : MonoBehaviour {
         if (wallRunFOVCoroutine != null)
             StopCoroutine(wallRunFOVCoroutine);
 
-        wallRunFOVCoroutine = StartCoroutine(StartFOVLerp(camera.fieldOfView, targetFOV, duration));
+        wallRunFOVCoroutine = StartCoroutine(StartFOVLerp(mainCamera.fieldOfView, targetFOV, duration));
 
     }
 
@@ -1568,12 +1589,12 @@ public class PlayerController : MonoBehaviour {
         while (currentTime < duration) {
 
             currentTime += Time.unscaledDeltaTime;
-            camera.fieldOfView = Mathf.Lerp(startFOV, targetFOV, currentTime / duration);
+            mainCamera.fieldOfView = Mathf.Lerp(startFOV, targetFOV, currentTime / duration);
             yield return null;
 
         }
 
-        camera.fieldOfView = targetFOV;
+        mainCamera.fieldOfView = targetFOV;
         wallRunFOVCoroutine = null;
 
     }
@@ -1583,7 +1604,7 @@ public class PlayerController : MonoBehaviour {
         if (wallRunTiltCoroutine != null)
             StopCoroutine(wallRunTiltCoroutine);
 
-        wallRunTiltCoroutine = StartCoroutine(StartTiltLerp(camera.transform.localRotation, Quaternion.Euler(targetTilt), duration));
+        wallRunTiltCoroutine = StartCoroutine(StartTiltLerp(mainCamera.transform.localRotation, Quaternion.Euler(targetTilt), duration));
 
     }
 
@@ -1594,12 +1615,12 @@ public class PlayerController : MonoBehaviour {
         while (currentTime < duration) {
 
             currentTime += Time.unscaledDeltaTime;
-            camera.transform.localRotation = Quaternion.Lerp(startTilt, targetTilt, currentTime / duration);
+            mainCamera.transform.localRotation = Quaternion.Lerp(startTilt, targetTilt, currentTime / duration);
             yield return null;
 
         }
 
-        camera.transform.localRotation = targetTilt;
+        mainCamera.transform.localRotation = targetTilt;
         wallRunTiltCoroutine = null;
 
     }
