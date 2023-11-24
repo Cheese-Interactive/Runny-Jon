@@ -6,8 +6,7 @@ using UnityEngine.Animations.Rigging;
 [RequireComponent(typeof(Rigidbody))]
 [RequireComponent(typeof(LineRenderer))]
 [RequireComponent(typeof(RigBuilder))]
-public class PlayerController : MonoBehaviour
-{
+public class PlayerController : MonoBehaviour {
 
     #region VARIABLES
     [Header("References")]
@@ -255,15 +254,13 @@ public class PlayerController : MonoBehaviour
     #endregion
 
     #region ENUMS
-    public enum MovementState
-    {
+    public enum MovementState {
 
         None, Walking, Sprinting, Crouching, Sliding, WallRunningLeft, WallRunningRight, Swinging, Ziplining, Air, Killed
 
     }
 
-    public enum SlopeType
-    {
+    public enum SlopeType {
 
         None, ValidUp, ValidDown, Invalid
 
@@ -271,8 +268,7 @@ public class PlayerController : MonoBehaviour
     #endregion
 
     #region CORE
-    private void Awake()
-    {
+    private void Awake() {
 
         gameManager = FindObjectOfType<GameManager>();
         audioManager = FindObjectOfType<GameAudioManager>();
@@ -323,29 +319,23 @@ public class PlayerController : MonoBehaviour
 
     }
 
-    private void Update()
-    {
+    private void Update() {
 
         // looking
-        if (lookEnabled)
-        {
+        if (lookEnabled) {
 
             float mouseX = Input.GetAxisRaw("Mouse X") * xSensitivity * 10f * Time.fixedDeltaTime;
             float mouseY = Input.GetAxisRaw("Mouse Y") * ySensitivity * 10f * Time.fixedDeltaTime;
 
             yRotation += mouseX;
 
-            if (movementState != MovementState.WallRunningLeft && movementState != MovementState.WallRunningRight)
-            {
+            if (movementState != MovementState.WallRunningLeft && movementState != MovementState.WallRunningRight) {
 
                 transform.rotation = Quaternion.Euler(0f, yRotation, 0f);
 
-            }
-            else
-            {
+            } else {
 
-                if (lookRotationLerpCoroutine == null)
-                {
+                if (lookRotationLerpCoroutine == null) {
 
                     Vector3 rotation = Quaternion.LookRotation(wallForward).eulerAngles;
 
@@ -384,17 +374,13 @@ public class PlayerController : MonoBehaviour
             lastWall = null;
 
         // handling velocity when landing
-        if (isGrounded && !lastIsGrounded)
-        { // just landed
+        if (isGrounded && !lastIsGrounded) { // just landed
 
-            if (movementDirection == Vector3.zero)
-            {
+            if (movementDirection == Vector3.zero) {
 
                 ResetVelocity();
 
-            }
-            else
-            {
+            } else {
 
                 moveSpeed /= landGroundFriction;
                 desiredMoveSpeed /= landGroundFriction;
@@ -418,8 +404,7 @@ public class PlayerController : MonoBehaviour
         ControlSpeed();
 
         // slide queueing
-        if (slideQueued && jumpReady && Input.GetKey(slideKey) && isGrounded && movementState == MovementState.Air)
-        {
+        if (slideQueued && jumpReady && Input.GetKey(slideKey) && isGrounded && movementState == MovementState.Air) {
 
             StartSlide();
             slideQueued = false;
@@ -427,11 +412,9 @@ public class PlayerController : MonoBehaviour
         }
 
         // jumping
-        if (Input.GetKeyDown(jumpKey) && jumpReady && jumpEnabled && (isGrounded || movementState == MovementState.Ziplining))
-        {
+        if (Input.GetKeyDown(jumpKey) && jumpReady && jumpEnabled && (isGrounded || movementState == MovementState.Ziplining)) {
 
-            if (movementState == MovementState.Sliding)
-            {
+            if (movementState == MovementState.Sliding) {
 
                 StopSlide();
                 slideQueued = true;
@@ -446,14 +429,11 @@ public class PlayerController : MonoBehaviour
         HandleHeadbob();
 
         // uncrouching
-        if (uncrouchQueued)
-        {
+        if (uncrouchQueued) {
 
-            foreach (Transform checker in obstacleCheckers)
-            {
+            foreach (Transform checker in obstacleCheckers) {
 
-                if (!Physics.Raycast(checker.position, Vector3.up, startHeight + uncrouchMinClearing, environmentMask))
-                {
+                if (!Physics.Raycast(checker.position, Vector3.up, startHeight + uncrouchMinClearing, environmentMask)) {
 
                     Uncrouch();
                     break;
@@ -463,8 +443,7 @@ public class PlayerController : MonoBehaviour
         }
 
         // sliding
-        if (Input.GetKeyDown(slideKey) && movementState != MovementState.Crouching && movementState != MovementState.Swinging && movementState != MovementState.WallRunningLeft && movementState != MovementState.WallRunningRight && movementState != MovementState.Ziplining)
-        {
+        if (Input.GetKeyDown(slideKey) && movementState != MovementState.Crouching && movementState != MovementState.Swinging && movementState != MovementState.WallRunningLeft && movementState != MovementState.WallRunningRight && movementState != MovementState.Ziplining) {
 
             Vector3 flatVel = new Vector3(rb.velocity.x, 0f, rb.velocity.z);
 
@@ -473,9 +452,7 @@ public class PlayerController : MonoBehaviour
             else if (crouchEnabled)
                 Crouch();
 
-        }
-        else if (Input.GetKeyUp(slideKey))
-        {
+        } else if (Input.GetKeyUp(slideKey)) {
 
             if (movementState == MovementState.Sliding)
                 StopSlide();
@@ -502,8 +479,7 @@ public class PlayerController : MonoBehaviour
             rb.drag = 0f;
 
         // level resetting
-        if (Input.GetKeyDown(resetKey))
-        {
+        if (Input.GetKeyDown(resetKey)) {
 
             transform.parent = null;
             gameManager.KillPlayer();
@@ -511,8 +487,7 @@ public class PlayerController : MonoBehaviour
         }
 
         // pausing
-        if (Input.GetKeyDown(pauseKey))
-        {
+        if (Input.GetKeyDown(pauseKey)) {
 
             if (gameManager.GetGamePaused())
                 UIController.ResumeGame();
@@ -528,16 +503,13 @@ public class PlayerController : MonoBehaviour
 
         Collider[] colliders = Physics.OverlapSphere(transform.position, ziplineCheckRadius, ziplineMask);
 
-        if (colliders.Length > 0 && movementState != MovementState.Ziplining)
-        {
+        if (colliders.Length > 0 && movementState != MovementState.Ziplining) {
 
             Zipline zipline = colliders[0].GetComponent<Zipline>();
 
-            if (ziplineEnabled && zipline.CanZipline())
-            {
+            if (ziplineEnabled && zipline.CanZipline()) {
 
-                if (Input.GetKeyDown(interactKey))
-                {
+                if (Input.GetKeyDown(interactKey)) {
 
                     StopSwing();
                     currZipline = zipline;
@@ -549,12 +521,9 @@ public class PlayerController : MonoBehaviour
                 UIController.EnableInteractCrosshair("Zipline");
 
             }
-        }
-        else if (Physics.Raycast(ray, out interactableHitInfo, interactDistance) && interactableHitInfo.transform.CompareTag("Interactable"))
-        {
+        } else if (Physics.Raycast(ray, out interactableHitInfo, interactDistance) && interactableHitInfo.transform.CompareTag("Interactable")) {
 
-            if (interactableHitInfo.collider.GetComponent<Interactable>() != null)
-            {
+            if (interactableHitInfo.collider.GetComponent<Interactable>() != null) {
 
                 Interactable interactable = interactableHitInfo.collider.GetComponent<Interactable>();
                 UIController.EnableInteractCrosshair(interactable.interactText);
@@ -563,39 +532,29 @@ public class PlayerController : MonoBehaviour
                     interactable.BaseInteract();
 
             }
-        }
-        else if (Physics.Raycast(ray, out grabbableHitInfo, grabDistance) && grabbableHitInfo.transform.CompareTag("Grabbable") && !currGrabbedObj && grabbableHitInfo.collider.GetComponent<Rigidbody>() != null)
-        {
+        } else if (Physics.Raycast(ray, out grabbableHitInfo, grabDistance) && grabbableHitInfo.transform.CompareTag("Grabbable") && !currGrabbedObj && grabbableHitInfo.collider.GetComponent<Rigidbody>() != null) {
 
-            if (Input.GetKey(grabKey))
-            {
+            if (Input.GetKey(grabKey)) {
 
                 // grabs object
                 currGrabbedObj = grabbableHitInfo.rigidbody;
                 currGrabbedObj.freezeRotation = true;
                 currGrabbedObj.useGravity = false;
 
-            }
-            else
-            {
+            } else {
 
                 // looking at object but isn't grabbing
                 UIController.EnableInteractCrosshair("Grab");
 
             }
-        }
-        else if (currGrabbedObj)
-        {
+        } else if (currGrabbedObj) {
 
-            if (Input.GetKey(grabKey))
-            {
+            if (Input.GetKey(grabKey)) {
 
                 // still holding onto grabbed object
                 UIController.EnableInteractCrosshair("");
 
-            }
-            else
-            {
+            } else {
 
                 // lets go of grabbed object
                 currGrabbedObj.useGravity = true;
@@ -603,9 +562,7 @@ public class PlayerController : MonoBehaviour
                 currGrabbedObj = null;
 
             }
-        }
-        else
-        {
+        } else {
 
             UIController.DisableInteractCrosshair();
 
@@ -615,12 +572,10 @@ public class PlayerController : MonoBehaviour
 
     }
 
-    private void FixedUpdate()
-    {
+    private void FixedUpdate() {
 
         // grabbing
-        if (currGrabbedObj)
-        {
+        if (currGrabbedObj) {
 
             Vector3 directionToPoint = grabPoint.position - currGrabbedObj.position;
             currGrabbedObj.velocity = directionToPoint * 12f * (directionToPoint.magnitude);
@@ -640,8 +595,7 @@ public class PlayerController : MonoBehaviour
 
         movementDirection = transform.forward * verticalInput + transform.right * horizontalInput;
 
-        if (movementDirection != Vector3.zero && !firstMovementDetected)
-        {
+        if (movementDirection != Vector3.zero && !firstMovementDetected) {
 
             gameManager.StartTimer();
             firstMovementDetected = true;
@@ -649,51 +603,44 @@ public class PlayerController : MonoBehaviour
         }
 
         // swinging
-        if (movementState == MovementState.Swinging && joint != null)
-        {
+        if (movementState == MovementState.Swinging && joint != null) {
 
             HandleSwingMovement();
 
         }
         // wall running
-        else if (movementState == MovementState.WallRunningLeft || movementState == MovementState.WallRunningRight)
-        {
+        else if (movementState == MovementState.WallRunningLeft || movementState == MovementState.WallRunningRight) {
 
             HandleWallRunMovement();
 
         }
         // on valid slope
-        else if (CheckSlope() == SlopeType.ValidUp || CheckSlope() == SlopeType.ValidDown && !exitingSlope)
-        {
+        else if (CheckSlope() == SlopeType.ValidUp || CheckSlope() == SlopeType.ValidDown && !exitingSlope) {
 
             rb.AddForce(GetSlopeMoveDirection() * moveSpeed * 30f, ForceMode.Force);
 
         }
         // on invalid slope
-        else if (CheckSlope() == SlopeType.Invalid)
-        {
+        else if (CheckSlope() == SlopeType.Invalid) {
 
             rb.AddForce(Vector3.Cross(slopeHit.normal, Vector3.Cross(slopeHit.normal, Vector3.up)) * 500f, ForceMode.Acceleration);
 
         }
         // on ground (walking, sprinting, crouching, sliding)
-        else if (isGrounded && movementState != MovementState.None)
-        {
+        else if (isGrounded && movementState != MovementState.None) {
 
             rb.AddForce(movementDirection.normalized * moveSpeed * 10f, ForceMode.Force);
 
         }
         // in air
-        else if (movementState != MovementState.None)
-        {
+        else if (movementState != MovementState.None) {
 
             rb.AddForce(movementDirection.normalized * moveSpeed * airMultiplier * 10f, ForceMode.Force);
 
         }
 
         // no gravity on slopes
-        if (!inGravityZone && movementState != MovementState.WallRunningLeft && movementState != MovementState.WallRunningRight && movementState != MovementState.Ziplining)
-        {
+        if (!inGravityZone && movementState != MovementState.WallRunningLeft && movementState != MovementState.WallRunningRight && movementState != MovementState.Ziplining) {
 
             // use gravity if player is on invalid slope or no slope (no gravity if player is on slope)
             rb.useGravity = CheckSlope() == SlopeType.None || CheckSlope() == SlopeType.Invalid;
@@ -701,19 +648,16 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    private void LateUpdate()
-    {
+    private void LateUpdate() {
 
         DrawRope();
 
     }
 
-    private void OnTriggerEnter(Collider collider)
-    {
+    private void OnTriggerEnter(Collider collider) {
 
         // check if collides with death zone
-        if (collider.CompareTag("DeathZone"))
-        {
+        if (collider.CompareTag("DeathZone")) {
 
             movementState = MovementState.Killed;
             gameManager.KillPlayer();
@@ -721,24 +665,19 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    private void OnTriggerStay(Collider collider)
-    {
+    private void OnTriggerStay(Collider collider) {
 
         // check if collides with effect zone
-        if (collider.CompareTag("EffectZone"))
-        {
+        if (collider.CompareTag("EffectZone")) {
 
             // loop through each effect on the player
-            foreach (Effect effect in currentEffects)
-            {
+            foreach (Effect effect in currentEffects) {
 
                 // check if effect type is low gravity
-                if (effect.GetEffectType() == EffectType.Gravity)
-                {
+                if (effect.GetEffectType() == EffectType.Gravity) {
 
                     // check if gravity hasn't been disabled
-                    if (rb.useGravity)
-                    {
+                    if (rb.useGravity) {
 
                         // disable gravity and flag that player is in gravity zone
                         rb.useGravity = false;
@@ -754,12 +693,10 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    private void OnTriggerExit(Collider collider)
-    {
+    private void OnTriggerExit(Collider collider) {
 
         // check if collides with effect zone
-        if (collider.CompareTag("EffectZone") && inGravityZone)
-        {
+        if (collider.CompareTag("EffectZone") && inGravityZone) {
 
             rb.useGravity = true;
             inGravityZone = false;
@@ -769,8 +706,7 @@ public class PlayerController : MonoBehaviour
     #endregion
 
     #region LOOKING
-    public void SetLookRotations(float xRotation, float yRotation)
-    {
+    public void SetLookRotations(float xRotation, float yRotation) {
 
         this.xRotation = xRotation;
         this.yRotation = yRotation;
@@ -779,92 +715,72 @@ public class PlayerController : MonoBehaviour
     #endregion
 
     #region MOVEMENT
-    private void HandleMovementState()
-    {
+    private void HandleMovementState() {
 
         Vector3 flatVel = new Vector3(rb.velocity.x, 0f, rb.velocity.z);
 
-        if (movementState == MovementState.Ziplining && ziplineEnabled)
-        {
+        if (movementState == MovementState.Ziplining && ziplineEnabled) {
 
             // ziplining
             movementState = MovementState.Ziplining;
             ResetAnimations();
             animator.SetBool("isZiplining", true);
 
-        }
-        else if (movementState == MovementState.Swinging && swingEnabled)
-        {
+        } else if (movementState == MovementState.Swinging && swingEnabled) {
 
             // swinging
             movementState = MovementState.Swinging;
             desiredMoveSpeed = maxSwingSpeed;
 
-            if (flatVel.magnitude >= minMovementVelocity)
-            {
+            if (flatVel.magnitude >= minMovementVelocity) {
 
                 ResetAnimations();
                 animator.SetBool("isSwinging", true);
 
-            }
-            else
-            {
+            } else {
 
                 ResetAnimations();
 
             }
-        }
-        else if (movementState == MovementState.WallRunningLeft && wallRunEnabled)
-        {
+        } else if (movementState == MovementState.WallRunningLeft && wallRunEnabled) {
 
             // wall running left
             movementState = MovementState.WallRunningLeft;
             desiredMoveSpeed = wallRunSpeed;
 
-            if (flatVel.magnitude >= minMovementVelocity)
-            {
+            if (flatVel.magnitude >= minMovementVelocity) {
 
                 ResetAnimations();
                 animator.SetBool("isWallRunningLeft", true);
 
-            }
-            else
-            {
+            } else {
 
                 ResetAnimations();
 
             }
-        }
-        else if (movementState == MovementState.WallRunningRight && wallRunEnabled)
-        {
+        } else if (movementState == MovementState.WallRunningRight && wallRunEnabled) {
 
             // wall running right
             movementState = MovementState.WallRunningRight;
             desiredMoveSpeed = wallRunSpeed;
 
-            if (flatVel.magnitude >= minMovementVelocity)
-            {
+            if (flatVel.magnitude >= minMovementVelocity) {
 
                 ResetAnimations();
                 animator.SetBool("isWallRunningRight", true);
 
-            }
-            else
-            {
+            } else {
 
                 ResetAnimations();
 
             }
-        }
-        else if (movementState == MovementState.Sliding && slideEnabled)
-        {
+        } else if (movementState == MovementState.Sliding && slideEnabled) {
 
             // sliding
             movementState = MovementState.Sliding;
 
             // state 1: player is on a flat surface
-            if (CheckSlope() == SlopeType.None && isGrounded)
-            {
+            if (CheckSlope() == SlopeType.None && isGrounded) {
 
                 desiredMoveSpeed = slideForwardForce;
 
@@ -874,8 +790,7 @@ public class PlayerController : MonoBehaviour
 
             }
             // state 2: player is going up slope
-            else if (CheckSlope() == SlopeType.ValidUp)
-            {
+            else if (CheckSlope() == SlopeType.ValidUp) {
 
                 // desired move speed is the max slide speed x upwards slide factor
                 desiredMoveSpeed = maxSlideSpeed * upwardsSlideFactor;
@@ -885,8 +800,7 @@ public class PlayerController : MonoBehaviour
 
             }
             // state 3: player is going down slope
-            else if (CheckSlope() == SlopeType.ValidDown)
-            {
+            else if (CheckSlope() == SlopeType.ValidDown) {
 
                 // desired move speed is the maximum slide speed
                 desiredMoveSpeed = maxSlideSpeed;
@@ -894,8 +808,7 @@ public class PlayerController : MonoBehaviour
 
             }
             // state 4: none (in air, etc)
-            else
-            {
+            else {
 
                 // desired move speed is sprint speed
                 desiredMoveSpeed = sprintSpeed;
@@ -905,115 +818,88 @@ public class PlayerController : MonoBehaviour
             if (slideTimer <= 0f)
                 StopSlide();
 
-            if (flatVel.magnitude >= minMovementVelocity)
-            {
+            if (flatVel.magnitude >= minMovementVelocity) {
 
                 ResetAnimations();
                 animator.SetBool("isSliding", true);
 
-            }
-            else
-            {
+            } else {
 
                 ResetAnimations();
 
             }
-        }
-        else if (movementState == MovementState.Crouching && crouchEnabled)
-        {
+        } else if (movementState == MovementState.Crouching && crouchEnabled) {
 
             // crouching
             movementState = MovementState.Crouching;
             desiredMoveSpeed = crouchSpeed;
 
-            if (flatVel.magnitude >= minMovementVelocity || rb.velocity.magnitude > 0.01f)
-            {
+            if (flatVel.magnitude >= minMovementVelocity || rb.velocity.magnitude > 0.01f) {
 
                 ResetAnimations();
                 animator.SetBool("isCrouching", true);
 
-            }
-            else
-            {
+            } else {
 
                 ResetAnimations();
 
             }
-        }
-        else if (isGrounded && movementDirection == Vector3.zero)
-        {
+        } else if (isGrounded && movementDirection == Vector3.zero) {
 
             // idle
             movementState = MovementState.None;
             desiredMoveSpeed = walkSpeed;
 
-            if (flatVel.magnitude >= minMovementVelocity)
-            {
+            if (flatVel.magnitude >= minMovementVelocity) {
+
+                ResetAnimations();
+
+            } else {
 
                 ResetAnimations();
 
             }
-            else
-            {
-
-                ResetAnimations();
-
-            }
-        }
-        else if (isGrounded && Input.GetKey(sprintKey) && sprintEnabled)
-        {
+        } else if (isGrounded && Input.GetKey(sprintKey) && sprintEnabled) {
 
             // sprinting
             movementState = MovementState.Sprinting;
             audioManager.PlaySound(GameAudioManager.GameSoundEffectType.SprintFootstep);
             desiredMoveSpeed = sprintSpeed;
 
-            if (flatVel.magnitude >= minMovementVelocity)
-            {
+            if (flatVel.magnitude >= minMovementVelocity) {
 
                 ResetAnimations();
                 animator.SetBool("isSprinting", true);
 
-            }
-            else
-            {
+            } else {
 
                 ResetAnimations();
 
             }
-        }
-        else if (isGrounded && walkEnabled)
-        {
+        } else if (isGrounded && walkEnabled) {
 
             // walking
             movementState = MovementState.Walking;
             audioManager.PlaySound(GameAudioManager.GameSoundEffectType.WalkFootstep);
             desiredMoveSpeed = walkSpeed;
 
-            if (flatVel.magnitude >= minMovementVelocity)
-            {
+            if (flatVel.magnitude >= minMovementVelocity) {
 
                 ResetAnimations();
                 animator.SetBool("isWalking", true);
 
-            }
-            else
-            {
+            } else {
 
                 ResetAnimations();
 
             }
-        }
-        else if (!isGrounded && (flatVel.magnitude >= minMovementVelocity || rb.velocity.magnitude > 0.01f) && movementState != MovementState.Crouching && movementState != MovementState.Sliding)
-        {
+        } else if (!isGrounded && (flatVel.magnitude >= minMovementVelocity || rb.velocity.magnitude > 0.01f) && movementState != MovementState.Crouching && movementState != MovementState.Sliding) {
 
             // air
             movementState = MovementState.Air;
             ResetAnimations();
 
-        }
-        else
-        {
+        } else {
 
             // default case
             movementState = MovementState.None;
@@ -1021,17 +907,14 @@ public class PlayerController : MonoBehaviour
 
         }
 
-        if (Mathf.Abs(desiredMoveSpeed - lastDesiredMoveSpeed) > sprintSpeed - walkSpeed && moveSpeed != 0f)
-        {
+        if (Mathf.Abs(desiredMoveSpeed - lastDesiredMoveSpeed) > sprintSpeed - walkSpeed && moveSpeed != 0f) {
 
             if (moveSpeedCoroutine != null)
                 StopCoroutine(moveSpeedCoroutine);
 
             moveSpeedCoroutine = StartCoroutine(LerpMoveSpeed());
 
-        }
-        else
-        {
+        } else {
 
             moveSpeed = desiredMoveSpeed;
 
@@ -1045,15 +928,13 @@ public class PlayerController : MonoBehaviour
 
     }
 
-    private IEnumerator LerpMoveSpeed()
-    {
+    private IEnumerator LerpMoveSpeed() {
 
         float timer = 0f;
         float difference = Mathf.Abs(desiredMoveSpeed - moveSpeed);
         float startValue = moveSpeed;
 
-        while (timer < difference)
-        {
+        while (timer < difference) {
 
             moveSpeed = Mathf.Lerp(startValue, desiredMoveSpeed, timer / difference);
 
@@ -1071,26 +952,21 @@ public class PlayerController : MonoBehaviour
 
     }
 
-    private void ControlSpeed()
-    {
+    private void ControlSpeed() {
 
         // check if player is on any type of slope and isn't exiting it
-        if (CheckSlope() == SlopeType.ValidUp || CheckSlope() == SlopeType.ValidDown || CheckSlope() == SlopeType.Invalid && !exitingSlope)
-        {
+        if (CheckSlope() == SlopeType.ValidUp || CheckSlope() == SlopeType.ValidDown || CheckSlope() == SlopeType.Invalid && !exitingSlope) {
 
             // normalize & limit velocity
             if (rb.velocity.magnitude > moveSpeed)
                 rb.velocity = rb.velocity.normalized * moveSpeed;
 
-        }
-        else
-        {
+        } else {
 
             // reset y velocity
             Vector3 flatVel = new Vector3(rb.velocity.x, 0f, rb.velocity.z);
 
-            if (flatVel.magnitude > moveSpeed)
-            {
+            if (flatVel.magnitude > moveSpeed) {
 
                 Vector3 controlledVel = flatVel.normalized * moveSpeed;
                 rb.velocity = new Vector3(controlledVel.x, rb.velocity.y, controlledVel.z);
@@ -1099,8 +975,7 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    public void ResetVelocity()
-    {
+    public void ResetVelocity() {
 
         moveSpeed = 0f;
         lastDesiredMoveSpeed = 0f;
@@ -1111,8 +986,7 @@ public class PlayerController : MonoBehaviour
     #endregion
 
     #region ANIMATIONS
-    private void ResetAnimations()
-    {
+    private void ResetAnimations() {
 
         animator.SetBool("isWalking", false);
         animator.SetBool("isSprinting", false);
@@ -1127,14 +1001,12 @@ public class PlayerController : MonoBehaviour
     #endregion
 
     #region JUMPING
-    private void Jump()
-    {
+    private void Jump() {
 
         if (inElevator)
             return;
 
-        if (movementState == MovementState.Ziplining)
-        {
+        if (movementState == MovementState.Ziplining) {
 
             currZipline.ResetZipline();
             return;
@@ -1144,8 +1016,7 @@ public class PlayerController : MonoBehaviour
         jumpReady = false;
         Invoke(nameof(ResetJump), jumpCooldown);
 
-        if (CheckSlope() == SlopeType.ValidUp || CheckSlope() == SlopeType.ValidDown)
-        {
+        if (CheckSlope() == SlopeType.ValidUp || CheckSlope() == SlopeType.ValidDown) {
 
             rb.velocity = new Vector3(rb.velocity.x, jumpForce, rb.velocity.z);
             exitingSlope = true;
@@ -1163,8 +1034,7 @@ public class PlayerController : MonoBehaviour
 
     }
 
-    private void ZiplineJump()
-    {
+    private void ZiplineJump() {
 
         if (movementState != MovementState.Ziplining)
             return;
@@ -1184,8 +1054,7 @@ public class PlayerController : MonoBehaviour
 
     }
 
-    private void ResetJump()
-    {
+    private void ResetJump() {
 
         jumpReady = true;
 
@@ -1193,8 +1062,7 @@ public class PlayerController : MonoBehaviour
     #endregion
 
     #region CROUCH
-    private void Crouch()
-    {
+    private void Crouch() {
 
         if (uncrouchQueued || inElevator)
             return;
@@ -1205,8 +1073,7 @@ public class PlayerController : MonoBehaviour
 
     }
 
-    private void ForceCrouch(float force)
-    {
+    private void ForceCrouch(float force) {
 
         transform.position += new Vector3(0f, startHeight / 2f, 0f);
         transform.localScale = new Vector3(transform.localScale.x, crouchScale, transform.localScale.z);
@@ -1215,14 +1082,11 @@ public class PlayerController : MonoBehaviour
 
     }
 
-    public void Uncrouch()
-    {
+    public void Uncrouch() {
 
-        foreach (Transform checker in obstacleCheckers)
-        {
+        foreach (Transform checker in obstacleCheckers) {
 
-            if (Physics.Raycast(checker.position, Vector3.up, startHeight + uncrouchMinClearing, environmentMask))
-            {
+            if (Physics.Raycast(checker.position, Vector3.up, startHeight + uncrouchMinClearing, environmentMask)) {
 
                 uncrouchQueued = true;
                 return;
@@ -1239,8 +1103,7 @@ public class PlayerController : MonoBehaviour
     #endregion
 
     #region SLIDING
-    private void StartSlide()
-    {
+    private void StartSlide() {
 
         if (inElevator)
             return;
@@ -1252,8 +1115,7 @@ public class PlayerController : MonoBehaviour
 
     }
 
-    private void StopSlide()
-    {
+    private void StopSlide() {
 
         movementState = MovementState.None;
         Uncrouch();
@@ -1262,8 +1124,7 @@ public class PlayerController : MonoBehaviour
     #endregion
 
     #region WALL RUNNING
-    private void CheckForWall()
-    {
+    private void CheckForWall() {
 
         // check for wall to the left
         wallLeft = Physics.SphereCast(transform.position, wallCheckRadius, -transform.right, out leftWallHit, wallCheckDistance, wallMask);
@@ -1273,23 +1134,20 @@ public class PlayerController : MonoBehaviour
 
     }
 
-    private bool CanWallRun()
-    {
+    private bool CanWallRun() {
 
         // check all the flags for wall running
         return (!Physics.Raycast(feet.position, Vector3.down, minJumpHeight, environmentMask)) && (movementState != MovementState.WallRunningLeft && movementState != MovementState.WallRunningRight) && lastWall != (wallRight ? rightWallHit.transform : leftWallHit.transform);
 
     }
 
-    private void HandleWallRunState()
-    {
+    private void HandleWallRunState() {
 
         // update wall check
         CheckForWall();
 
         // wall scaling
-        if (wallRunScalingEnabled)
-        {
+        if (wallRunScalingEnabled) {
 
             runningUpWall = Input.GetKey(upwardsWallRunKey);
             runningDownWall = Input.GetKey(downwardsWallRunKey);
@@ -1297,23 +1155,20 @@ public class PlayerController : MonoBehaviour
         }
 
         // state 1: wall running
-        if ((wallLeft || wallRight) && verticalInput > 0 && !isGrounded && !exitingWall)
-        {
+        if ((wallLeft || wallRight) && verticalInput > 0 && !isGrounded && !exitingWall) {
 
             // start wall run
             if (movementState != MovementState.WallRunningLeft && movementState != MovementState.WallRunningRight)
                 StartWallRun();
 
             // wall run timer (if enabled)
-            if (wallRunTimerEnabled)
-            {
+            if (wallRunTimerEnabled) {
 
                 if (wallRunTimer > 0f)
                     wallRunTimer -= Time.deltaTime;
 
                 // timer runs out
-                if (wallRunTimer <= 0f && (movementState == MovementState.WallRunningLeft || movementState == MovementState.WallRunningRight))
-                {
+                if (wallRunTimer <= 0f && (movementState == MovementState.WallRunningLeft || movementState == MovementState.WallRunningRight)) {
 
                     WallJump();
                     // exitingWall = true;
@@ -1328,8 +1183,7 @@ public class PlayerController : MonoBehaviour
 
         }
         // state 2: exiting wall
-        else if (exitingWall)
-        {
+        else if (exitingWall) {
 
             // if player is walling running, stop it
             if (movementState == MovementState.WallRunningLeft || movementState == MovementState.WallRunningRight)
@@ -1345,8 +1199,7 @@ public class PlayerController : MonoBehaviour
 
         }
         // state 3: none
-        else
-        {
+        else {
 
             // if player is wall running, stop it
             if (movementState == MovementState.WallRunningLeft || movementState == MovementState.WallRunningRight)
@@ -1355,8 +1208,7 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    private void StartWallRun()
-    {
+    private void StartWallRun() {
 
         // make sure player can wall run
         if (!CanWallRun())
@@ -1398,8 +1250,7 @@ public class PlayerController : MonoBehaviour
         wallForward = Vector3.Cross(wallHit.normal, Vector3.up);
 
         // check if player is wall running in opposite direction
-        if ((transform.forward - wallForward).magnitude > (transform.forward + wallForward).magnitude)
-        {
+        if ((transform.forward - wallForward).magnitude > (transform.forward + wallForward).magnitude) {
 
             // flip rotation vector & wall forward
             wallForward *= -1;
@@ -1423,11 +1274,9 @@ public class PlayerController : MonoBehaviour
 
     }
 
-    private void HandleWallRunMovement()
-    {
+    private void HandleWallRunMovement() {
 
-        if (rb.velocity.magnitude < 0.1f)
-        {
+        if (rb.velocity.magnitude < 0.1f) {
 
             StopWallRun();
             return;
@@ -1459,8 +1308,7 @@ public class PlayerController : MonoBehaviour
 
     }
 
-    private IEnumerator HandleWallRunGravity()
-    {
+    private IEnumerator HandleWallRunGravity() {
 
         // counter force initially fully counters gravity
         float counterForce = -Physics.gravity.y;
@@ -1472,8 +1320,7 @@ public class PlayerController : MonoBehaviour
         rb.useGravity = true;
 
         // while player is wall running
-        while (movementState == MovementState.WallRunningLeft || movementState == MovementState.WallRunningRight)
-        {
+        while (movementState == MovementState.WallRunningLeft || movementState == MovementState.WallRunningRight) {
 
             // add counter force
             rb.AddForce(transform.up * counterForce, ForceMode.Force);
@@ -1491,8 +1338,7 @@ public class PlayerController : MonoBehaviour
 
     }
 
-    public void StopWallRun()
-    {
+    public void StopWallRun() {
 
         // reset movement state
         movementState = MovementState.None;
@@ -1503,8 +1349,7 @@ public class PlayerController : MonoBehaviour
 
     }
 
-    private void WallJump()
-    {
+    private void WallJump() {
 
         // enter exit state
         exitingWall = true;
@@ -1526,30 +1371,26 @@ public class PlayerController : MonoBehaviour
     #endregion
 
     #region SWINGING
-    public Transform GetSwingMuzzle()
-    {
+    public Transform GetSwingMuzzle() {
 
         return muzzle;
 
     }
 
-    public Vector3 GetSwingPoint()
-    {
+    public Vector3 GetSwingPoint() {
 
         return swingPoint.position;
 
     }
 
-    private void CheckSwingPoints()
-    {
+    private void CheckSwingPoints() {
 
         if (!swingEnabled || joint != null || (movementState == MovementState.WallRunningLeft || movementState == MovementState.WallRunningRight) || movementState == MovementState.Swinging)
             return;
 
         Physics.Raycast(cameraPos.position, cameraPos.forward, out RaycastHit raycastHit, maxSwingDistance);
 
-        if (raycastHit.point != Vector3.zero && (swingMask & (1 << raycastHit.transform.gameObject.layer)) != 0)
-        {
+        if (raycastHit.point != Vector3.zero && (swingMask & (1 << raycastHit.transform.gameObject.layer)) != 0) {
 
             // direct hit
             predictionHit = raycastHit;
@@ -1562,14 +1403,11 @@ public class PlayerController : MonoBehaviour
             // disable crosshair
             UIController.DisableCrosshair();
 
-        }
-        else
-        {
+        } else {
 
             Physics.SphereCast(cameraPos.position, predictionRadius, cameraPos.forward, out RaycastHit sphereCastHit, maxSwingDistance, swingMask);
 
-            if (sphereCastHit.point != Vector3.zero)
-            {
+            if (sphereCastHit.point != Vector3.zero) {
 
                 // indirect / predicted hit
                 predictionHit = sphereCastHit;
@@ -1582,9 +1420,7 @@ public class PlayerController : MonoBehaviour
                 // enable crosshair
                 UIController.EnableCrosshair();
 
-            }
-            else
-            {
+            } else {
 
                 // miss
                 predictionHit.point = Vector3.zero;
@@ -1595,8 +1431,7 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    private void StartSwing()
-    {
+    private void StartSwing() {
 
         if (predictionHit.point == Vector3.zero)
             return;
@@ -1629,11 +1464,9 @@ public class PlayerController : MonoBehaviour
 
     }
 
-    private void DrawRope()
-    {
+    private void DrawRope() {
 
-        if (movementState != MovementState.Swinging)
-        {
+        if (movementState != MovementState.Swinging) {
 
             currentSwingPosition = muzzle.position;
             spring.Reset();
@@ -1645,8 +1478,7 @@ public class PlayerController : MonoBehaviour
 
         }
 
-        if (lineRenderer.positionCount == 0)
-        {
+        if (lineRenderer.positionCount == 0) {
 
             spring.SetVelocity(velocity);
             lineRenderer.positionCount = quality + 1;
@@ -1661,10 +1493,9 @@ public class PlayerController : MonoBehaviour
 
         currentSwingPosition = Vector3.Lerp(currentSwingPosition, swingPoint.position, Time.deltaTime * 12f);
 
-        for (int i = 0; i < quality + 1; i++)
-        {
+        for (int i = 0; i < quality + 1; i++) {
 
-            var delta = i / (float)quality;
+            var delta = i / (float) quality;
             Vector3 offset = up * waveHeight * Mathf.Sin(delta * waveCount * Mathf.PI * spring.Value * effectCurve.Evaluate(delta));
 
             lineRenderer.SetPosition(i, Vector3.Lerp(muzzle.position, currentSwingPosition, delta) + offset);
@@ -1672,8 +1503,7 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    private void HandleSwingMovement()
-    {
+    private void HandleSwingMovement() {
 
         swingIKTarget.position = swingPoint.position;
         joint.connectedAnchor = swingPoint.position;
@@ -1684,8 +1514,7 @@ public class PlayerController : MonoBehaviour
         if (verticalInput > 0f)
             rb.AddForce(transform.forward * forwardThrustForce * Time.deltaTime);
 
-        if (Input.GetKey(jumpKey) && jumpEnabled)
-        {
+        if (Input.GetKey(jumpKey) && jumpEnabled) {
 
             Vector3 directionToPoint = swingPoint.position - transform.position;
             rb.AddForce(directionToPoint.normalized * forwardThrustForce * Time.deltaTime);
@@ -1697,8 +1526,7 @@ public class PlayerController : MonoBehaviour
 
         }
 
-        if (Input.GetKey(cableExtendKey))
-        {
+        if (Input.GetKey(cableExtendKey)) {
 
             float extendedDistanceFromPoint = Vector3.Distance(transform.position, swingPoint.position) + cableExtendSpeed;
 
@@ -1708,8 +1536,7 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    public void StopSwing()
-    {
+    public void StopSwing() {
 
         movementState = MovementState.None;
         rigBuilder.layers[leftHandIKRigIndex].active = true;
@@ -1722,8 +1549,7 @@ public class PlayerController : MonoBehaviour
     #endregion
 
     #region ZIPLINING
-    public void ResetZipline()
-    {
+    public void ResetZipline() {
 
         ZiplineJump();
 
@@ -1731,11 +1557,9 @@ public class PlayerController : MonoBehaviour
     #endregion
 
     #region HEADBOB
-    private void HandleHeadbob()
-    {
+    private void HandleHeadbob() {
 
-        if (movementState == MovementState.Ziplining)
-        {
+        if (movementState == MovementState.Ziplining) {
 
             timer += ziplineBobSpeed * Time.deltaTime;
             cameraPos.localPosition = new Vector3(cameraPos.localPosition.x, startCameraPos.y + Mathf.Sin(timer) * ziplineBobAmount, cameraPos.localPosition.z);
@@ -1743,34 +1567,31 @@ public class PlayerController : MonoBehaviour
 
         }
 
-        if (isGrounded)
-        {
+        if (isGrounded) {
 
             Vector3 flatVel = new Vector3(rb.velocity.x, 0f, rb.velocity.z);
 
-            if (flatVel.magnitude >= minMovementVelocity)
-            {
+            if (flatVel.magnitude >= minMovementVelocity) {
 
-                switch (movementState)
-                {
+                switch (movementState) {
 
                     case MovementState.Crouching:
 
-                        timer += crouchBobSpeed * Time.deltaTime;
-                        cameraPos.localPosition = new Vector3(cameraPos.localPosition.x, startCameraPos.y + Mathf.Sin(timer) * crouchBobAmount, cameraPos.localPosition.z);
-                        break;
+                    timer += crouchBobSpeed * Time.deltaTime;
+                    cameraPos.localPosition = new Vector3(cameraPos.localPosition.x, startCameraPos.y + Mathf.Sin(timer) * crouchBobAmount, cameraPos.localPosition.z);
+                    break;
 
                     case MovementState.Sprinting:
 
-                        timer += sprintBobSpeed * Time.deltaTime;
-                        cameraPos.localPosition = new Vector3(cameraPos.localPosition.x, startCameraPos.y + Mathf.Sin(timer) * sprintBobAmount, cameraPos.localPosition.z);
-                        break;
+                    timer += sprintBobSpeed * Time.deltaTime;
+                    cameraPos.localPosition = new Vector3(cameraPos.localPosition.x, startCameraPos.y + Mathf.Sin(timer) * sprintBobAmount, cameraPos.localPosition.z);
+                    break;
 
                     case MovementState.Walking:
 
-                        timer += walkBobSpeed * Time.deltaTime;
-                        cameraPos.localPosition = new Vector3(cameraPos.localPosition.x, startCameraPos.y + Mathf.Sin(timer) * walkBobAmount, cameraPos.localPosition.z);
-                        break;
+                    timer += walkBobSpeed * Time.deltaTime;
+                    cameraPos.localPosition = new Vector3(cameraPos.localPosition.x, startCameraPos.y + Mathf.Sin(timer) * walkBobAmount, cameraPos.localPosition.z);
+                    break;
 
                 }
             }
@@ -1779,19 +1600,15 @@ public class PlayerController : MonoBehaviour
     #endregion
 
     #region SLOPES
-    private SlopeType CheckSlope()
-    {
+    private SlopeType CheckSlope() {
 
-        if (Physics.Raycast(feet.position, Vector3.down, out slopeHit, slopeCheckDistance))
-        {
+        if (Physics.Raycast(feet.position, Vector3.down, out slopeHit, slopeCheckDistance)) {
 
             float angle = Vector3.Angle(Vector3.up, slopeHit.normal);
 
-            if (angle != 0f)
-            {
+            if (angle != 0f) {
 
-                if (angle <= maxSlopeAngle)
-                {
+                if (angle <= maxSlopeAngle) {
 
                     float dot = Vector3.Dot(slopeHit.normal, transform.forward);
 
@@ -1800,9 +1617,7 @@ public class PlayerController : MonoBehaviour
                     else if (dot > 0f)
                         return SlopeType.ValidDown;
 
-                }
-                else
-                {
+                } else {
 
                     return SlopeType.Invalid;
 
@@ -1814,8 +1629,7 @@ public class PlayerController : MonoBehaviour
 
     }
 
-    private Vector3 GetSlopeMoveDirection()
-    {
+    private Vector3 GetSlopeMoveDirection() {
 
         return Vector3.ProjectOnPlane(movementDirection, slopeHit.normal).normalized;
 
@@ -1823,8 +1637,7 @@ public class PlayerController : MonoBehaviour
     #endregion
 
     #region CAMERA EFFECTS
-    private void LerpFOV(float targetFOV, float duration)
-    {
+    private void LerpFOV(float targetFOV, float duration) {
 
         if (wallRunFOVCoroutine != null)
             StopCoroutine(wallRunFOVCoroutine);
@@ -1833,13 +1646,11 @@ public class PlayerController : MonoBehaviour
 
     }
 
-    private IEnumerator StartFOVLerp(float startFOV, float targetFOV, float duration)
-    {
+    private IEnumerator StartFOVLerp(float startFOV, float targetFOV, float duration) {
 
         float currentTime = 0f;
 
-        while (currentTime < duration)
-        {
+        while (currentTime < duration) {
 
             currentTime += Time.unscaledDeltaTime;
             mainCamera.fieldOfView = Mathf.Lerp(startFOV, targetFOV, currentTime / duration);
@@ -1852,8 +1663,7 @@ public class PlayerController : MonoBehaviour
 
     }
 
-    private void LerpTilt(Vector3 targetTilt, float duration)
-    {
+    private void LerpTilt(Vector3 targetTilt, float duration) {
 
         if (wallRunTiltCoroutine != null)
             StopCoroutine(wallRunTiltCoroutine);
@@ -1862,13 +1672,11 @@ public class PlayerController : MonoBehaviour
 
     }
 
-    private IEnumerator StartTiltLerp(Quaternion startTilt, Quaternion targetTilt, float duration)
-    {
+    private IEnumerator StartTiltLerp(Quaternion startTilt, Quaternion targetTilt, float duration) {
 
         float currentTime = 0f;
 
-        while (currentTime < duration)
-        {
+        while (currentTime < duration) {
 
             currentTime += Time.unscaledDeltaTime;
             mainCamera.transform.localRotation = Quaternion.Lerp(startTilt, targetTilt, currentTime / duration);
@@ -1881,14 +1689,12 @@ public class PlayerController : MonoBehaviour
 
     }
 
-    private IEnumerator LerpLookRotation(Quaternion targetRotation)
-    {
+    private IEnumerator LerpLookRotation(Quaternion targetRotation) {
 
         float currentTime = 0f;
         Quaternion startRotation = Quaternion.Euler(0f, yRotation, 0f);
 
-        while (currentTime < lookRotationLerpDuration)
-        {
+        while (currentTime < lookRotationLerpDuration) {
 
             currentTime += Time.deltaTime;
             yRotation = Quaternion.Lerp(startRotation, targetRotation, currentTime / lookRotationLerpDuration).eulerAngles.y;
@@ -1903,8 +1709,7 @@ public class PlayerController : MonoBehaviour
     #endregion
 
     #region MOVEMENT TOGGLES
-    public void EnableAllMovement()
-    {
+    public void EnableAllMovement() {
 
         if (levelLookEnabled)
             lookEnabled = true;
@@ -1938,8 +1743,7 @@ public class PlayerController : MonoBehaviour
 
     }
 
-    public void DisableAllMovement()
-    {
+    public void DisableAllMovement() {
 
         if (levelLookEnabled)
             lookEnabled = false;
@@ -1978,143 +1782,123 @@ public class PlayerController : MonoBehaviour
 
     }
 
-    public void EnableLook()
-    {
+    public void EnableLook() {
 
         if (levelLookEnabled)
             lookEnabled = true;
 
     }
 
-    public void DisableLook()
-    {
+    public void DisableLook() {
 
         if (levelLookEnabled)
             lookEnabled = false;
 
     }
 
-    public void EnableWalk()
-    {
+    public void EnableWalk() {
 
         walkEnabled = true;
 
     }
 
-    public void DisableWalk()
-    {
+    public void DisableWalk() {
 
         walkEnabled = false;
 
     }
 
-    public void EnableSprint()
-    {
+    public void EnableSprint() {
 
         sprintEnabled = true;
 
     }
 
-    public void DisableSprint()
-    {
+    public void DisableSprint() {
 
         sprintEnabled = false;
 
     }
 
-    public void EnableJump()
-    {
+    public void EnableJump() {
 
         jumpEnabled = true;
 
     }
 
-    public void DisableJump()
-    {
+    public void DisableJump() {
 
         jumpEnabled = false;
 
     }
 
-    public void EnableCrouch()
-    {
+    public void EnableCrouch() {
 
         crouchEnabled = true;
 
     }
 
-    public void DisableCrouch()
-    {
+    public void DisableCrouch() {
 
         crouchEnabled = false;
 
     }
 
-    public void EnableSlide()
-    {
+    public void EnableSlide() {
 
         slideEnabled = true;
 
     }
 
-    public void DisableSlide()
-    {
+    public void DisableSlide() {
 
         slideEnabled = false;
 
     }
 
-    public void EnableWallRun()
-    {
+    public void EnableWallRun() {
 
         wallRunEnabled = true;
 
     }
 
-    public void DisableWallRun()
-    {
+    public void DisableWallRun() {
 
         wallRunEnabled = false;
 
     }
 
-    public void EnableSwing()
-    {
+    public void EnableSwing() {
 
         swingEnabled = true;
 
     }
 
-    public void DisableSwing()
-    {
+    public void DisableSwing() {
 
         swingEnabled = false;
 
     }
 
-    public void EnableZipline()
-    {
+    public void EnableZipline() {
 
         ziplineEnabled = true;
 
     }
 
-    public void DisableZipline()
-    {
+    public void DisableZipline() {
 
         ziplineEnabled = false;
 
     }
 
-    public void EnableGrab()
-    {
+    public void EnableGrab() {
 
         grabEnabled = true;
 
     }
 
-    public void DisableGrab()
-    {
+    public void DisableGrab() {
 
         grabEnabled = false;
 
@@ -2122,11 +1906,9 @@ public class PlayerController : MonoBehaviour
     #endregion
 
     #region ELEVATOR
-    public void SetInElevator(bool inElevator)
-    {
+    public void SetInElevator(bool inElevator) {
 
-        if (inElevator)
-        {
+        if (inElevator) {
 
             StopSlide();
             Uncrouch();
@@ -2139,8 +1921,7 @@ public class PlayerController : MonoBehaviour
 
     }
 
-    public void SetElevatorMoving(bool elevatorMoving)
-    {
+    public void SetElevatorMoving(bool elevatorMoving) {
 
         this.elevatorMoving = elevatorMoving;
 
@@ -2148,8 +1929,7 @@ public class PlayerController : MonoBehaviour
     #endregion
 
     #region MISCELLANEOUS GETTERS & SETTERS
-    public float GetPlayerHeight()
-    {
+    public float GetPlayerHeight() {
 
         return startHeight;
 
@@ -2157,15 +1937,13 @@ public class PlayerController : MonoBehaviour
     #endregion
 
     #region EFFECTS
-    public void AddEffect(Effect effect)
-    {
+    public void AddEffect(Effect effect) {
 
         currentEffects.Add(effect);
 
     }
 
-    public void RemoveEffect(Effect effect)
-    {
+    public void RemoveEffect(Effect effect) {
 
         currentEffects.Remove(effect);
 
