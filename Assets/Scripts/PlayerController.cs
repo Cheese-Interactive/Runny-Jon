@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Animations.Rigging;
 
@@ -22,6 +23,7 @@ public class PlayerController : MonoBehaviour {
     private Spring spring;
     private float startScale;
     private float startHeight;
+    private Vector3 startGravity;
 
     [Header("Toggles")]
     private bool levelLookEnabled;
@@ -216,6 +218,10 @@ public class PlayerController : MonoBehaviour {
     [Header("Interacting")]
     [SerializeField] private float interactDistance;
 
+    [Header("Effects")]
+    private List<Effect> currentEffects;
+    private bool inGravityZone;
+
     [Header("Ground Check")]
     [SerializeField] private Transform feet;
     [SerializeField] private float groundCheckRadius;
@@ -273,6 +279,7 @@ public class PlayerController : MonoBehaviour {
         rigBuilder = GetComponent<RigBuilder>();
         predictionObj = FindObjectOfType<SwingPredictor>().transform;
         spring = new Spring();
+        startGravity = Physics.gravity;
 
         rigBuilder.layers[leftHandIKRigIndex].active = true;
         rigBuilder.layers[rightHandIKRigIndex].active = true;
@@ -292,6 +299,8 @@ public class PlayerController : MonoBehaviour {
         startCameraPos = cameraPos.localPosition;
 
         predictionObj.gameObject.SetActive(false);
+
+        currentEffects = new List<Effect>();
 
         Level level = gameManager.GetCurrentLevel();
         lookEnabled = levelLookEnabled = level.GetLookEnabled();
@@ -631,7 +640,7 @@ public class PlayerController : MonoBehaviour {
         }
 
         // no gravity on slopes
-        if (movementState != MovementState.WallRunningLeft && movementState != MovementState.WallRunningRight && movementState != MovementState.Ziplining) {
+        if (!inGravityZone && movementState != MovementState.WallRunningLeft && movementState != MovementState.WallRunningRight && movementState != MovementState.Ziplining) {
 
             // use gravity if player is on invalid slope or no slope (no gravity if player is on slope)
             rb.useGravity = CheckSlope() == SlopeType.None || CheckSlope() == SlopeType.Invalid;
@@ -647,10 +656,50 @@ public class PlayerController : MonoBehaviour {
 
     private void OnTriggerEnter(Collider collider) {
 
+        // check if collides with death zone
         if (collider.CompareTag("DeathZone")) {
 
             movementState = MovementState.Killed;
             gameManager.KillPlayer();
+
+        }
+    }
+
+    private void OnTriggerStay(Collider collider) {
+
+        // check if collides with effect zone
+        if (collider.CompareTag("EffectZone")) {
+
+            // loop through each effect on the player
+            foreach (Effect effect in currentEffects) {
+
+                // check if effect type is low gravity
+                if (effect.GetEffectType() == EffectType.Gravity) {
+
+                    // check if gravity hasn't been disabled
+                    if (rb.useGravity) {
+
+                        // disable gravity and flag that player is in gravity zone
+                        rb.useGravity = false;
+                        inGravityZone = true;
+
+                    }
+
+                    // add downwards "gravity" force
+                    rb.AddForce(transform.up * Physics.gravity.y * effect.GetMultiplier(), ForceMode.Force);
+
+                }
+            }
+        }
+    }
+
+    private void OnTriggerExit(Collider collider) {
+
+        // check if collides with effect zone
+        if (collider.CompareTag("EffectZone") && inGravityZone) {
+
+            rb.useGravity = true;
+            inGravityZone = false;
 
         }
     }
@@ -871,6 +920,10 @@ public class PlayerController : MonoBehaviour {
 
         }
 
+        foreach (Effect effect in currentEffects)
+            if (effect.GetEffectType() == EffectType.Speed)
+                moveSpeed *= effect.GetMultiplier();
+
         lastDesiredMoveSpeed = desiredMoveSpeed;
 
     }
@@ -971,7 +1024,13 @@ public class PlayerController : MonoBehaviour {
 
         }
 
-        rb.velocity = new Vector3(rb.velocity.x, jumpForce, rb.velocity.z);
+        float force = jumpForce;
+
+        foreach (Effect effect in currentEffects)
+            if (effect.GetEffectType() == EffectType.Jump)
+                force *= effect.GetMultiplier();
+
+        rb.velocity = new Vector3(rb.velocity.x, force, rb.velocity.z);
 
     }
 
@@ -1326,7 +1385,7 @@ public class PlayerController : MonoBehaviour {
 
     private void CheckSwingPoints() {
 
-        if (joint != null || (movementState == MovementState.WallRunningLeft || movementState == MovementState.WallRunningRight) || movementState == MovementState.Swinging)
+        if (!swingEnabled || joint != null || (movementState == MovementState.WallRunningLeft || movementState == MovementState.WallRunningRight) || movementState == MovementState.Swinging)
             return;
 
         Physics.Raycast(cameraPos.position, cameraPos.forward, out RaycastHit raycastHit, maxSwingDistance);
@@ -1335,10 +1394,16 @@ public class PlayerController : MonoBehaviour {
 
             // direct hit
             predictionHit = raycastHit;
+
+            // place prediction object
+            predictionObj.position = predictionHit.point + (predictionHit.normal * 0.002f);
+            predictionObj.rotation = Quaternion.LookRotation(-predictionHit.normal, Vector3.up);
             predictionObj.gameObject.SetActive(true);
+
+            // disable crosshair
             UIController.DisableCrosshair();
 
-        } else if (raycastHit.point == Vector3.zero) {
+        } else {
 
             Physics.SphereCast(cameraPos.position, predictionRadius, cameraPos.forward, out RaycastHit sphereCastHit, maxSwingDistance, swingMask);
 
@@ -1346,7 +1411,13 @@ public class PlayerController : MonoBehaviour {
 
                 // indirect / predicted hit
                 predictionHit = sphereCastHit;
+
+                // place prediction object
+                predictionObj.position = predictionHit.point + (predictionHit.normal * 0.002f);
+                predictionObj.rotation = Quaternion.LookRotation(-predictionHit.normal, Vector3.up);
                 predictionObj.gameObject.SetActive(true);
+
+                // enable crosshair
                 UIController.EnableCrosshair();
 
             } else {
@@ -1357,13 +1428,6 @@ public class PlayerController : MonoBehaviour {
                 UIController.EnableCrosshair();
 
             }
-        }
-
-        if (predictionHit.point != Vector3.zero && swingEnabled) {
-
-            predictionObj.position = predictionHit.point + (predictionHit.normal * 0.002f);
-            predictionObj.rotation = Quaternion.LookRotation(-predictionHit.normal, Vector3.up);
-
         }
     }
 
@@ -1868,6 +1932,20 @@ public class PlayerController : MonoBehaviour {
     public float GetPlayerHeight() {
 
         return startHeight;
+
+    }
+    #endregion
+
+    #region EFFECTS
+    public void AddEffect(Effect effect) {
+
+        currentEffects.Add(effect);
+
+    }
+
+    public void RemoveEffect(Effect effect) {
+
+        currentEffects.Remove(effect);
 
     }
     #endregion

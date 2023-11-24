@@ -4,13 +4,20 @@ using UnityEngine;
 
 public class GravityZone : MonoBehaviour {
 
-    [Header("Settings")]
-    [SerializeField] private float gravityMultiplier;
+    [Header("References")]
+    [SerializeField] private EffectObject effectObject;
 
-    private void OnTriggerStay(Collider collider) {
+    private void OnTriggerEnter(Collider collider) {
 
         if (collider.CompareTag("Player"))
-            collider.GetComponent<Rigidbody>().AddForce(transform.up * Physics.gravity.y * gravityMultiplier);
+            effectObject.GravityEntered();
+
+    }
+
+    private void OnTriggerExit(Collider collider) {
+
+        if (collider.CompareTag("Player"))
+            effectObject.GravityExited();
 
     }
 }

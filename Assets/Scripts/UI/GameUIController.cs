@@ -22,8 +22,8 @@ public class GameUIController : MonoBehaviour {
     [SerializeField] private CanvasGroup pauseMenu;
     [SerializeField] private Transform pauseTimerTextPos;
     [SerializeField] private Button pauseResumeButton;
+    [SerializeField] private Button pauseRestartButton;
     [SerializeField] private Button pauseMainMenuButton;
-    [SerializeField] private Button pauseSettingsButton;
     [SerializeField] private CanvasGroup deathScreen;
     [SerializeField] private CanvasGroup loadingScreen;
     [SerializeField] private TMP_Text loadingText;
@@ -48,7 +48,7 @@ public class GameUIController : MonoBehaviour {
     [SerializeField] private float deathScreenFadeDuration;
     [SerializeField] private float levelCompleteFadeInDuration;
     [SerializeField] private float loadingScreenFadeDuration;
-    [SerializeField] private float minMainMenuLoadingDuration;
+    [SerializeField] private float minLoadingDuration;
     private Coroutine typeCoroutine;
     private Coroutine screenFadeCoroutine;
     private Coroutine textFadeCoroutine;
@@ -73,9 +73,10 @@ public class GameUIController : MonoBehaviour {
         startTimerTextParent = timerText.rectTransform.parent;
 
         pauseResumeButton.onClick.AddListener(ResumeButtonClicked);
+        pauseRestartButton.onClick.AddListener(ReloadLevel);
         pauseMainMenuButton.onClick.AddListener(OpenMainMenu);
         mainMenuButton.onClick.AddListener(OpenMainMenu);
-        replayButton.onClick.AddListener(ReplayLevel);
+        replayButton.onClick.AddListener(ReloadLevel);
 
         pauseMenu.alpha = 0f;
         deathScreen.alpha = 0f;
@@ -251,16 +252,36 @@ public class GameUIController : MonoBehaviour {
 
         }
 
-        yield return new WaitForSecondsRealtime(minMainMenuLoadingDuration - currentTime);
+        yield return new WaitForSecondsRealtime(minLoadingDuration - currentTime);
         operation.allowSceneActivation = true;
         Time.timeScale = 1f;
 
     }
 
-    public void ReplayLevel() {
+    public void ReloadLevel() {
 
         levelComplete = false;
-        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        StartCoroutine(LoadLevel(SceneManager.GetActiveScene()));
+
+    }
+
+    public IEnumerator LoadLevel(Scene level) {
+
+        SetLoadingText("Loading Level...");
+        yield return FadeInLoadingScreen();
+        AsyncOperation operation = SceneManager.LoadSceneAsync(level.name);
+        operation.allowSceneActivation = false;
+        float currentTime = 0f;
+
+        while (!operation.isDone && operation.progress < 0.9f) {
+
+            currentTime += Time.unscaledDeltaTime;
+            yield return null;
+
+        }
+
+        yield return new WaitForSecondsRealtime(minLoadingDuration - currentTime);
+        operation.allowSceneActivation = true;
 
     }
 

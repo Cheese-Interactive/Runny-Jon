@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Runtime.InteropServices.WindowsRuntime;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -8,10 +7,8 @@ public class LevelManager : GameManager {
 
     private void Awake() {
 
-        SpawnPlayer();
+        InitializeScene();
 
-        UIController = FindObjectOfType<GameUIController>();
-        audioManager = FindObjectOfType<GameAudioManager>();
         playerData = FindObjectOfType<PlayerData>();
 
         acquiredCollectibles = new List<Collectible>();

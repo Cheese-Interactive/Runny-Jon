@@ -7,10 +7,8 @@ public class TutorialManager : GameManager {
 
     private void Awake() {
 
-        SpawnPlayer();
+        InitializeScene();
 
-        UIController = FindObjectOfType<GameUIController>();
-        audioManager = FindObjectOfType<GameAudioManager>();
         playerData = FindObjectOfType<PlayerData>();
 
         acquiredCollectibles = new List<Collectible>();

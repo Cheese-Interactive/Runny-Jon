@@ -2,13 +2,18 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 
 public abstract class GameManager : MonoBehaviour {
 
     [Header("References")]
-    [SerializeField] private GameObject playerPrefab;
-    [SerializeField] private GameObject cameraHolderPrefab;
+    [SerializeField] private SwingPredictor swingPredictorPrefab;
+    [SerializeField] private GameUIController canvasPrefab;
+    [SerializeField] private EventSystem eventSystemPrefab;
+    [SerializeField] private PlayerController playerPrefab;
+    [SerializeField] private CameraFollow cameraHolderPrefab;
+    [SerializeField] private GameAudioManager audioManagerPrefab;
     [SerializeField] protected Checkpoint[] checkpoints;
     protected PlayerController playerController;
     protected GameUIController UIController;
@@ -60,7 +65,13 @@ public abstract class GameManager : MonoBehaviour {
         }
     }
 
-    protected void SpawnPlayer() {
+    protected void InitializeScene() {
+
+        // instantiate swing predictor, canvas, event system, and audio manager
+        Instantiate(swingPredictorPrefab);
+        UIController = Instantiate(canvasPrefab);
+        Instantiate(eventSystemPrefab);
+        audioManager = Instantiate(audioManagerPrefab);
 
         // get player spawn
         Transform spawn = checkpoints[currCheckpoint].GetPlayerSpawn();
@@ -69,7 +80,7 @@ public abstract class GameManager : MonoBehaviour {
         Instantiate(cameraHolderPrefab, spawn.position, Quaternion.identity);
 
         // instantiate player prefab at spawn after
-        playerController = Instantiate(playerPrefab, spawn.position, Quaternion.identity).GetComponent<PlayerController>();
+        playerController = Instantiate(playerPrefab, spawn.position, Quaternion.identity);
 
         // set player rotation & reset velocity
         playerController.SetLookRotations(0f, spawn.rotation.eulerAngles.y);
