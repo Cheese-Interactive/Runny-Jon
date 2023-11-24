@@ -5,7 +5,6 @@ using UnityEngine;
 public class EffectObject : MonoBehaviour {
 
     [Header("References")]
-    [SerializeField] private GravityZone gravityZone;
     [SerializeField] private List<Effect> effectCycle;
     private int currIndex;
     private PlayerController playerController;
@@ -18,11 +17,6 @@ public class EffectObject : MonoBehaviour {
 
         playerController = FindObjectOfType<PlayerController>();
         material = GetComponent<MeshRenderer>().material;
-
-        // check if gravity zone isn't null
-        if (gravityZone)
-            // disable gravity zone
-            gravityZone.gameObject.SetActive(false);
 
         // fade color
         fadeCoroutine = StartCoroutine(FadeColor(effectCycle[currIndex].GetEffectColor(), effectCycle[currIndex].GetColorFadeDuration()));
@@ -45,16 +39,6 @@ public class EffectObject : MonoBehaviour {
         // fade color
         fadeCoroutine = StartCoroutine(FadeColor(effectCycle[currIndex].GetEffectColor(), effectCycle[currIndex].GetColorFadeDuration()));
 
-        // make sure gravity zone isn't null
-        if (gravityZone)
-            // check if current effect is gravity
-            if (effectCycle[currIndex].GetEffectType() == EffectType.Gravity)
-                // enable gravity zone
-                gravityZone.gameObject.SetActive(true);
-            else
-                // disable gravity zone
-                gravityZone.gameObject.SetActive(false);
-
     }
 
     public Effect GetEffect() {
@@ -63,61 +47,17 @@ public class EffectObject : MonoBehaviour {
 
     }
 
-    public void GravityEntered() {
+    public void ZoneEntered() {
 
         // add effect
         playerController.AddEffect(effectCycle[currIndex]);
 
     }
 
-    public void GravityExited() {
+    public void ZoneExited() {
 
         // remove effect
         playerController.RemoveEffect(effectCycle[currIndex]);
-
-    }
-
-    private void OnCollisionEnter(Collision collision) {
-
-        // check if player collided
-        if (collision.transform.CompareTag("Player"))
-            // make sure effect isn't gravity (handled elsewhere)
-            if (effectCycle[currIndex].GetEffectType() != EffectType.Gravity)
-                // add effect
-                playerController.AddEffect(effectCycle[currIndex]);
-
-    }
-
-    private void OnTriggerEnter(Collider collider) {
-
-        // check if player collided
-        if (collider.transform.CompareTag("Player"))
-            // make sure effect isn't gravity (handled elsewhere)
-            if (effectCycle[currIndex].GetEffectType() != EffectType.Gravity)
-                // add effect
-                playerController.AddEffect(effectCycle[currIndex]);
-
-    }
-
-    private void OnCollisionExit(Collision collision) {
-
-        // check if player collided
-        if (collision.transform.CompareTag("Player"))
-            // make sure effect isn't gravity (handled elsewhere)
-            if (effectCycle[currIndex].GetEffectType() != EffectType.Gravity)
-                // remove effect
-                playerController.RemoveEffect(effectCycle[currIndex]);
-
-    }
-
-    private void OnTriggerExit(Collider collider) {
-
-        // check if player collided
-        if (collider.transform.CompareTag("Player"))
-            // make sure effect isn't gravity (handled elsewhere)
-            if (effectCycle[currIndex].GetEffectType() != EffectType.Gravity)
-                // remove effect
-                playerController.RemoveEffect(effectCycle[currIndex]);
 
     }
 
