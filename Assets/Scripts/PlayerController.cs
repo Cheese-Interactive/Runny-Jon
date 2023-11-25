@@ -1388,9 +1388,9 @@ public class PlayerController : MonoBehaviour {
         if (!swingEnabled || joint != null || (movementState == MovementState.WallRunningLeft || movementState == MovementState.WallRunningRight) || movementState == MovementState.Swinging)
             return;
 
-        Physics.Raycast(cameraPos.position, cameraPos.forward, out RaycastHit raycastHit, maxSwingDistance);
+        Physics.Raycast(cameraPos.position, cameraPos.forward, out RaycastHit raycastHit, maxSwingDistance, swingMask);
 
-        if (raycastHit.point != Vector3.zero && (swingMask & (1 << raycastHit.transform.gameObject.layer)) != 0) {
+        if (raycastHit.point != Vector3.zero) {
 
             // direct hit
             predictionHit = raycastHit;

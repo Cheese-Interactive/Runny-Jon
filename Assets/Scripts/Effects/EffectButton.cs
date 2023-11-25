@@ -2,49 +2,18 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Device;
 
 public class EffectButton : MonoBehaviour {
 
     [Header("Objects")]
     [SerializeField] private List<EffectObject> effectObjects;
 
-    [Header("Pressing")]
-    [SerializeField] private Transform pressTarget;
-    [SerializeField] private float pressDuration;
-    [SerializeField] private float pressCooldown;
-    private Vector3 startPosition;
-    private bool pressable;
+    public void OnPress() {
 
-    private void Start() {
-
-        // store start position for pressing
-        startPosition = transform.position;
-
-        // make button pressable
-        pressable = true;
-
-    }
-
-    private void OnCollisionEnter(Collision collision) {
-
-        // check if button is pressable & player collided
-        if (pressable && collision.transform.CompareTag("Player")) {
-
-            // change each object's color to current effect color
-            foreach (EffectObject effectObj in effectObjects)
-                effectObj.ChangeEffect();
-
-            // start press cooldown
-            StartCoroutine(HandlePressCooldown(pressCooldown));
-
-        }
-    }
-
-    private IEnumerator HandlePressCooldown(float duration) {
-
-        pressable = false;
-        yield return new WaitForSeconds(duration);
-        pressable = true;
+        // change each object's color to current effect color
+        foreach (EffectObject effectObj in effectObjects)
+            effectObj.ChangeEffect();
 
     }
 }
