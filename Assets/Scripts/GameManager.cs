@@ -153,6 +153,9 @@ public abstract class GameManager : MonoBehaviour {
         playerController.StopSwing();
         playerController.ResetVelocity();
 
+        // clear effects
+        playerController.ClearEffects();
+
         // show death screen
         yield return StartCoroutine(UIController.ShowDeathScreen());
 

@@ -5,6 +5,7 @@ using UnityEngine;
 public class PlayerColor : Cosmetic {
 
     [Header("References")]
+    private PlayerController playerController;
     private Material playerMaterial;
 
     [Header("Settings")]
@@ -12,8 +13,8 @@ public class PlayerColor : Cosmetic {
 
     private void Start() {
 
-        playerMaterial = FindObjectOfType<SkinnedMeshRenderer>().material;
-        playerMaterial.color = color;
+        playerController = GetComponent<PlayerController>();
+        playerController.SetPlayerColor(color);
 
     }
 

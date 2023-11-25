@@ -3,7 +3,7 @@ using UnityEngine;
 public class RopeColor : Cosmetic {
 
     [Header("References")]
-    private LineRenderer lineRenderer;
+    private PlayerController playerController;
 
     [Header("Settings")]
     [SerializeField] private Color startColor;
@@ -11,9 +11,8 @@ public class RopeColor : Cosmetic {
 
     private void Start() {
 
-        lineRenderer = GetComponent<LineRenderer>();
-        lineRenderer.startColor = startColor;
-        lineRenderer.endColor = endColor;
+        playerController = GetComponent<PlayerController>();
+        playerController.SetRopeColor(startColor, endColor);
 
     }
 

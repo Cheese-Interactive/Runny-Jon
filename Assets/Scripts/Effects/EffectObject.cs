@@ -6,20 +6,30 @@ public class EffectObject : MonoBehaviour {
 
     [Header("References")]
     [SerializeField] private List<Effect> effectCycle;
+    [SerializeField] private EffectZone effectZone;
     private int currIndex;
     private PlayerController playerController;
-    private Material material;
+    private Material platformMaterial;
+    private Material zoneMaterial;
 
     [Header("Animations")]
-    private Coroutine fadeCoroutine;
+    private Coroutine platformFadeCoroutine;
+    private Coroutine zoneFadeCoroutine;
 
     private void Start() {
 
         playerController = FindObjectOfType<PlayerController>();
-        material = GetComponent<MeshRenderer>().material;
+        platformMaterial = GetComponent<MeshRenderer>().material;
+        zoneMaterial = effectZone.GetComponent<MeshRenderer>().material;
 
-        // fade color
-        fadeCoroutine = StartCoroutine(FadeColor(effectCycle[currIndex].GetEffectColor(), effectCycle[currIndex].GetColorFadeDuration()));
+        // get effect color
+        Color effectColor = effectCycle[currIndex].GetEffectColor();
+
+        // fade platform color
+        platformFadeCoroutine = StartCoroutine(FadeColor(platformMaterial, effectColor, effectCycle[currIndex].GetColorFadeDuration(), platformFadeCoroutine));
+
+        // fade zone color
+        zoneFadeCoroutine = StartCoroutine(FadeColor(zoneMaterial, new Color(effectColor.r, effectColor.g, effectColor.b, effectZone.GetOpacity()), effectCycle[currIndex].GetColorFadeDuration(), zoneFadeCoroutine));
 
     }
 
@@ -32,12 +42,22 @@ public class EffectObject : MonoBehaviour {
         if (currIndex >= effectCycle.Count)
             currIndex = 0;
 
-        // stop any existing fade coroutine
-        if (fadeCoroutine != null)
-            StopCoroutine(fadeCoroutine);
+        // stop any existing platform fade coroutine
+        if (platformFadeCoroutine != null)
+            StopCoroutine(platformFadeCoroutine);
 
-        // fade color
-        fadeCoroutine = StartCoroutine(FadeColor(effectCycle[currIndex].GetEffectColor(), effectCycle[currIndex].GetColorFadeDuration()));
+        // stop any existing zone fade coroutine
+        if (zoneFadeCoroutine != null)
+            StopCoroutine(zoneFadeCoroutine);
+
+        // get effect color
+        Color effectColor = effectCycle[currIndex].GetEffectColor();
+
+        // fade platform color
+        platformFadeCoroutine = StartCoroutine(FadeColor(platformMaterial, effectColor, effectCycle[currIndex].GetColorFadeDuration(), platformFadeCoroutine));
+
+        // fade zone color
+        zoneFadeCoroutine = StartCoroutine(FadeColor(zoneMaterial, new Color(effectColor.r, effectColor.g, effectColor.b, effectZone.GetOpacity()), effectCycle[currIndex].GetColorFadeDuration(), zoneFadeCoroutine));
 
     }
 
@@ -61,7 +81,7 @@ public class EffectObject : MonoBehaviour {
 
     }
 
-    private IEnumerator FadeColor(Color targetColor, float duration) {
+    private IEnumerator FadeColor(Material material, Color targetColor, float duration, Coroutine coroutine) {
 
         float currentTime = 0f;
         Color startColor = material.color;
@@ -75,7 +95,7 @@ public class EffectObject : MonoBehaviour {
         }
 
         material.color = targetColor;
-        fadeCoroutine = null;
+        coroutine = null;
 
     }
 }

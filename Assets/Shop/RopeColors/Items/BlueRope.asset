@@ -17,5 +17,5 @@ MonoBehaviour:
   itemName: Blue Rope
   icon: {fileID: 0}
   price: 10
-  selected: 0
-  purchased: 0
+  selected: 1
+  purchased: 1

@@ -16,6 +16,7 @@ public class PlayerController : MonoBehaviour {
     [SerializeField] private Transform muzzle;
     [SerializeField] private Transform[] obstacleCheckers;
     [SerializeField] private Animator animator;
+    [SerializeField] private SkinnedMeshRenderer skinnedMeshRenderer;
     private GameManager gameManager;
     private GameAudioManager audioManager;
     private GameUIController UIController;
@@ -1984,6 +1985,26 @@ public class PlayerController : MonoBehaviour {
 
         }
     }
+
+    public void ClearEffects() {
+
+        currentEffects.Clear();
+
+    }
     #endregion
 
+    #region COSMETICS
+    public void SetPlayerColor(Color color) {
+
+        skinnedMeshRenderer.material.color = color;
+
+    }
+
+    public void SetRopeColor(Color startColor, Color endColor) {
+
+        lineRenderer.startColor = startColor;
+        lineRenderer.endColor = endColor;
+
+    }
+    #endregion
 }

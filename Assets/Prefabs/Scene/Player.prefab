@@ -321,6 +321,7 @@ MonoBehaviour:
   - {fileID: 3485645972973864139}
   - {fileID: 3485645971839931098}
   animator: {fileID: 3485645971171359003}
+  skinnedMeshRenderer: {fileID: 3485645971321812935}
   leftHandIKRigIndex: 0
   rightHandIKRigIndex: 1
   rightHandFollowRigIndex: 2

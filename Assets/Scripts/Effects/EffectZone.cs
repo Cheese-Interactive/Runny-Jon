@@ -7,6 +7,9 @@ public class EffectZone : MonoBehaviour {
     [Header("References")]
     [SerializeField] private EffectObject effectObject;
 
+    [Header("Color")]
+    [SerializeField][Range(0f, 1f)] private float opacity;
+
     private void OnTriggerEnter(Collider collider) {
 
         // check if player collided
@@ -22,6 +25,12 @@ public class EffectZone : MonoBehaviour {
         if (collider.CompareTag("Player"))
             // tell effect object that player exited zone
             effectObject.ZoneExited();
+
+    }
+
+    public float GetOpacity() {
+
+        return opacity;
 
     }
 }
