@@ -2,6 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Animations.Rigging;
+using UnityEngine.Device;
+using UnityEngine.ProBuilder.MeshOperations;
 
 [RequireComponent(typeof(Rigidbody))]
 [RequireComponent(typeof(LineRenderer))]
@@ -220,6 +222,7 @@ public class PlayerController : MonoBehaviour {
 
     [Header("Effects")]
     private List<Effect> currentEffects;
+    private Effect speedZoneQueuedEffect;
     private bool inGravityZone;
 
     [Header("Ground Check")]
@@ -387,7 +390,21 @@ public class PlayerController : MonoBehaviour {
 
             }
 
+            // check if effect is queued
+            if (speedZoneQueuedEffect != null) {
+
+                // remove effect
+                currentEffects.Remove(speedZoneQueuedEffect);
+
+                // reset effect queue
+                speedZoneQueuedEffect = null;
+
+            }
+
+            // play land sound
             audioManager.PlaySound(GameAudioManager.GameSoundEffectType.Land);
+
+            // reset exiting slope
             exitingSlope = false;
 
         }
@@ -686,7 +703,7 @@ public class PlayerController : MonoBehaviour {
                     }
 
                     // add downwards "gravity" force
-                    rb.AddForce(transform.up * Physics.gravity.y * effect.GetMultiplier(), ForceMode.Force);
+                    rb.AddForce(transform.up * Physics.gravity.y * effect.GetStrength(), ForceMode.Force);
 
                 }
             }
@@ -920,9 +937,14 @@ public class PlayerController : MonoBehaviour {
 
         }
 
-        foreach (Effect effect in currentEffects)
-            if (effect.GetEffectType() == EffectType.Speed)
-                moveSpeed *= effect.GetMultiplier();
+        foreach (Effect effect in currentEffects) {
+
+            if (effect.GetEffectType() == EffectType.Speed) {
+
+                moveSpeed *= effect.GetStrength();
+
+            }
+        }
 
         lastDesiredMoveSpeed = desiredMoveSpeed;
 
@@ -1028,7 +1050,7 @@ public class PlayerController : MonoBehaviour {
 
         foreach (Effect effect in currentEffects)
             if (effect.GetEffectType() == EffectType.Jump)
-                force *= effect.GetMultiplier();
+                force *= effect.GetStrength();
 
         rb.velocity = new Vector3(rb.velocity.x, force, rb.velocity.z);
 
@@ -1939,14 +1961,28 @@ public class PlayerController : MonoBehaviour {
     #region EFFECTS
     public void AddEffect(Effect effect) {
 
+        // add effect
         currentEffects.Add(effect);
 
     }
 
     public void RemoveEffect(Effect effect) {
 
-        currentEffects.Remove(effect);
+        // check if player is grounded
+        if (isGrounded) {
 
+            // remove effect
+            currentEffects.Remove(effect);
+
+            // reset effect queue
+            speedZoneQueuedEffect = null;
+
+        } else {
+
+            // queue effect removal until player lands
+            speedZoneQueuedEffect = effect;
+
+        }
     }
     #endregion
 

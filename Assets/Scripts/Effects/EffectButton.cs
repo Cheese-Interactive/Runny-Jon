@@ -23,13 +23,13 @@ public class Effect {
 
     [Header("Settings")]
     [SerializeField] private EffectType effectType;
-    [SerializeField] private float multiplier;
+    [SerializeField] private float strength;
     [SerializeField] private Color effectColor;
     [SerializeField] private float colorFadeDuration;
 
     public bool Equals(Effect other) {
 
-        return effectType == other.GetEffectType() && multiplier == other.GetMultiplier() && effectColor == other.GetEffectColor() && colorFadeDuration == other.GetColorFadeDuration();
+        return effectType == other.GetEffectType() && strength == other.GetStrength() && effectColor == other.GetEffectColor() && colorFadeDuration == other.GetColorFadeDuration();
 
     }
 
@@ -39,9 +39,9 @@ public class Effect {
 
     }
 
-    public float GetMultiplier() {
+    public float GetStrength() {
 
-        return multiplier;
+        return strength;
 
     }
 

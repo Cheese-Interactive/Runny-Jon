@@ -402,7 +402,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh-177032
+  m_Name: pb_Mesh-1364
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -566,7 +566,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh44252
+  m_Name: pb_Mesh29010
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -841,15 +841,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   effectCycle:
   - effectType: 1
-    multiplier: 1.5
+    strength: 2
+    effectFadeDuration: 2
     effectColor: {r: 0, g: 1, b: 1, a: 1}
     colorFadeDuration: 0.5
   - effectType: 2
-    multiplier: 2
+    strength: 2
+    effectFadeDuration: 0
     effectColor: {r: 0, g: 1, b: 0, a: 1}
     colorFadeDuration: 0.5
   - effectType: 0
-    multiplier: 0
+    strength: 0
+    effectFadeDuration: 0
     effectColor: {r: 1, g: 1, b: 1, a: 1}
     colorFadeDuration: 0.5
 --- !u!65 &167448658
@@ -937,7 +940,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh44492
+  m_Name: pb_Mesh29218
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -1101,7 +1104,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh-176976
+  m_Name: pb_Mesh-1308
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -2756,7 +2759,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh-177004
+  m_Name: pb_Mesh-1336
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -3045,15 +3048,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   effectCycle:
   - effectType: 0
-    multiplier: 0
+    strength: 0
+    effectFadeDuration: 0
     effectColor: {r: 1, g: 1, b: 1, a: 1}
     colorFadeDuration: 0.5
   - effectType: 1
-    multiplier: 1.5
+    strength: 2
+    effectFadeDuration: 2
     effectColor: {r: 0, g: 1, b: 1, a: 1}
     colorFadeDuration: 0.5
   - effectType: 2
-    multiplier: 2
+    strength: 2
+    effectFadeDuration: 0
     effectColor: {r: 0, g: 1, b: 0, a: 1}
     colorFadeDuration: 0.5
 --- !u!65 &632004258
@@ -3350,7 +3356,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh44744
+  m_Name: pb_Mesh29444
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -4358,19 +4364,23 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   effectCycle:
   - effectType: 2
-    multiplier: 1.5
+    strength: 2
+    effectFadeDuration: 0
     effectColor: {r: 0, g: 1, b: 0, a: 1}
     colorFadeDuration: 0.5
   - effectType: 0
-    multiplier: 0
+    strength: 0
+    effectFadeDuration: 0
     effectColor: {r: 1, g: 1, b: 1, a: 1}
     colorFadeDuration: 0.5
   - effectType: 1
-    multiplier: 1.5
+    strength: 2
+    effectFadeDuration: 2
     effectColor: {r: 0, g: 1, b: 1, a: 1}
     colorFadeDuration: 0.5
   - effectType: 3
-    multiplier: 0.5
+    strength: 0.5
+    effectFadeDuration: 0
     effectColor: {r: 1, g: 0, b: 1, a: 1}
     colorFadeDuration: 0.5
 --- !u!23 &834239735
@@ -5087,7 +5097,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh44404
+  m_Name: pb_Mesh29144
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -5251,7 +5261,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh-176962
+  m_Name: pb_Mesh-1288
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -5415,7 +5425,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh44686
+  m_Name: pb_Mesh29386
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -5579,7 +5589,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh44418
+  m_Name: pb_Mesh29158
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -7703,7 +7713,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh-177018
+  m_Name: pb_Mesh-1350
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -7867,7 +7877,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh-176990
+  m_Name: pb_Mesh-1322
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -8305,7 +8315,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh44282
+  m_Name: pb_Mesh29040
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
