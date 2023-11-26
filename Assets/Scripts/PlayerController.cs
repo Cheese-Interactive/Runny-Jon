@@ -196,6 +196,9 @@ public class PlayerController : MonoBehaviour {
     [SerializeField] private LayerMask ziplineMask;
     private Zipline currZipline;
 
+    [Header("Animations")]
+    [SerializeField] private float speedMultiplier;
+
     [Header("Elevator")]
     private bool inElevator;
     private bool elevatorMoving;
@@ -704,7 +707,7 @@ public class PlayerController : MonoBehaviour {
                     }
 
                     // add downwards "gravity" force
-                    rb.AddForce(transform.up * Physics.gravity.y * effect.GetStrength(), ForceMode.Force);
+                    //rb.AddForce(transform.up * Physics.gravity.y * effect.GetStrength(), ForceMode.Force);
 
                 }
             }
@@ -743,6 +746,8 @@ public class PlayerController : MonoBehaviour {
             movementState = MovementState.Ziplining;
             ResetAnimations();
             animator.SetBool("isZiplining", true);
+            speedMultiplier = 1f;
+            animator.SetFloat("speed", speedMultiplier);
 
         } else if (movementState == MovementState.Swinging && swingEnabled) {
 
@@ -754,6 +759,8 @@ public class PlayerController : MonoBehaviour {
 
                 ResetAnimations();
                 animator.SetBool("isSwinging", true);
+                speedMultiplier = 1f;
+                animator.SetFloat("speed", speedMultiplier);
 
             } else {
 
@@ -770,6 +777,8 @@ public class PlayerController : MonoBehaviour {
 
                 ResetAnimations();
                 animator.SetBool("isWallRunningLeft", true);
+                speedMultiplier = 1f;
+                animator.SetFloat("speed", speedMultiplier);
 
             } else {
 
@@ -786,6 +795,8 @@ public class PlayerController : MonoBehaviour {
 
                 ResetAnimations();
                 animator.SetBool("isWallRunningRight", true);
+                speedMultiplier = 1f;
+                animator.SetFloat("speed", speedMultiplier);
 
             } else {
 
@@ -840,6 +851,8 @@ public class PlayerController : MonoBehaviour {
 
                 ResetAnimations();
                 animator.SetBool("isSliding", true);
+                speedMultiplier = 1f;
+                animator.SetFloat("speed", speedMultiplier);
 
             } else {
 
@@ -856,6 +869,8 @@ public class PlayerController : MonoBehaviour {
 
                 ResetAnimations();
                 animator.SetBool("isCrouching", true);
+                speedMultiplier = moveSpeed / crouchSpeed;
+                animator.SetFloat("speed", speedMultiplier);
 
             } else {
 
@@ -888,6 +903,8 @@ public class PlayerController : MonoBehaviour {
 
                 ResetAnimations();
                 animator.SetBool("isSprinting", true);
+                speedMultiplier = moveSpeed / sprintSpeed;
+                animator.SetFloat("speed", speedMultiplier);
 
             } else {
 
@@ -905,6 +922,8 @@ public class PlayerController : MonoBehaviour {
 
                 ResetAnimations();
                 animator.SetBool("isWalking", true);
+                speedMultiplier = moveSpeed / walkSpeed;
+                animator.SetFloat("speed", speedMultiplier);
 
             } else {
 
@@ -1019,6 +1038,8 @@ public class PlayerController : MonoBehaviour {
         animator.SetBool("isWallRunningRight", false);
         animator.SetBool("isSwinging", false);
         animator.SetBool("isZiplining", false);
+        speedMultiplier = 1f;
+        animator.SetFloat("speed", speedMultiplier);
 
     }
     #endregion
@@ -1584,7 +1605,7 @@ public class PlayerController : MonoBehaviour {
 
         if (movementState == MovementState.Ziplining) {
 
-            timer += ziplineBobSpeed * Time.deltaTime;
+            timer += ziplineBobSpeed * speedMultiplier * Time.deltaTime;
             cameraPos.localPosition = new Vector3(cameraPos.localPosition.x, startCameraPos.y + Mathf.Sin(timer) * ziplineBobAmount, cameraPos.localPosition.z);
             return;
 
@@ -1600,19 +1621,19 @@ public class PlayerController : MonoBehaviour {
 
                     case MovementState.Crouching:
 
-                    timer += crouchBobSpeed * Time.deltaTime;
+                    timer += crouchBobSpeed * speedMultiplier * Time.deltaTime;
                     cameraPos.localPosition = new Vector3(cameraPos.localPosition.x, startCameraPos.y + Mathf.Sin(timer) * crouchBobAmount, cameraPos.localPosition.z);
                     break;
 
                     case MovementState.Sprinting:
 
-                    timer += sprintBobSpeed * Time.deltaTime;
+                    timer += sprintBobSpeed * speedMultiplier * Time.deltaTime;
                     cameraPos.localPosition = new Vector3(cameraPos.localPosition.x, startCameraPos.y + Mathf.Sin(timer) * sprintBobAmount, cameraPos.localPosition.z);
                     break;
 
                     case MovementState.Walking:
 
-                    timer += walkBobSpeed * Time.deltaTime;
+                    timer += walkBobSpeed * speedMultiplier * Time.deltaTime;
                     cameraPos.localPosition = new Vector3(cameraPos.localPosition.x, startCameraPos.y + Mathf.Sin(timer) * walkBobAmount, cameraPos.localPosition.z);
                     break;
 
@@ -1962,12 +1983,20 @@ public class PlayerController : MonoBehaviour {
     #region EFFECTS
     public void AddEffect(Effect effect) {
 
+        // if effect is gravity, adjust gravity
+        if (effect.GetEffectType() == EffectType.Gravity)
+            Physics.gravity = new Vector3(Physics.gravity.x, Physics.gravity.y * effect.GetStrength(), Physics.gravity.z);
+
         // add effect
         currentEffects.Add(effect);
 
     }
 
     public void RemoveEffect(Effect effect) {
+
+        // if effect is gravity, reset gravity
+        if (effect.GetEffectType() == EffectType.Gravity)
+            Physics.gravity = startGravity;
 
         // check if player is grounded
         if (isGrounded) {

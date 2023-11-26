@@ -44,6 +44,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: afacb11280eac964f958fcf671fd08be, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  properties: 2
-  startColor: {r: 1, g: 0.93808424, b: 0.48584908, a: 1}
+  startColor: {r: 1, g: 0.8235294, b: 0.23137255, a: 1}
   endColor: {r: 1, g: 0.8251203, b: 0.23113209, a: 1}
