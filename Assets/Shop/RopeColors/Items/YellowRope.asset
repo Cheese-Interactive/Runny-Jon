@@ -17,5 +17,5 @@ MonoBehaviour:
   itemName: Yellow Rope
   icon: {fileID: 0}
   price: 50
-  selected: 1
-  purchased: 1
+  selected: 0
+  purchased: 0

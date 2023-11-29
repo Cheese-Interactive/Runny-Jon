@@ -18,4 +18,4 @@ MonoBehaviour:
   icon: {fileID: 0}
   price: 10
   selected: 0
-  purchased: 1
+  purchased: 0

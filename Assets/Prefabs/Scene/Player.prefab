@@ -365,7 +365,7 @@ MonoBehaviour:
   wallJumpUpForce: 8
   wallJumpSideForce: 20
   wallCheckRadius: 0.1
-  wallCheckDistance: 1
+  wallCheckDistance: 0.5
   minJumpHeight: 0.25
   wallRunFOV: 90
   wallRunFOVLerpDuration: 0.25
@@ -387,7 +387,7 @@ MonoBehaviour:
   swingPoint: {fileID: 3485645972361380235}
   swingMask:
     serializedVersion: 2
-    m_Bits: 256
+    m_Bits: 1024
   quality: 500
   damper: 14
   strength: 800
@@ -424,7 +424,8 @@ MonoBehaviour:
   ziplineExitForwardFactor: 20
   ziplineMask:
     serializedVersion: 2
-    m_Bits: 1024
+    m_Bits: 256
+  speedMultiplier: 0
   grabDistance: 5
   grabPoint: {fileID: 3485645972245657256}
   walkBobSpeed: 10
@@ -440,7 +441,7 @@ MonoBehaviour:
   groundCheckRadius: 0.25
   environmentMask:
     serializedVersion: 2
-    m_Bits: 2496
+    m_Bits: 3520
   maxSlopeAngle: 45
   slopeCheckDistance: 0.3
   groundDrag: 5
@@ -1054,16 +1055,16 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3485645971266237507}
-  m_LocalRotation: {x: -0.7071068, y: -0, z: -0, w: 0.7071067}
+  m_LocalRotation: {x: -0.7071068, y: 0, z: 0, w: 0.7071068}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 99.97506, y: 100, z: 100}
+  m_LocalScale: {x: 100, y: 100, z: 100}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 3485645972385528647}
   - {fileID: 3485645972516419807}
   m_Father: {fileID: 3485645971131126391}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: -90, y: 0, z: 0}
 --- !u!1 &3485645971274096797
 GameObject:
   m_ObjectHideFlags: 0

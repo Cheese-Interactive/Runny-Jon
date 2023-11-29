@@ -9,6 +9,7 @@ using UnityEngine.UI;
 public class GameUIController : MonoBehaviour {
 
     [Header("References")]
+    private Animator animator;
     private PlayerController playerController;
     private GameManager gameManager;
     private Vector3 startTimerTextPos;
@@ -25,8 +26,7 @@ public class GameUIController : MonoBehaviour {
     [SerializeField] private Button pauseRestartButton;
     [SerializeField] private Button pauseMainMenuButton;
     [SerializeField] private CanvasGroup deathScreen;
-    [SerializeField] private CanvasGroup loadingScreen;
-    [SerializeField] private TMP_Text loadingText;
+    [SerializeField] private Image wipeScreen;
     private Sprite defaultCrosshair;
     private bool defaultCrosshairEnabled;
 
@@ -47,17 +47,15 @@ public class GameUIController : MonoBehaviour {
     [SerializeField] private float pauseMenuFadeDuration;
     [SerializeField] private float deathScreenFadeDuration;
     [SerializeField] private float levelCompleteFadeInDuration;
-    [SerializeField] private float loadingScreenFadeDuration;
-    [SerializeField] private float minLoadingDuration;
     private Coroutine typeCoroutine;
     private Coroutine screenFadeCoroutine;
     private Coroutine textFadeCoroutine;
-    private Coroutine loadingScreenFadeCoroutine;
     private bool textFaded;
     private bool levelComplete;
 
     private void Start() {
 
+        animator = GetComponent<Animator>();
         playerController = FindObjectOfType<PlayerController>();
         gameManager = FindObjectOfType<GameManager>();
 
@@ -65,9 +63,10 @@ public class GameUIController : MonoBehaviour {
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
 
-        SetLoadingText("Loading Level...");
-        loadingScreen.alpha = 1f;
-        FadeOutScreen(loadingScreen, loadingScreenFadeDuration);
+        //SetLoadingText("Loading Level...");
+        //loadingScreen.alpha = 1f;
+        wipeScreen.gameObject.SetActive(true);
+        StartCoroutine(FadeOutWipeScreen());
 
         startTimerTextPos = timerText.rectTransform.localPosition;
         startTimerTextParent = timerText.rectTransform.parent;
@@ -148,11 +147,11 @@ public class GameUIController : MonoBehaviour {
         if (typeCoroutine != null)
             StopCoroutine(typeCoroutine);
 
-        typeCoroutine = StartCoroutine(StartTypeAnimation(text));
+        typeCoroutine = StartCoroutine(HandleTypeAnimation(text));
 
     }
 
-    private IEnumerator StartTypeAnimation(string text) {
+    private IEnumerator HandleTypeAnimation(string text) {
 
         FadeOutText(subtitleText, subtitleFadeDuration);
 
@@ -238,9 +237,7 @@ public class GameUIController : MonoBehaviour {
 
     private IEnumerator LoadMainMenu() {
 
-        StartCoroutine(FadeScreen(pauseMenu, 0f, pauseMenuFadeDuration, false));
-        SetLoadingText("Loading Main Menu...");
-        yield return FadeInLoadingScreen();
+        yield return FadeInWipeScreen();
         AsyncOperation operation = SceneManager.LoadSceneAsync(0);
         operation.allowSceneActivation = false;
         float currentTime = 0f;
@@ -252,7 +249,6 @@ public class GameUIController : MonoBehaviour {
 
         }
 
-        yield return new WaitForSecondsRealtime(minLoadingDuration - currentTime);
         operation.allowSceneActivation = true;
         Time.timeScale = 1f;
 
@@ -267,8 +263,7 @@ public class GameUIController : MonoBehaviour {
 
     public IEnumerator LoadLevel(Scene level) {
 
-        SetLoadingText("Loading Level...");
-        yield return FadeInLoadingScreen();
+        yield return FadeInWipeScreen();
         AsyncOperation operation = SceneManager.LoadSceneAsync(level.name);
         operation.allowSceneActivation = false;
         float currentTime = 0f;
@@ -280,7 +275,6 @@ public class GameUIController : MonoBehaviour {
 
         }
 
-        yield return new WaitForSecondsRealtime(minLoadingDuration - currentTime);
         operation.allowSceneActivation = true;
 
     }
@@ -325,13 +319,32 @@ public class GameUIController : MonoBehaviour {
 
     }
 
-    private IEnumerator FadeInLoadingScreen() {
+    private IEnumerator FadeInWipeScreen() {
 
-        if (loadingScreenFadeCoroutine != null)
-            StopCoroutine(loadingScreenFadeCoroutine);
+        // enable wipe screen
+        wipeScreen.gameObject.SetActive(true);
 
-        loadingScreenFadeCoroutine = StartCoroutine(FadeScreen(loadingScreen, 1f, loadingScreenFadeDuration, true));
-        yield return loadingScreenFadeCoroutine;
+        // start unload animation
+        animator.SetTrigger("unload");
+
+        // wait for unload animation to end
+        yield return new WaitForSecondsRealtime(animator.GetCurrentAnimatorClipInfo(0)[0].clip.length);
+
+    }
+
+    private IEnumerator FadeOutWipeScreen() {
+
+        // enable wipe screen
+        wipeScreen.gameObject.SetActive(true);
+
+        // start unload animation
+        animator.SetTrigger("load");
+
+        // wait for load animation to end
+        yield return new WaitForSeconds(animator.GetCurrentAnimatorClipInfo(0)[0].clip.length);
+
+        // disable wipe screen
+        wipeScreen.gameObject.SetActive(true);
 
     }
 
@@ -400,11 +413,5 @@ public class GameUIController : MonoBehaviour {
             textFaded = true;
 
         }
-    }
-
-    public void SetLoadingText(string text) {
-
-        loadingText.text = text;
-
     }
 }

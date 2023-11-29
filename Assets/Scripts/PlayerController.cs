@@ -226,7 +226,7 @@ public class PlayerController : MonoBehaviour {
 
     [Header("Effects")]
     private List<Effect> currentEffects;
-    private Effect speedZoneQueuedEffect;
+    private List<Effect> queuedEffectRemovals;
     private bool inGravityZone;
 
     [Header("Ground Check")]
@@ -308,6 +308,7 @@ public class PlayerController : MonoBehaviour {
         predictionObj.gameObject.SetActive(false);
 
         currentEffects = new List<Effect>();
+        queuedEffectRemovals = new List<Effect>();
 
         Level level = gameManager.GetCurrentLevel();
         lookEnabled = levelLookEnabled = level.GetLookEnabled();
@@ -394,16 +395,16 @@ public class PlayerController : MonoBehaviour {
 
             }
 
-            // check if effect is queued
-            if (speedZoneQueuedEffect != null) {
+            // loop through any queued effect removals
+            foreach (Effect effect in queuedEffectRemovals) {
 
                 // remove effect
-                currentEffects.Remove(speedZoneQueuedEffect);
-
-                // reset effect queue
-                speedZoneQueuedEffect = null;
+                currentEffects.Remove(effect);
 
             }
+
+            // clear queue
+            queuedEffectRemovals.Clear();
 
             // play land sound
             audioManager.PlaySound(GameAudioManager.GameSoundEffectType.Land);
@@ -844,9 +845,11 @@ public class PlayerController : MonoBehaviour {
 
             }
 
+            // stop slide if slide timer is done
             if (slideTimer <= 0f)
                 StopSlide();
 
+            // check if player is moving horizontally more than the minimum movement velocity
             if (flatVel.magnitude >= minMovementVelocity) {
 
                 ResetAnimations();
@@ -1253,6 +1256,9 @@ public class PlayerController : MonoBehaviour {
     }
 
     private void StartWallRun() {
+
+        // stop swinging
+        StopSwing();
 
         // make sure player can wall run
         if (!CanWallRun())
@@ -1999,20 +2005,13 @@ public class PlayerController : MonoBehaviour {
             Physics.gravity = startGravity;
 
         // check if player is grounded
-        if (isGrounded) {
-
+        if (isGrounded)
             // remove effect
             currentEffects.Remove(effect);
-
-            // reset effect queue
-            speedZoneQueuedEffect = null;
-
-        } else {
-
+        else
             // queue effect removal until player lands
-            speedZoneQueuedEffect = effect;
+            queuedEffectRemovals.Add(effect);
 
-        }
     }
 
     public void ClearEffects() {

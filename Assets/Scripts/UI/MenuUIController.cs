@@ -1,14 +1,12 @@
 using System.Collections;
-using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
-using UnityEngine.EventSystems;
-using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class MenuUIController : MonoBehaviour {
 
     [Header("References")]
+    private Animator animator;
     private MenuManager menuManager;
     private PlayerData playerData;
     private MenuAudioManager audioManager;
@@ -21,8 +19,7 @@ public class MenuUIController : MonoBehaviour {
     [SerializeField] private Button quitButton;
     [SerializeField] private CanvasGroup levelMenu;
     [SerializeField] private Button levelMenuBackButton;
-    [SerializeField] private CanvasGroup loadingScreen;
-    [SerializeField] private TMP_Text loadingText;
+    [SerializeField] private Image wipeScreen;
 
     [Header("Shop")]
     [SerializeField] private CanvasGroup shopMenu;
@@ -31,31 +28,30 @@ public class MenuUIController : MonoBehaviour {
 
     [Header("Animations")]
     [SerializeField] private float quesoCountUpdateDuration;
-    [SerializeField] private float loadingScreenFadeDuration;
-    [SerializeField] private float minLoadingDuration;
     private Coroutine quesoCountCoroutine;
     private Coroutine screenFadeInCoroutine;
     private Coroutine screenFadeOutCoroutine;
-    private Coroutine loadingScreenFadeCoroutine;
 
     private void Start() {
 
+        animator = GetComponent<Animator>();
         menuManager = FindObjectOfType<MenuManager>();
         playerData = FindObjectOfType<PlayerData>();
         audioManager = FindObjectOfType<MenuAudioManager>();
 
-        SetLoadingText("Loading Main Menu...");
-        loadingScreen.alpha = 1f;
-        FadeOutScreen(loadingScreen, loadingScreenFadeDuration);
+        //SetLoadingText("Loading Main Menu...");
+        //loadingScreen.alpha = 1f;
+        wipeScreen.gameObject.SetActive(true);
+        StartCoroutine(FadeOutWipeScreen());
 
         shopQuesoText.text = playerData.GetQuesos() + "";
 
-        playButton.onClick.AddListener(PlayClicked);
-        shopButton.onClick.AddListener(ShopClicked);
+        playButton.onClick.AddListener(() => StartCoroutine(OpenLevelMenu()));
+        shopButton.onClick.AddListener(() => StartCoroutine(OpenShopMenu()));
         quitButton.onClick.AddListener(QuitClicked);
 
-        levelMenuBackButton.onClick.AddListener(CloseLevelMenu);
-        shopMenuBackButton.onClick.AddListener(CloseShopMenu);
+        levelMenuBackButton.onClick.AddListener(() => StartCoroutine(CloseLevelMenu()));
+        shopMenuBackButton.onClick.AddListener(() => StartCoroutine(CloseShopMenu()));
 
         levelMenu.gameObject.SetActive(false);
         shopMenu.gameObject.SetActive(false);
@@ -73,56 +69,144 @@ public class MenuUIController : MonoBehaviour {
 
     }
 
-    private void PlayClicked() {
-
-        OpenLevelMenu();
-
-    }
-
-    private void ShopClicked() {
-
-        OpenShopMenu();
-
-    }
-
     private void QuitClicked() {
 
         Application.Quit();
 
     }
 
-    private void OpenLevelMenu() {
+    private IEnumerator OpenLevelMenu() {
 
+        // enable wipe screen
+        wipeScreen.gameObject.SetActive(true);
+
+        // disable interacting to prevent multiple animations
+        mainMenu.interactable = false;
+
+        // start unload animation
+        animator.SetTrigger("unload");
+
+        // wait for unload animation to end
+        yield return new WaitForSeconds(animator.GetCurrentAnimatorClipInfo(0)[0].clip.length);
+
+        // disable main menu / enable level menu
         mainMenu.gameObject.SetActive(false);
         levelMenu.gameObject.SetActive(true);
 
+        // start load animation
+        animator.SetTrigger("load");
+
+        // wait for load animation to end
+        yield return new WaitForSeconds(animator.GetCurrentAnimatorClipInfo(0)[0].clip.length);
+
+        // enable interacting on new menu
+        levelMenu.interactable = true;
+
+        // disable wipe screen
+        wipeScreen.gameObject.SetActive(false);
+
     }
 
-    private void CloseLevelMenu() {
+    private IEnumerator CloseLevelMenu() {
 
         if (menuManager.IsLevelSectionOpen()) {
 
             menuManager.CloseLevelLayout(menuManager.GetCurrentLevelLayout());
-            return;
+            yield break;
 
         }
 
+        // enable wipe screen
+        wipeScreen.gameObject.SetActive(true);
+
+        // disable interacting to prevent multiple animations
+        levelMenu.interactable = false;
+
+        // start unload animation
+        animator.SetTrigger("unload");
+
+        // wait for unload animation to end
+        yield return new WaitForSeconds(animator.GetCurrentAnimatorClipInfo(0)[0].clip.length);
+
+        // disable level menu / enable main menu
         levelMenu.gameObject.SetActive(false);
         mainMenu.gameObject.SetActive(true);
 
+        // start load animation
+        animator.SetTrigger("load");
+
+        // wait for load animation to end
+        yield return new WaitForSeconds(animator.GetCurrentAnimatorClipInfo(0)[0].clip.length);
+
+        // enable interacting on new menu
+        mainMenu.interactable = true;
+
+        // disable wipe screen
+        wipeScreen.gameObject.SetActive(false);
+
     }
 
-    private void OpenShopMenu() {
+    private IEnumerator OpenShopMenu() {
 
+        // enable wipe screen
+        wipeScreen.gameObject.SetActive(true);
+
+        // disable interacting to prevent multiple animations
+        mainMenu.interactable = false;
+
+        // start unload animation
+        animator.SetTrigger("unload");
+
+        // wait for unload animation to end
+        yield return new WaitForSeconds(animator.GetCurrentAnimatorClipInfo(0)[0].clip.length);
+
+        // disable main menu / enable shop menu
         mainMenu.gameObject.SetActive(false);
         shopMenu.gameObject.SetActive(true);
 
+        // start load animation
+        animator.SetTrigger("load");
+
+        // wait for load animation to end
+        yield return new WaitForSeconds(animator.GetCurrentAnimatorClipInfo(0)[0].clip.length);
+
+        // enable interacting on new menu
+        shopMenu.interactable = true;
+
+        // disable wipe screen
+        wipeScreen.gameObject.SetActive(false);
+
     }
 
-    private void CloseShopMenu() {
+    private IEnumerator CloseShopMenu() {
 
+        // enable wipe screen
+        wipeScreen.gameObject.SetActive(true);
+
+        // disable interacting to prevent multiple animations
+        shopMenu.interactable = false;
+
+        // start unload animation
+        animator.SetTrigger("unload");
+
+        // wait for unload animation to end
+        yield return new WaitForSeconds(animator.GetCurrentAnimatorClipInfo(0)[0].clip.length);
+
+        // disable shop menu / enable main menu
         shopMenu.gameObject.SetActive(false);
         mainMenu.gameObject.SetActive(true);
+
+        // start load animation
+        animator.SetTrigger("load");
+
+        // wait for load animation to end
+        yield return new WaitForSeconds(animator.GetCurrentAnimatorClipInfo(0)[0].clip.length);
+
+        // enable interacting on new menu
+        mainMenu.interactable = true;
+
+        // disable wipe screen
+        wipeScreen.gameObject.SetActive(false);
 
     }
 
@@ -171,13 +255,32 @@ public class MenuUIController : MonoBehaviour {
 
     }
 
-    public IEnumerator FadeInLoadingScreen() {
+    public IEnumerator FadeInWipeScreen() {
 
-        if (loadingScreenFadeCoroutine != null)
-            StopCoroutine(loadingScreenFadeCoroutine);
+        // enable wipe screen
+        wipeScreen.gameObject.SetActive(true);
 
-        loadingScreenFadeCoroutine = StartCoroutine(FadeScreen(loadingScreen, 1f, loadingScreenFadeDuration, true));
-        yield return loadingScreenFadeCoroutine;
+        // start unload animation
+        animator.SetTrigger("unload");
+
+        // wait for unload animation to end
+        yield return new WaitForSeconds(animator.GetCurrentAnimatorClipInfo(0)[0].clip.length);
+
+    }
+
+    private IEnumerator FadeOutWipeScreen() {
+
+        // enable wipe screen
+        wipeScreen.gameObject.SetActive(true);
+
+        // start unload animation
+        animator.SetTrigger("load");
+
+        // wait for load animation to end
+        yield return new WaitForSeconds(animator.GetCurrentAnimatorClipInfo(0)[0].clip.length);
+
+        // disable wipe screen
+        wipeScreen.gameObject.SetActive(false);
 
     }
 
@@ -203,18 +306,6 @@ public class MenuUIController : MonoBehaviour {
 
         if (!fadeIn)
             screen.gameObject.SetActive(false);
-
-    }
-
-    public void SetLoadingText(string text) {
-
-        loadingText.text = text;
-
-    }
-
-    public float GetMinLoadingDuration() {
-
-        return minLoadingDuration;
 
     }
 }

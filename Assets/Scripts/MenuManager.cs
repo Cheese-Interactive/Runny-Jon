@@ -254,8 +254,7 @@ public class MenuManager : MonoBehaviour {
 
     public IEnumerator LoadLevel(UnityEngine.Object level) {
 
-        UIController.SetLoadingText("Loading Level...");
-        yield return UIController.FadeInLoadingScreen();
+        yield return UIController.FadeInWipeScreen();
         AsyncOperation operation = SceneManager.LoadSceneAsync(level.name);
         operation.allowSceneActivation = false;
         float currentTime = 0f;
@@ -267,7 +266,6 @@ public class MenuManager : MonoBehaviour {
 
         }
 
-        yield return new WaitForSeconds(UIController.GetMinLoadingDuration() - currentTime);
         PlayerPrefs.SetString("SelectedShopItems", JsonUtility.ToJson(selectedShopItems));
         operation.allowSceneActivation = true;
 
