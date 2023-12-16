@@ -10,6 +10,9 @@ public class Collectible : MonoBehaviour {
     private Material material;
     private bool collected;
 
+    [Header("Settings")]
+    [SerializeField] private CollectibleType collectibleType;
+
     [Header("Animations")]
     [SerializeField] private float fadeDuration;
 
@@ -50,4 +53,16 @@ public class Collectible : MonoBehaviour {
         gameObject.SetActive(false);
 
     }
+
+    public CollectibleType GetCollectibleType() {
+
+        return collectibleType;
+
+    }
+}
+
+public enum CollectibleType {
+
+    Queso, Other
+
 }

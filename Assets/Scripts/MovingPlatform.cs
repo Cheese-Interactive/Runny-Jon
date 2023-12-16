@@ -1,6 +1,7 @@
 using System.Collections;
 using UnityEngine;
 
+[RequireComponent(typeof(Rigidbody))]
 public class MovingPlatform : MonoBehaviour {
 
     [Header("Movement")]
@@ -21,7 +22,7 @@ public class MovingPlatform : MonoBehaviour {
 
     private void OnCollisionEnter(Collision collision) {
 
-        if (collision.gameObject.CompareTag("Player")) {
+        if (collision.gameObject.CompareTag("Player") && collision.transform.parent != transform) {
 
             prevParent = collision.transform.parent;
             collision.transform.parent = transform;
@@ -31,7 +32,7 @@ public class MovingPlatform : MonoBehaviour {
 
     private void OnTriggerEnter(Collider collider) {
 
-        if (collider.gameObject.CompareTag("Player")) {
+        if (collider.gameObject.CompareTag("Player") && collider.transform.parent != transform) {
 
             prevParent = collider.transform.parent;
             collider.transform.parent = transform;
@@ -65,7 +66,7 @@ public class MovingPlatform : MonoBehaviour {
 
                 currentTime += Time.deltaTime;
                 transform.position = Vector3.Lerp(startPosition, targetPosition, currentTime / movementDuration);
-                yield return null;
+                yield return new WaitForFixedUpdate();
 
             }
 
@@ -81,7 +82,7 @@ public class MovingPlatform : MonoBehaviour {
 
                     currentTime += Time.deltaTime;
                     transform.rotation = Quaternion.Euler(Vector3.Lerp(startRotation, targetRotation, currentTime / rotateDuration));
-                    yield return null;
+                    yield return new WaitForFixedUpdate();
 
                 }
 

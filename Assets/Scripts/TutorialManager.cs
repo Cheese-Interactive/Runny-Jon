@@ -118,12 +118,19 @@ public class TutorialManager : GameManager {
 
         // remaining collectibles in tempCollectibles list will be the bonus optional collectibles
 
+        // find how many bonus quesos the player collected
+        int bonusQuesos = 0;
+
+        foreach (Collectible collectible in tempCollectibles)
+            if (collectible.GetCollectibleType() == CollectibleType.Queso)
+                bonusQuesos++;
+
         StartCoroutine(DelayedTimeFreeze());
         playerController.DisableAllMovement();
         playerController.DisableLook();
         stopwatch.Stop();
         audioManager.PlaySound(GameAudioManager.GameSoundEffectType.Victory);
-        UIController.ShowLevelCompleteScreen(playerData.OnLevelComplete(currentLevel, deaths, (float) stopwatch.Elapsed.TotalSeconds, 1), deaths);
+        UIController.ShowLevelCompleteScreen(playerData.OnLevelComplete(currentLevel, deaths, (float) stopwatch.Elapsed.TotalSeconds, 1 + bonusQuesos), deaths);
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
         return true;

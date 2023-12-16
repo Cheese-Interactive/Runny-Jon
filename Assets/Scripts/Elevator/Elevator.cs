@@ -103,7 +103,7 @@ public class Elevator : MonoBehaviour {
 
                 currentTime += Time.deltaTime;
                 rb.MovePosition(Vector3.Lerp(startPosition, targetPosition, currentTime / duration));
-                yield return null;
+                yield return new WaitForFixedUpdate();
 
             }
 

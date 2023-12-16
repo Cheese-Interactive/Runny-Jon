@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[RequireComponent(typeof(Collider))]
 public class EffectZone : MonoBehaviour {
 
     [Header("References")]
@@ -12,6 +13,7 @@ public class EffectZone : MonoBehaviour {
 
     private void OnTriggerEnter(Collider collider) {
 
+        print("enter");
         // check if player collided
         if (collider.CompareTag("Player"))
             // tell effect object that player entered zone

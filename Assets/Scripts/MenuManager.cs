@@ -254,7 +254,7 @@ public class MenuManager : MonoBehaviour {
 
     public IEnumerator LoadLevel(UnityEngine.Object level) {
 
-        yield return UIController.FadeInWipeScreen();
+        yield return UIController.OnLevelLoad();
         AsyncOperation operation = SceneManager.LoadSceneAsync(level.name);
         operation.allowSceneActivation = false;
         float currentTime = 0f;

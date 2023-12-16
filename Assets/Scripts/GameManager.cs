@@ -129,12 +129,9 @@ public abstract class GameManager : MonoBehaviour {
             }
         }
 
-        for (int i = 1; i < checkpoints.Length - 1; i++) {
-
+        for (int i = 1; i < checkpoints.Length - 1; i++)
             if (i + 1 != currCheckpoint)
                 checkpoints[i].gameObject.SetActive(false);
-
-        }
 
         if (currCheckpoint != checkpoints.Length - 1)
             checkpoints[currCheckpoint + 1].gameObject.SetActive(true);
@@ -152,9 +149,8 @@ public abstract class GameManager : MonoBehaviour {
         playerController.Uncrouch();
         playerController.StopSwing();
         playerController.ResetVelocity();
-
-        // clear effects
-        playerController.ClearEffects();
+        playerController.SetInElevator(false);
+        playerController.ResetParent();
 
         // show death screen
         yield return StartCoroutine(UIController.ShowDeathScreen());

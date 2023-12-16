@@ -35,6 +35,7 @@ public class GameUIController : MonoBehaviour {
 
     [Header("Level Complete Menu")]
     [SerializeField] private CanvasGroup levelCompleteScreen;
+    [SerializeField] private RectTransform timeLayoutGroup;
     [SerializeField] private TMP_Text timeText;
     [SerializeField] private GameObject recordText;
     [SerializeField] private TMP_Text deathsText;
@@ -46,7 +47,6 @@ public class GameUIController : MonoBehaviour {
     [SerializeField] private float subtitleFadeDuration;
     [SerializeField] private float pauseMenuFadeDuration;
     [SerializeField] private float deathScreenFadeDuration;
-    [SerializeField] private float levelCompleteFadeInDuration;
     private Coroutine typeCoroutine;
     private Coroutine screenFadeCoroutine;
     private Coroutine textFadeCoroutine;
@@ -63,11 +63,6 @@ public class GameUIController : MonoBehaviour {
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
 
-        //SetLoadingText("Loading Level...");
-        //loadingScreen.alpha = 1f;
-        wipeScreen.gameObject.SetActive(true);
-        StartCoroutine(FadeOutWipeScreen());
-
         startTimerTextPos = timerText.rectTransform.localPosition;
         startTimerTextParent = timerText.rectTransform.parent;
 
@@ -79,11 +74,16 @@ public class GameUIController : MonoBehaviour {
 
         pauseMenu.alpha = 0f;
         deathScreen.alpha = 0f;
-        levelCompleteScreen.alpha = 0f;
         pauseMenu.gameObject.SetActive(false);
         deathScreen.gameObject.SetActive(false);
         levelCompleteScreen.gameObject.SetActive(false);
 
+        wipeScreen.gameObject.SetActive(true);
+
+        // hide wipe screen
+        animator.SetTrigger("hideWipeScreen");
+
+        // show default crosshair
         defaultCrosshairEnabled = true;
         defaultCrosshair = crosshair.sprite;
         EnableCrosshair();
@@ -92,6 +92,7 @@ public class GameUIController : MonoBehaviour {
 
     private void Update() {
 
+        // if game unfocuses in standalone build, pause game
         if (!Application.isEditor && !Application.isFocused)
             PauseGame();
 
@@ -231,14 +232,21 @@ public class GameUIController : MonoBehaviour {
     public void OpenMainMenu() {
 
         levelComplete = false;
-        StartCoroutine(LoadMainMenu());
+        StartCoroutine(LoadLevel(0));
 
     }
 
-    private IEnumerator LoadMainMenu() {
+    public void ReloadLevel() {
 
-        yield return FadeInWipeScreen();
-        AsyncOperation operation = SceneManager.LoadSceneAsync(0);
+        levelComplete = false;
+        StartCoroutine(LoadLevel(SceneManager.GetActiveScene().buildIndex));
+
+    }
+
+    public IEnumerator LoadLevel(int buildIndex) {
+
+        yield return ShowWipeScreen();
+        AsyncOperation operation = SceneManager.LoadSceneAsync(buildIndex);
         operation.allowSceneActivation = false;
         float currentTime = 0f;
 
@@ -251,31 +259,6 @@ public class GameUIController : MonoBehaviour {
 
         operation.allowSceneActivation = true;
         Time.timeScale = 1f;
-
-    }
-
-    public void ReloadLevel() {
-
-        levelComplete = false;
-        StartCoroutine(LoadLevel(SceneManager.GetActiveScene()));
-
-    }
-
-    public IEnumerator LoadLevel(Scene level) {
-
-        yield return FadeInWipeScreen();
-        AsyncOperation operation = SceneManager.LoadSceneAsync(level.name);
-        operation.allowSceneActivation = false;
-        float currentTime = 0f;
-
-        while (!operation.isDone && operation.progress < 0.9f) {
-
-            currentTime += Time.unscaledDeltaTime;
-            yield return null;
-
-        }
-
-        operation.allowSceneActivation = true;
 
     }
 
@@ -293,11 +276,27 @@ public class GameUIController : MonoBehaviour {
 
     public void ShowLevelCompleteScreen(bool newRecord, int deaths) {
 
+        // flag level as complete
         levelComplete = true;
+
+        // update time text
         timeText.text = "Your Time: " + timerText.text;
+
+        // enable record text if there's a new record
         recordText.gameObject.SetActive(newRecord);
+
+        // update death count
         deathsText.text = "Deaths: " + deaths;
-        FadeInScreen(levelCompleteScreen, 1f, levelCompleteFadeInDuration);
+
+        // activate level complete screen
+        levelCompleteScreen.gameObject.SetActive(true);
+
+        // rebuild level complete layouts
+        LayoutRebuilder.ForceRebuildLayoutImmediate(levelCompleteScreen.GetComponent<RectTransform>());
+        LayoutRebuilder.ForceRebuildLayoutImmediate(timeLayoutGroup.GetComponent<RectTransform>());
+
+        // play animation
+        animator.SetTrigger("showLevelComplete");
 
     }
 
@@ -319,32 +318,13 @@ public class GameUIController : MonoBehaviour {
 
     }
 
-    private IEnumerator FadeInWipeScreen() {
+    private IEnumerator ShowWipeScreen() {
 
-        // enable wipe screen
-        wipeScreen.gameObject.SetActive(true);
+        // start animation
+        animator.SetTrigger("showWipeScreen");
 
-        // start unload animation
-        animator.SetTrigger("unload");
-
-        // wait for unload animation to end
+        // wait for animation to end
         yield return new WaitForSecondsRealtime(animator.GetCurrentAnimatorClipInfo(0)[0].clip.length);
-
-    }
-
-    private IEnumerator FadeOutWipeScreen() {
-
-        // enable wipe screen
-        wipeScreen.gameObject.SetActive(true);
-
-        // start unload animation
-        animator.SetTrigger("load");
-
-        // wait for load animation to end
-        yield return new WaitForSeconds(animator.GetCurrentAnimatorClipInfo(0)[0].clip.length);
-
-        // disable wipe screen
-        wipeScreen.gameObject.SetActive(true);
 
     }
 
@@ -365,11 +345,9 @@ public class GameUIController : MonoBehaviour {
         screen.alpha = targetOpacity;
         screenFadeCoroutine = null;
 
-        if (!fadeIn) {
-
+        if (!fadeIn)
             screen.gameObject.SetActive(false);
 
-        }
     }
 
     private void FadeInText(TMP_Text text, float targetOpacity, float duration) {

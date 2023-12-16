@@ -39,10 +39,9 @@ public class MenuUIController : MonoBehaviour {
         playerData = FindObjectOfType<PlayerData>();
         audioManager = FindObjectOfType<MenuAudioManager>();
 
-        //SetLoadingText("Loading Main Menu...");
-        //loadingScreen.alpha = 1f;
         wipeScreen.gameObject.SetActive(true);
-        StartCoroutine(FadeOutWipeScreen());
+        mainMenu.gameObject.SetActive(true);
+        StartCoroutine(LoadMainMenu());
 
         shopQuesoText.text = playerData.GetQuesos() + "";
 
@@ -55,11 +54,13 @@ public class MenuUIController : MonoBehaviour {
 
         levelMenu.gameObject.SetActive(false);
         shopMenu.gameObject.SetActive(false);
-
         mainMenu.gameObject.SetActive(true);
 
         foreach (Button button in FindObjectsOfType<Button>(true))
             button.onClick.AddListener(PlayClickSound);
+
+        // play default animations
+        animator.SetTrigger("hideWipeScreen");
 
     }
 
@@ -77,33 +78,27 @@ public class MenuUIController : MonoBehaviour {
 
     private IEnumerator OpenLevelMenu() {
 
-        // enable wipe screen
-        wipeScreen.gameObject.SetActive(true);
-
         // disable interacting to prevent multiple animations
         mainMenu.interactable = false;
 
-        // start unload animation
-        animator.SetTrigger("unload");
+        // start animation
+        animator.SetTrigger("showWipeScreen");
 
-        // wait for unload animation to end
+        // wait for animation to end
         yield return new WaitForSeconds(animator.GetCurrentAnimatorClipInfo(0)[0].clip.length);
 
         // disable main menu / enable level menu
         mainMenu.gameObject.SetActive(false);
         levelMenu.gameObject.SetActive(true);
 
-        // start load animation
-        animator.SetTrigger("load");
+        // start animation
+        animator.SetTrigger("hideWipeScreen");
 
-        // wait for load animation to end
+        // wait for animation to end
         yield return new WaitForSeconds(animator.GetCurrentAnimatorClipInfo(0)[0].clip.length);
 
         // enable interacting on new menu
         levelMenu.interactable = true;
-
-        // disable wipe screen
-        wipeScreen.gameObject.SetActive(false);
 
     }
 
@@ -116,97 +111,92 @@ public class MenuUIController : MonoBehaviour {
 
         }
 
-        // enable wipe screen
-        wipeScreen.gameObject.SetActive(true);
-
         // disable interacting to prevent multiple animations
         levelMenu.interactable = false;
 
-        // start unload animation
-        animator.SetTrigger("unload");
+        // start animation
+        animator.SetTrigger("showWipeScreen");
 
-        // wait for unload animation to end
+        // wait for animation to end
         yield return new WaitForSeconds(animator.GetCurrentAnimatorClipInfo(0)[0].clip.length);
 
         // disable level menu / enable main menu
         levelMenu.gameObject.SetActive(false);
         mainMenu.gameObject.SetActive(true);
 
-        // start load animation
-        animator.SetTrigger("load");
+        // start animation
+        animator.SetTrigger("hideWipeScreen");
 
-        // wait for load animation to end
+        // wait for animation to end
         yield return new WaitForSeconds(animator.GetCurrentAnimatorClipInfo(0)[0].clip.length);
 
         // enable interacting on new menu
         mainMenu.interactable = true;
 
-        // disable wipe screen
-        wipeScreen.gameObject.SetActive(false);
-
     }
 
     private IEnumerator OpenShopMenu() {
 
-        // enable wipe screen
-        wipeScreen.gameObject.SetActive(true);
-
         // disable interacting to prevent multiple animations
         mainMenu.interactable = false;
 
-        // start unload animation
-        animator.SetTrigger("unload");
+        // start animation
+        animator.SetTrigger("showWipeScreen");
 
-        // wait for unload animation to end
+        // wait for animation to end
         yield return new WaitForSeconds(animator.GetCurrentAnimatorClipInfo(0)[0].clip.length);
 
         // disable main menu / enable shop menu
         mainMenu.gameObject.SetActive(false);
         shopMenu.gameObject.SetActive(true);
 
-        // start load animation
-        animator.SetTrigger("load");
+        // start animation
+        animator.SetTrigger("hideWipeScreen");
 
-        // wait for load animation to end
+        // wait for animation to end
         yield return new WaitForSeconds(animator.GetCurrentAnimatorClipInfo(0)[0].clip.length);
 
         // enable interacting on new menu
         shopMenu.interactable = true;
 
-        // disable wipe screen
-        wipeScreen.gameObject.SetActive(false);
-
     }
 
     private IEnumerator CloseShopMenu() {
 
-        // enable wipe screen
-        wipeScreen.gameObject.SetActive(true);
-
         // disable interacting to prevent multiple animations
         shopMenu.interactable = false;
 
-        // start unload animation
-        animator.SetTrigger("unload");
+        // start animation
+        animator.SetTrigger("showWipeScreen");
 
-        // wait for unload animation to end
+        // wait for animation to end
         yield return new WaitForSeconds(animator.GetCurrentAnimatorClipInfo(0)[0].clip.length);
 
         // disable shop menu / enable main menu
         shopMenu.gameObject.SetActive(false);
         mainMenu.gameObject.SetActive(true);
 
-        // start load animation
-        animator.SetTrigger("load");
+        // start animation
+        animator.SetTrigger("hideWipeScreen");
 
-        // wait for load animation to end
+        // wait for animation to end
         yield return new WaitForSeconds(animator.GetCurrentAnimatorClipInfo(0)[0].clip.length);
 
         // enable interacting on new menu
         mainMenu.interactable = true;
 
-        // disable wipe screen
-        wipeScreen.gameObject.SetActive(false);
+    }
+
+    public IEnumerator OnLevelLoad() {
+
+        // disable interacting to prevent multiple animations
+        levelMenu.interactable = false;
+
+        // start animation
+        animator.SetTrigger("showWipeScreen");
+
+        // wait for animation to end
+        yield return new WaitForSeconds(animator.GetCurrentAnimatorClipInfo(0)[0].clip.length);
 
     }
 
@@ -255,32 +245,19 @@ public class MenuUIController : MonoBehaviour {
 
     }
 
-    public IEnumerator FadeInWipeScreen() {
+    private IEnumerator LoadMainMenu() {
 
-        // enable wipe screen
-        wipeScreen.gameObject.SetActive(true);
+        // disable interacting to prevent multiple animations
+        mainMenu.interactable = false;
 
-        // start unload animation
-        animator.SetTrigger("unload");
+        // start animation
+        animator.SetTrigger("hideWipeScreen");
 
-        // wait for unload animation to end
+        // wait for animation to end
         yield return new WaitForSeconds(animator.GetCurrentAnimatorClipInfo(0)[0].clip.length);
 
-    }
-
-    private IEnumerator FadeOutWipeScreen() {
-
-        // enable wipe screen
-        wipeScreen.gameObject.SetActive(true);
-
-        // start unload animation
-        animator.SetTrigger("load");
-
-        // wait for load animation to end
-        yield return new WaitForSeconds(animator.GetCurrentAnimatorClipInfo(0)[0].clip.length);
-
-        // disable wipe screen
-        wipeScreen.gameObject.SetActive(false);
+        // enable interacting on new menu
+        mainMenu.interactable = true;
 
     }
 

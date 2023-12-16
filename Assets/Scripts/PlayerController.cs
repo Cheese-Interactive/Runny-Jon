@@ -2,8 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Animations.Rigging;
-using UnityEngine.Device;
-using UnityEngine.ProBuilder.MeshOperations;
+using UnityEngine.Rendering;
 
 [RequireComponent(typeof(Rigidbody))]
 [RequireComponent(typeof(LineRenderer))]
@@ -27,6 +26,7 @@ public class PlayerController : MonoBehaviour {
     private float startScale;
     private float startHeight;
     private Vector3 startGravity;
+    private Transform parent;
 
     [Header("Toggles")]
     private bool levelLookEnabled;
@@ -101,7 +101,6 @@ public class PlayerController : MonoBehaviour {
     [Header("Sliding")]
     [SerializeField] private float maxSlideSpeed;
     [SerializeField] private float slideDownwardsForce;
-    [SerializeField] private float slideForwardForce;
     [SerializeField] private float maxSlideTime;
     [SerializeField] private float upwardsSlideFactor;
     private float slideTimer;
@@ -172,6 +171,7 @@ public class PlayerController : MonoBehaviour {
     [SerializeField] private Transform swingIKTarget;
     [SerializeField] private Transform swingPoint;
     [SerializeField] private LayerMask swingMask;
+    [SerializeField] private Transform swingGun;
     private Vector3 currentSwingPosition;
     private SpringJoint joint;
 
@@ -197,7 +197,7 @@ public class PlayerController : MonoBehaviour {
     private Zipline currZipline;
 
     [Header("Animations")]
-    [SerializeField] private float speedMultiplier;
+    private float speedMultiplier;
 
     [Header("Elevator")]
     private bool inElevator;
@@ -207,7 +207,10 @@ public class PlayerController : MonoBehaviour {
     [SerializeField] private float grabDistance;
     [SerializeField] private Transform grabPoint;
     private Rigidbody currGrabbedObj;
-    private string currObjTag;
+    private string prevObjTag;
+
+    [Header("Grab Rotation")]
+    [SerializeField] private float grabRotationSpeed;
 
     [Header("Headbob")]
     [SerializeField] private float walkBobSpeed;
@@ -228,6 +231,7 @@ public class PlayerController : MonoBehaviour {
     private List<Effect> currentEffects;
     private List<Effect> queuedEffectRemovals;
     private bool inGravityZone;
+    private bool exitingSpeedZone;
 
     [Header("Ground Check")]
     [SerializeField] private Transform feet;
@@ -237,6 +241,8 @@ public class PlayerController : MonoBehaviour {
     private bool lastIsGrounded;
 
     [Header("Slope Handling")]
+    [SerializeField] private float slopeDownwardForce;
+    [SerializeField] private float invalidSlopeForce;
     [SerializeField] private float maxSlopeAngle;
     [SerializeField] private float slopeCheckDistance;
     private RaycastHit slopeHit;
@@ -258,6 +264,10 @@ public class PlayerController : MonoBehaviour {
     [SerializeField] private KeyCode resetKey;
     [SerializeField] private KeyCode pauseKey;
     [SerializeField] private KeyCode grabKey;
+    [SerializeField] private KeyCode rotationLeftKey;
+    [SerializeField] private KeyCode rotationRightKey;
+    [SerializeField] private KeyCode rotationForwardKey;
+    [SerializeField] private KeyCode rotationBackwardKey;
     #endregion
 
     #region ENUMS
@@ -287,6 +297,7 @@ public class PlayerController : MonoBehaviour {
         predictionObj = FindObjectOfType<SwingPredictor>().transform;
         spring = new Spring();
         startGravity = Physics.gravity;
+        parent = transform.parent;
 
         rigBuilder.layers[leftHandIKRigIndex].active = true;
         rigBuilder.layers[rightHandIKRigIndex].active = true;
@@ -325,6 +336,8 @@ public class PlayerController : MonoBehaviour {
         startFOV = mainCamera.fieldOfView;
         startTilt = mainCamera.transform.localRotation.eulerAngles;
 
+        swingGun.gameObject.SetActive(false);
+
     }
 
     private void Update() {
@@ -358,11 +371,23 @@ public class PlayerController : MonoBehaviour {
                     //
                     // lookRotationLerpCoroutine = StartCoroutine(LerpLookRotation(Quaternion.Euler(rotation)));
 
-                    if (wallLeft)
-                        yRotation = Mathf.Clamp(yRotation, rotation.y - wallSideCameraClamp, float.MaxValue);
-                    else
+                    float newYRotation;
+
+                    if (wallLeft) {
+
+                        newYRotation = rotation.y - wallSideCameraClamp;
+
+                        // deal with coterminal angles
+                        if (newYRotation > 180f)
+                            newYRotation -= 360f;
+
+                        yRotation = Mathf.Clamp(yRotation, newYRotation, float.MaxValue);
+
+                    } else {
+
                         yRotation = Mathf.Clamp(yRotation, float.MinValue, rotation.y + wallSideCameraClamp);
 
+                    }
                 }
             }
 
@@ -396,12 +421,9 @@ public class PlayerController : MonoBehaviour {
             }
 
             // loop through any queued effect removals
-            foreach (Effect effect in queuedEffectRemovals) {
-
+            foreach (Effect effect in queuedEffectRemovals)
                 // remove effect
                 currentEffects.Remove(effect);
-
-            }
 
             // clear queue
             queuedEffectRemovals.Clear();
@@ -563,6 +585,10 @@ public class PlayerController : MonoBehaviour {
                 currGrabbedObj.freezeRotation = true;
                 currGrabbedObj.useGravity = false;
 
+                // set tag to player to allow object to break glass and interact with things only the player can
+                prevObjTag = currGrabbedObj.tag;
+                currGrabbedObj.tag = "Player";
+
             } else {
 
                 // looking at object but isn't grabbing
@@ -582,6 +608,9 @@ public class PlayerController : MonoBehaviour {
                 currGrabbedObj.useGravity = true;
                 currGrabbedObj.freezeRotation = false;
                 currGrabbedObj = null;
+
+                // reset tag
+                currGrabbedObj.tag = prevObjTag;
 
             }
         } else {
@@ -606,6 +635,22 @@ public class PlayerController : MonoBehaviour {
 
             if (newSpeed < moveSpeed)
                 moveSpeed = newSpeed;
+
+            // rotating grabbed object left
+            if (Input.GetKey(rotationLeftKey))
+                currGrabbedObj.transform.Rotate(new Vector3(0f, grabRotationSpeed / currGrabbedObj.mass, 0f));
+
+            // rotating grabbed object right
+            if (Input.GetKey(rotationRightKey))
+                currGrabbedObj.transform.Rotate(new Vector3(0f, -grabRotationSpeed / currGrabbedObj.mass, 0f));
+
+            // rotating grabbed object forward
+            if (Input.GetKey(rotationForwardKey))
+                currGrabbedObj.transform.RotateAround(currGrabbedObj.position, transform.right, grabRotationSpeed / currGrabbedObj.mass);
+
+            // rotating grabbed object backward
+            if (Input.GetKey(rotationBackwardKey))
+                currGrabbedObj.transform.RotateAround(currGrabbedObj.position, transform.right, -grabRotationSpeed / currGrabbedObj.mass);
 
         }
 
@@ -639,13 +684,17 @@ public class PlayerController : MonoBehaviour {
         // on valid slope
         else if (CheckSlope() == SlopeType.ValidUp || CheckSlope() == SlopeType.ValidDown && !exitingSlope) {
 
+            // move player along slope direction
             rb.AddForce(GetSlopeMoveDirection() * moveSpeed * 30f, ForceMode.Force);
+
+            // apply downward force on slope
+            rb.AddForce(-transform.up * slopeDownwardForce, ForceMode.Force);
 
         }
         // on invalid slope
         else if (CheckSlope() == SlopeType.Invalid) {
 
-            rb.AddForce(Vector3.Cross(slopeHit.normal, Vector3.Cross(slopeHit.normal, Vector3.up)) * 500f, ForceMode.Acceleration);
+            rb.AddForce(Vector3.Cross(slopeHit.normal, Vector3.Cross(slopeHit.normal, Vector3.up)) * invalidSlopeForce, ForceMode.Acceleration);
 
         }
         // on ground (walking, sprinting, crouching, sliding)
@@ -706,10 +755,6 @@ public class PlayerController : MonoBehaviour {
                         inGravityZone = true;
 
                     }
-
-                    // add downwards "gravity" force
-                    //rb.AddForce(transform.up * Physics.gravity.y * effect.GetStrength(), ForceMode.Force);
-
                 }
             }
         }
@@ -812,7 +857,8 @@ public class PlayerController : MonoBehaviour {
             // state 1: player is on a flat surface
             if (CheckSlope() == SlopeType.None && isGrounded) {
 
-                desiredMoveSpeed = slideForwardForce;
+                // desired move speed is the sprint speed (player can only slide when sprinting on ground)
+                desiredMoveSpeed = sprintSpeed;
 
                 // decrement slide timer
                 slideTimer -= Time.deltaTime;
@@ -841,7 +887,7 @@ public class PlayerController : MonoBehaviour {
             else {
 
                 // desired move speed is sprint speed
-                desiredMoveSpeed = sprintSpeed;
+                desiredMoveSpeed = maxSlideSpeed;
 
             }
 
@@ -947,7 +993,14 @@ public class PlayerController : MonoBehaviour {
 
         }
 
-        if (Mathf.Abs(desiredMoveSpeed - lastDesiredMoveSpeed) > sprintSpeed - walkSpeed && moveSpeed != 0f) {
+        float multiplier = 1f;
+
+        // calculate speed multiplier (for loop to avoid foreach bug)
+        for (int i = 0; i < currentEffects.Count; i++)
+            if (currentEffects[i].GetEffectType() == EffectType.Speed)
+                multiplier *= currentEffects[i].GetStrength();
+
+        if (!exitingSpeedZone && multiplier == 1f && Mathf.Abs((desiredMoveSpeed * multiplier) - lastDesiredMoveSpeed) > sprintSpeed - walkSpeed && moveSpeed != 0f) {
 
             if (moveSpeedCoroutine != null)
                 StopCoroutine(moveSpeedCoroutine);
@@ -956,27 +1009,25 @@ public class PlayerController : MonoBehaviour {
 
         } else {
 
-            moveSpeed = desiredMoveSpeed;
+            if (exitingSpeedZone)
+                exitingSpeedZone = false;
+
+            if (moveSpeedCoroutine != null)
+                StopCoroutine(moveSpeedCoroutine);
+
+            print(desiredMoveSpeed + " " + multiplier + " " + queuedEffectRemovals.Count);
+            moveSpeed = desiredMoveSpeed * multiplier;
 
         }
 
-        foreach (Effect effect in currentEffects) {
-
-            if (effect.GetEffectType() == EffectType.Speed) {
-
-                moveSpeed *= effect.GetStrength();
-
-            }
-        }
-
-        lastDesiredMoveSpeed = desiredMoveSpeed;
+        lastDesiredMoveSpeed = desiredMoveSpeed * multiplier;
 
     }
 
     private IEnumerator LerpMoveSpeed() {
 
         float timer = 0f;
-        float difference = Mathf.Abs(desiredMoveSpeed - moveSpeed);
+        float difference = Mathf.Abs((desiredMoveSpeed) - moveSpeed);
         float startValue = moveSpeed;
 
         while (timer < difference) {
@@ -999,18 +1050,19 @@ public class PlayerController : MonoBehaviour {
 
     private void ControlSpeed() {
 
-        // check if player is on any type of slope and isn't exiting it
-        if (CheckSlope() == SlopeType.ValidUp || CheckSlope() == SlopeType.ValidDown || CheckSlope() == SlopeType.Invalid && !exitingSlope) {
+        // get flat velocity (no y value)
+        Vector3 flatVel = new Vector3(rb.velocity.x, 0f, rb.velocity.z);
 
-            // normalize & limit velocity
-            if (rb.velocity.magnitude > moveSpeed)
-                rb.velocity = rb.velocity.normalized * moveSpeed;
+        // check if player is on upwards slope
+        if (CheckSlope() == SlopeType.ValidUp) {
+
+            // normalize & limit flat velocity
+            if (flatVel.magnitude > moveSpeed && !exitingSlope)
+                rb.velocity = flatVel.normalized * moveSpeed;
 
         } else {
 
-            // reset y velocity
-            Vector3 flatVel = new Vector3(rb.velocity.x, 0f, rb.velocity.z);
-
+            // limit flat velocity
             if (flatVel.magnitude > moveSpeed) {
 
                 Vector3 controlledVel = flatVel.normalized * moveSpeed;
@@ -1025,7 +1077,9 @@ public class PlayerController : MonoBehaviour {
         moveSpeed = 0f;
         lastDesiredMoveSpeed = 0f;
         desiredMoveSpeed = 0f;
+        speedMultiplier = 1f;
         rb.velocity = Vector3.zero;
+        ClearEffects();
 
     }
     #endregion
@@ -1483,8 +1537,14 @@ public class PlayerController : MonoBehaviour {
 
     private void StartSwing() {
 
+        Uncrouch();
+        StopSlide();
+
         if (predictionHit.point == Vector3.zero)
             return;
+
+        animator.SetTrigger("swing");
+        swingGun.gameObject.SetActive(true);
 
         movementState = MovementState.Swinging;
         rigBuilder.layers[leftHandIKRigIndex].active = false;
@@ -1588,6 +1648,7 @@ public class PlayerController : MonoBehaviour {
 
     public void StopSwing() {
 
+        swingGun.gameObject.SetActive(false);
         movementState = MovementState.None;
         rigBuilder.layers[leftHandIKRigIndex].active = true;
         rigBuilder.layers[rightHandIKRigIndex].active = true;
@@ -1955,7 +2016,7 @@ public class PlayerController : MonoBehaviour {
     }
     #endregion
 
-    #region ELEVATOR
+    #region MOVING PLATFORMS
     public void SetInElevator(bool inElevator) {
 
         if (inElevator) {
@@ -1963,7 +2024,7 @@ public class PlayerController : MonoBehaviour {
             StopSlide();
             Uncrouch();
             StopSwing();
-            // StopWallRun();
+            StopWallRun();
 
         }
 
@@ -1973,6 +2034,7 @@ public class PlayerController : MonoBehaviour {
 
     public void SetElevatorMoving(bool elevatorMoving) {
 
+        // flag that player is moving in elevator
         this.elevatorMoving = elevatorMoving;
 
     }
@@ -1982,6 +2044,12 @@ public class PlayerController : MonoBehaviour {
     public float GetPlayerHeight() {
 
         return startHeight;
+
+    }
+
+    public void ResetParent() {
+
+        transform.parent = parent;
 
     }
     #endregion
@@ -2004,6 +2072,10 @@ public class PlayerController : MonoBehaviour {
         if (effect.GetEffectType() == EffectType.Gravity)
             Physics.gravity = startGravity;
 
+        // if effect is speed, flag speed zone exit
+        if (effect.GetEffectType() == EffectType.Speed)
+            exitingSpeedZone = true;
+
         // check if player is grounded
         if (isGrounded)
             // remove effect
@@ -2016,7 +2088,16 @@ public class PlayerController : MonoBehaviour {
 
     public void ClearEffects() {
 
-        currentEffects.Clear();
+        // clear current effects (for loop to avoid foreach bug)
+        for (int i = 0; i < currentEffects.Count; i++)
+            RemoveEffect(currentEffects[i]);
+
+        // remove any queued effect removals (for loop to avoid foreach bug)
+        for (int i = 0; i < queuedEffectRemovals.Count; i++)
+            currentEffects.Remove(queuedEffectRemovals[i]);
+
+        // clear queue
+        queuedEffectRemovals.Clear();
 
     }
     #endregion
@@ -2035,4 +2116,5 @@ public class PlayerController : MonoBehaviour {
 
     }
     #endregion
+
 }

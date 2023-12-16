@@ -12,6 +12,10 @@ public class EffectObject : MonoBehaviour {
     private Material platformMaterial;
     private Material zoneMaterial;
 
+    [Header("Time Cycle")]
+    [SerializeField] private bool timeCycleEnabled;
+    [SerializeField] private float cycleWaitDuration;
+
     [Header("Animations")]
     private Coroutine platformFadeCoroutine;
     private Coroutine zoneFadeCoroutine;
@@ -30,6 +34,10 @@ public class EffectObject : MonoBehaviour {
 
         // fade zone color
         zoneFadeCoroutine = StartCoroutine(FadeColor(zoneMaterial, new Color(effectColor.r, effectColor.g, effectColor.b, effectZone.GetOpacity()), effectCycle[currIndex].GetColorFadeDuration(), zoneFadeCoroutine));
+
+        // start time cycle if enabled
+        if (timeCycleEnabled)
+            StartCoroutine(HandleTimeCycle(cycleWaitDuration));
 
     }
 
@@ -95,7 +103,21 @@ public class EffectObject : MonoBehaviour {
         }
 
         material.color = targetColor;
+
+        // reset coroutine
         coroutine = null;
 
+    }
+
+    private IEnumerator HandleTimeCycle(float cycleWaitDuration) {
+
+        // infinite loop
+        while (true) {
+
+            // wait for cycle wait duration then change effect
+            yield return new WaitForSeconds(cycleWaitDuration);
+            ChangeEffect();
+
+        }
     }
 }

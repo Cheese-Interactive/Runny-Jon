@@ -1870,7 +1870,7 @@ GameObject:
   - component: {fileID: 541919914}
   - component: {fileID: 541919913}
   - component: {fileID: 541919912}
-  m_Layer: 8
+  m_Layer: 10
   m_Name: Swingable3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2238,6 +2238,7 @@ Transform:
   - {fileID: 546621878}
   - {fileID: 851490890}
   - {fileID: 287720890}
+  - {fileID: 1373272212}
   m_Father: {fileID: 650703682}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -2407,7 +2408,6 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 1373272212}
   - {fileID: 1190943655}
   - {fileID: 1122338150}
   - {fileID: 1943381565}
@@ -2426,7 +2426,7 @@ GameObject:
   - component: {fileID: 681212366}
   - component: {fileID: 681212365}
   - component: {fileID: 681212364}
-  m_Layer: 8
+  m_Layer: 10
   m_Name: Swingable1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4173,7 +4173,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 654468877}
-  m_RootOrder: 2
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 90, y: 0, z: 90}
 --- !u!65 &1122338151
 BoxCollider:
@@ -4462,7 +4462,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 654468877}
-  m_RootOrder: 1
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
 --- !u!65 &1190943656
 BoxCollider:
@@ -5373,7 +5373,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: -6478536213147159724, guid: e4ff369b084b2bc4b966d5a7bc548f73, type: 3}
+  - {fileID: 2100000, guid: 93671d5addcbe0e448b7ee5d249750ce, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -5407,8 +5407,8 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 654468877}
-  m_RootOrder: 0
+  m_Father: {fileID: 563286362}
+  m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!95 &1373272213
 Animator:
@@ -5876,7 +5876,7 @@ GameObject:
   - component: {fileID: 1644706528}
   - component: {fileID: 1644706527}
   - component: {fileID: 1644706526}
-  m_Layer: 8
+  m_Layer: 10
   m_Name: Swingable2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -6102,6 +6102,7 @@ MonoBehaviour:
   - {fileID: 1159760208}
   - {fileID: 1790022869}
   animator: {fileID: 1644799734}
+  skinnedMeshRenderer: {fileID: 0}
   leftHandIKRigIndex: 0
   rightHandIKRigIndex: 0
   rightHandFollowRigIndex: 0
@@ -6168,6 +6169,7 @@ MonoBehaviour:
   swingMask:
     serializedVersion: 2
     m_Bits: 0
+  swingGun: {fileID: 0}
   quality: 500
   damper: 14
   strength: 800
@@ -6221,6 +6223,8 @@ MonoBehaviour:
   environmentMask:
     serializedVersion: 2
     m_Bits: 448
+  slopeDownwardForce: 0
+  invalidSlopeForce: 0
   maxSlopeAngle: 45
   slopeCheckDistance: 0.3
   groundDrag: 5
@@ -7282,7 +7286,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 654468877}
-  m_RootOrder: 3
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
 --- !u!65 &1943381566
 BoxCollider:
